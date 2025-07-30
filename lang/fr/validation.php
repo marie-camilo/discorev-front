@@ -156,8 +156,8 @@ return [
     'uuid'                   => 'Le champ :attribute doit être un UUID valide',
     'attributes' => [
         'name' => 'nom complet',
-        'first_name' => 'prénom',
-        'last_name' => 'nom de famille',
+        'firstName' => 'prénom',
+        'lastName' => 'nom de famille',
         'email' => 'adresse e-mail',
         'password' => 'mot de passe',
         'password_confirmation' => 'confirmation du mot de passe',

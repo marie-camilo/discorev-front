@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Client\Response;
+use \Illuminate\Http\UploadedFile;
 
 class DiscorevApiService
 {
@@ -17,7 +18,7 @@ class DiscorevApiService
     public function get(string $endpoint, array $params = [])
     {
         return $this->withAutoRefresh(function () use ($endpoint, $params) {
-            return Http::withToken(Session::get('access_token'))
+            return Http::withToken(Session::get('accessToken'))
                 ->get("{$this->baseUrl}/{$endpoint}", $params);
         });
     }
@@ -25,7 +26,7 @@ class DiscorevApiService
     public function post(string $endpoint, array $data)
     {
         return $this->withAutoRefresh(function () use ($endpoint, $data) {
-            return Http::withToken(Session::get('access_token'))
+            return Http::withToken(Session::get('accessToken'))
                 ->post("{$this->baseUrl}/{$endpoint}", $data);
         });
     }
@@ -33,7 +34,7 @@ class DiscorevApiService
     public function put(string $endpoint, array $data)
     {
         return $this->withAutoRefresh(function () use ($endpoint, $data) {
-            return Http::withToken(Session::get('access_token'))
+            return Http::withToken(Session::get('accessToken'))
                 ->put("{$this->baseUrl}/{$endpoint}", $data);
         });
     }
@@ -41,8 +42,21 @@ class DiscorevApiService
     public function delete(string $endpoint)
     {
         return $this->withAutoRefresh(function () use ($endpoint) {
-            return Http::withToken(Session::get('access_token'))
+            return Http::withToken(Session::get('accessToken'))
                 ->delete("{$this->baseUrl}/{$endpoint}");
+        });
+    }
+
+    public function uploadMedia(array $data, UploadedFile $file)
+    {
+        return $this->withAutoRefresh(function () use ($data, $file) {
+            return Http::withToken(Session::get('accessToken'))
+                ->attach(
+                    'file',                       // <-- Doit correspondre au nom attendu dans le backend Node.js
+                    file_get_contents($file),
+                    $file->getClientOriginalName()
+                )
+                ->post("{$this->baseUrl}/upload/media", $data);
         });
     }
 
@@ -67,19 +81,20 @@ class DiscorevApiService
      */
     protected function refreshToken(): bool
     {
-        $refresh = Http::withCookies(request()->cookies->all(), parse_url($this->baseUrl)['host'])
-            ->post("{$this->baseUrl}/auth/refresh-token");
+        $refresh = Http::withOptions([
+            'base_uri' => $this->baseUrl,
+            'cookies' => true, // <-- Permet d’envoyer les cookies existants (dont HttpOnly)
+        ])->post('/auth/refresh-token');
 
         if ($refresh->successful()) {
             $newToken = $refresh['accessToken'] ?? null;
             if ($newToken) {
-                Session::put('access_token', $newToken);
+                Session::put('accessToken', $newToken);
                 return true;
             }
         }
 
-        // Le refresh a échoué : déconnexion ?
-        Session::forget('access_token');
+        Session::forget('accessToken');
         return false;
     }
 }

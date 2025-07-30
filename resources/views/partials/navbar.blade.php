@@ -32,8 +32,8 @@
 
                     @if ($isAuthenticated && isset($user))
                         @php
-                            $isCandidate = $user['account_type'] === 'candidate';
-                            $isRecruiter = $user['account_type'] === 'recruiter';
+                            $isCandidate = $user['accountType'] === 'candidate';
+                            $isRecruiter = $user['accountType'] === 'recruiter';
                         @endphp
 
                         @if ($isCandidate)
@@ -69,9 +69,15 @@
 
                         <!-- Icône profil connecté -->
                         <li class="nav-item dropdown">
+                            @php
+                                $profilePicture = collect($user['medias'] ?? [])->firstWhere('type', 'profile_picture');
+                                $profilePictureUrl = $profilePicture
+                                    ? env('DISCOREV_API_URL') . '/' . $profilePicture['filePath']
+                                    : asset('img/default-avatar.png');
+                            @endphp
+
                             <a href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ $user['profile_picture'] ?? asset('img/default-avatar.png') }}"
-                                    alt="Profil" class="rounded-circle me-2 shadow" width="32" height="32">
+                                <img src="{{ $profilePictureUrl }}" alt="Profil" class="rounded-circle me-2 shadow">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{{ route('profile') }}">

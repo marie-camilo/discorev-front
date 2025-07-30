@@ -9,6 +9,19 @@ class Recruiter extends Model
 {
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
+
+    protected $fillable = [
+        'userId',
+        'companyName',
+        'siret',
+        'companyLogo',
+        'companyDescription',
+        'location',
+        'website',
+        'sector',
+        'teamSize',
+        'contactPerson',
+    ];
 }

@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-            $view->with('isAuthenticated', Session::has('access_token'));
+            $view->with('isAuthenticated', Session::has('accessToken'));
             $view->with('user', Session::get('user'));
         });
     }

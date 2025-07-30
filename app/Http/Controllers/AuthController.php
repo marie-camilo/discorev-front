@@ -69,8 +69,8 @@ class AuthController extends Controller
         $loginData = $loginResponse->json();
 
         if ($loginResponse->successful() && isset($loginData['token'])) {
-            Session::put('access_token', $loginData['token']);
-            Session::put('refresh_token', $loginData['refresh_token']);
+            Session::put('accessToken', $loginData['token']);
+            Session::put('refreshToken', $loginData['refreshToken']);
             Session::put('user', $loginData['data']);
 
             $user = User::where('email', $loginData['data']['email'])->first();
@@ -103,8 +103,8 @@ class AuthController extends Controller
                 Auth::login($user);
             }
 
-            Session::put('access_token', $responseData['token']);
-            Session::put('refresh_token', $responseData['refresh_token']);
+            Session::put('accessToken', $responseData['token']);
+            Session::put('refreshToken', $responseData['refreshToken']);
             Session::put('user', $responseData['data']);
 
             return redirect()->route('home')->with('success', 'Connexion réussie !');

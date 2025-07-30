@@ -3,7 +3,7 @@
 
 @section('content')
     @php
-        $type = auth()->user()->account_type;
+        $type = auth()->user()->accountType;
     @endphp
     <div class="card">
         <div class="card-header d-flex justify-content-between">

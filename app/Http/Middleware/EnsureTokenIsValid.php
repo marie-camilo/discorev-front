@@ -11,48 +11,45 @@ class EnsureTokenIsValid
 {
     public function handle(Request $request, Closure $next)
     {
-        $token = Session::get('access_token');
+        $token = Session::get('accessToken');
 
-        // Si on a un token, on le vérifie
+        // Si on a un token, on tente de le vérifier
         if ($token) {
-            $response = Http::withToken($token)->get(env('API_URL') . '/auth/verify');
+            $response = Http::withToken($token)->get(env('DISCOREV_API_URL') . '/auth/verify');
 
             if ($response->ok()) {
-                // Utilisateur authentifié
+                // Token valide
                 view()->share('isAuthenticated', true);
                 view()->share('user', Session::get('user'));
                 return $next($request);
             }
 
-            // Si token expiré, tente un refresh
+            // Si le token est invalide, on tente de le rafraîchir
             if ($response->status() === 401) {
-                $refreshResponse = Http::withCookies($request->cookies->all(), env('API_URL'))
-                    ->post(env('API_URL') . '/auth/refresh-token');
+                $refresh = Http::withCookies($request->cookies->all(), parse_url(env('DISCOREV_API_URL'))['host'])
+                    ->post(env('DISCOREV_API_URL') . '/auth/refresh-token');
 
-                if ($refreshResponse->ok()) {
-                    // Stocke le nouveau token
-                    Session::put('access_token', $refreshResponse['token']);
-                    Session::put('user', $refreshResponse['data']);
+                if ($refresh->successful() && isset($refresh['accessToken'])) {
+                    // On stocke le nouveau token et continue
+                    Session::put('accessToken', $refresh['accessToken']);
+                    Session::put('user', $refresh['data'] ?? null);
 
                     view()->share('isAuthenticated', true);
-                    view()->share('user', $refreshResponse['data']);
+                    view()->share('user', $refresh['data'] ?? null);
 
                     return $next($request);
-                } else {
-                    // Token non valide, suppression du token de la session
-                    Session::forget('access_token');
-                    Session::forget('user');
                 }
-            } else {
-                // Token non valide, suppression du token de la session
-                Session::forget('access_token');
-                Session::forget('user');
             }
         }
 
-        // Non authentifié
+        // Si aucune authentification n'est possible, on déconnecte l'utilisateur
+        Session::forget('accessToken');
+        Session::forget('user');
+
         view()->share('isAuthenticated', false);
         view()->share('user', null);
-        return $next($request);
+
+        // 🔁 Redirige vers login si ce n'est pas une API ou une page publique
+        return redirect()->route('login');
     }
 }

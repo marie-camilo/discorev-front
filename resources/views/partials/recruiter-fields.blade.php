@@ -1,6 +1,6 @@
 <div class="mb-3">
     <label>Nom de l'entreprise</label>
-    <input type="text" name="company_name" class="form-control" required>
+    <input type="text" name="companyName" class="form-control" required>
 </div>
 
 <div class="mb-3">
@@ -10,12 +10,12 @@
 
 <div class="mb-3">
     <label>Logo de l'entreprise</label>
-    <input type="file" name="company_logo" class="form-control" accept="image/*">
+    <input type="file" name="companyLogo" class="form-control" accept="image/*">
 </div>
 
 <div class="mb-3">
     <label>Description de l'entreprise</label>
-    <textarea name="company_description" class="form-control" rows="4"></textarea>
+    <textarea name="companyDescription" class="form-control" rows="4"></textarea>
 </div>
 
 <div class="mb-3">
@@ -35,10 +35,10 @@
 
 <div class="mb-3">
     <label>Taille de l'équipe</label>
-    <input type="text" name="team_size" class="form-control">
+    <input type="text" name="teamSize" class="form-control">
 </div>
 
 <div class="mb-3">
     <label>Personne à contacter</label>
-    <textarea name="contact_person" class="form-control" rows="2"></textarea>
+    <textarea name="contactPerson" class="form-control" rows="2"></textarea>
 </div>

@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'recruiter' => UserIsRecruiter::class,
-            'web' => EnsureTokenIsValid::class,
+            'token.valid' => EnsureTokenIsValid::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

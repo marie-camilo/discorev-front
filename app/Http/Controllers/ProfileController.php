@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Http\Controllers\Controller;
 
 class ProfileController extends Controller
@@ -17,50 +15,77 @@ class ProfileController extends Controller
         return view('account.profile.index');
     }
 
+    public function edit(DiscorevApiService $api)
+    {
+        $user = Auth::user();
+        $type = $user->accountType;
+        $tabs =
+            $type === 'recruiter'
+            ? [
+                'company' => ['label' => 'Mon entreprise', 'icon' => 'corporate_fare'],
+                'account' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
+                'page' => ['label' => 'Ma page', 'icon' => 'monitor'],
+                'help' => ['label' => 'Aide et support', 'icon' => 'help'],
+            ]
+            : [
+                'profile' => ['label' => 'Mon profil', 'icon' => 'face'],
+                'account' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
+                'cv' => ['label' => 'Mon CV', 'icon' => 'contact_page'],
+                'help' => ['label' => 'Aide et support', 'icon' => 'help'],
+            ];
+        // Appel API pour récupérer les données selon le type de compte
+        $endpoint = $user->accountType === 'recruiter' ? 'recruiters/' : 'candidates/';
+        $response = $api->get($endpoint . $user->id);
+        $json = $response->json();
+
+        if (!$response->successful() || !isset($json['data'])) {
+            $errorMsg = $user->accountType === 'recruiter'
+                ? 'Impossible de récupérer les données du recruteur.'
+                : 'Impossible de récupérer les données du candidat.';
+            return back()->with('error', $errorMsg);
+        }
+
+        $data = $json['data'];
+        return view('account.profile.edit', [
+            $type => $data,
+            'tabs' => $tabs,
+            'type' => $type,
+            'user' => $user,
+        ]);
+    }
+
     public function showCompletionForm()
     {
         return view('account.profile.complete');
     }
 
-    public function update(Request $request)
+    public function update(Request $request, DiscorevApiService $api, $id)
     {
         $section = $request->input('section');
 
         switch ($section) {
             case 'general':
-                $request->validate([
-                    'name' => 'required|string',
-                    //'email' => 'required|email|unique:users,email,' . auth()->id(),
+
+                $validated = $request->validate([
+                    'firstName' => 'nullable|string',
+                    'lastName' => 'nullable|string',
+                    'email' => 'required|email',
+                    'phoneNumber' => 'nullable|string',
                 ]);
 
-                //auth()->user()->update($request->only('name', 'email'));
+                $response = $api->put('/users/' . $id, $validated);
+
                 return back()->with('success_general', 'Informations mises à jour.');
 
             case 'avatar':
                 $request->validate([
-                    'profile_picture' => 'required|image|max:2048',
+                    'profilePicture' => 'required|image|max:2048',
                 ]);
 
-                $path = $request->file('profile_picture')->store('avatars', 'public');
-                //auth()->user()->update(['profile_picture' => $path]);
+                $path = $request->file('profilePicture')->store('avatars', 'public');
+                //auth()->user()->update(['profilePicture' => $path]);
 
                 return back()->with('success_avatar', 'Photo mise à jour.');
-
-            case 'location':
-                $request->validate([
-                    'location' => 'required|string',
-                ]);
-                //auth()->user()->update(['location' => $request->location]);
-
-                return back()->with('success_location', 'Localisation mise à jour.');
-
-            case 'bio':
-                $request->validate([
-                    'bio' => 'nullable|string|max:500',
-                ]);
-                //auth()->user()->update(['bio' => $request->bio]);
-
-                return back()->with('success_bio', 'Biographie mise à jour.');
         }
 
         return back()->with('error', 'Section inconnue.');

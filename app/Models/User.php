@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Recruiter;
+use App\Traits\CamelCaseAttributes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CamelCaseAttributes;
 
     /**
      * The attributes that are mass assignable.
@@ -32,6 +33,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'refreshToken',
     ];
 
     /**
@@ -49,16 +51,21 @@ class User extends Authenticatable
 
     public function isCandidate(): bool
     {
-        return $this->account_type === 'candidate';
+        return $this->accountType === 'candidate';
     }
 
     public function isRecruiter(): bool
     {
-        return $this->account_type === 'recruiter';
+        return $this->accountType === 'recruiter';
     }
 
     public function recruiter()
     {
         return $this->hasOne(Recruiter::class);
+    }
+
+    public function candidate()
+    {
+        return $this->hasOne(Candidate::class);
     }
 }
