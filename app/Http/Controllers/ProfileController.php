@@ -10,12 +10,19 @@ use App\Http\Controllers\Controller;
 class ProfileController extends Controller
 {
 
+    private DiscorevApiService $api;
+
+    public function __construct(DiscorevApiService $api)
+    {
+        $this->api = $api;
+    }
+
     public function index()
     {
         return view('account.profile.index');
     }
 
-    public function edit(DiscorevApiService $api)
+    public function edit()
     {
         $user = Auth::user();
         $type = $user->accountType;
@@ -23,19 +30,19 @@ class ProfileController extends Controller
             $type === 'recruiter'
             ? [
                 'company' => ['label' => 'Mon entreprise', 'icon' => 'corporate_fare'],
-                'account' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
+                'account-recruiter' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
                 'page' => ['label' => 'Ma page', 'icon' => 'monitor'],
                 'help' => ['label' => 'Aide et support', 'icon' => 'help'],
             ]
             : [
                 'profile' => ['label' => 'Mon profil', 'icon' => 'face'],
-                'account' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
+                'account-candidate' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
                 'cv' => ['label' => 'Mon CV', 'icon' => 'contact_page'],
                 'help' => ['label' => 'Aide et support', 'icon' => 'help'],
             ];
         // Appel API pour récupérer les données selon le type de compte
         $endpoint = $user->accountType === 'recruiter' ? 'recruiters/' : 'candidates/';
-        $response = $api->get($endpoint . $user->id);
+        $response = $this->api->get($endpoint . $user->id);
         $json = $response->json();
 
         if (!$response->successful() || !isset($json['data'])) {
@@ -47,7 +54,8 @@ class ProfileController extends Controller
 
         $data = $json['data'];
         return view('account.profile.edit', [
-            $type => $data,
+            'recruiter' => $type === 'recruiter' ? $data : null,
+            'candidate' => $type === 'candidate' ? $data : null,
             'tabs' => $tabs,
             'type' => $type,
             'user' => $user,
@@ -59,7 +67,7 @@ class ProfileController extends Controller
         return view('account.profile.complete');
     }
 
-    public function update(Request $request, DiscorevApiService $api, $id)
+    public function update(Request $request, $id)
     {
         $section = $request->input('section');
 
@@ -73,7 +81,7 @@ class ProfileController extends Controller
                     'phoneNumber' => 'nullable|string',
                 ]);
 
-                $response = $api->put('/users/' . $id, $validated);
+                $response = $this->api->put('/users/' . $id, $validated);
 
                 return back()->with('success_general', 'Informations mises à jour.');
 

@@ -164,7 +164,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="login-logo-container">
-                <img src="{{ asset('img/logo-dark.png') }}" alt="Logo" class="login-logo-img" />
+                <img src="{{ asset('img/logos/logo-blue.svg') }}" alt="Logo" class="login-logo-img" />
             </div>
             <div class="title">Bienvenue</div>
 

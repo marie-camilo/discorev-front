@@ -23,10 +23,11 @@
         </div>
 
         <div class="footer-col">
-            <img src="{{ asset('img/logo-png.png') }}" alt="Logo Discorev">
+            <img src="{{ asset('img/logos/logo-white.svg') }}" alt="Logo Discorev">
             <h3>Suivez-nous</h3>
             <div class="social-icons">
-                <a href="https://www.linkedin.com/company/discorev/" class="social-icon" target="_blank" aria-label="LinkedIn">
+                <a href="https://www.linkedin.com/company/discorev/" class="social-icon" target="_blank"
+                    aria-label="LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
                 <a href="#" class="social-icon" target="_blank" aria-label="Facebook">

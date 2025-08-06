@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\RecruiterController;
+use App\Http\Controllers\RecruiterTeamMemberController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
@@ -56,6 +57,7 @@ Route::middleware(['auth', 'web', 'token.valid'])->group(function () {
 
     //Upload des medias
     Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+    Route::delete('/media/delete/{id}', [MediaController::class, 'delete'])->name('media.delete');
 });
 
 // Accès public
@@ -74,6 +76,7 @@ Route::middleware(['auth', 'web', 'recruiter', 'token.valid'])->group(function (
     Route::put('/job_offers/{id}', [JobOfferController::class, 'update'])->name('recruiter.jobs.update');
     Route::delete('/job_offers/{id}', [JobOfferController::class, 'destroy'])->name('recruiter.jobs.destroy');
     Route::put('/recruiter/{id}', [RecruiterController::class, 'update'])->name('recruiter.update');
+    Route::post('/recruiter/{id}/team/sync', [RecruiterTeamMemberController::class, 'syncTeamMembers'])->name('recruiter.members.sync');
     Route::get('/cvtheque', [CandidateController::class, 'index'])->name('cvtheque.index');
 });
 

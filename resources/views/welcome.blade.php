@@ -53,7 +53,7 @@
     <section class="explore-companies">
         <div class="container">
             <h2>Explorer les entreprises</h2>
-            <h4>Découvrez des entreprises qui recrutent activement dans le secteur social.</h4>
+            <h4>Découvrez des entreprises qui recrutent activement dans le secteur santé, social et médico-social.</h4>
 
             <div class="row gy-4 mt-4 mb-5">
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">

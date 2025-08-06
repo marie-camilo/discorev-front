@@ -36,5 +36,6 @@
     {{-- Section Avatar --}}
     <div class="col-12 col-md-6">
         <x-media-uploader :label="'photo de profil'" :medias="$user['medias']" type="profile_picture" context="user_profile"
-            target-type="user" :title="'Photo de ' . $user['lastName'] . ' ' . $user['firstName']" :target-id="$user['id']" />
+            target-type="user" :title="'Photo de ' . $user['lastName'] . ' ' . $user['firstName']" :target-id="$user['id']" :isMultiple="false" />
     </div>
+</div>

@@ -11,10 +11,16 @@ use Illuminate\Support\Facades\Redirect;
 
 class JobOfferController extends Controller
 {
+    private DiscorevApiService $api;
 
-    public function index(DiscorevApiService $api)
+    public function __construct(DiscorevApiService $api)
     {
-        $response = $api->get('job_offers');
+        $this->api = $api;
+    }
+
+    public function index()
+    {
+        $response = $this->api->get('job_offers');
 
         if ($response->successful()) {
             $offers = $response->json()['data'];
@@ -24,9 +30,9 @@ class JobOfferController extends Controller
         abort(500, 'Erreur lors de la récupération des offres.');
     }
 
-    public function show(DiscorevApiService $api, $id)
+    public function show($id)
     {
-        $response = $api->get('job_offers/' . $id);
+        $response = $this->api->get('job_offers/' . $id);
 
         if ($response->successful()) {
             $offer = $response->json()['data']['jobOffer'];
@@ -37,7 +43,7 @@ class JobOfferController extends Controller
         abort(500, 'Erreur lors de la récupération des offres.');
     }
 
-    public function myOffers(DiscorevApiService $api)
+    public function myOffers()
     {
         $recruiter = auth()->user()->recruiter;
 
@@ -47,7 +53,7 @@ class JobOfferController extends Controller
             Redirect::back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
         }
 
-        $response = $api->get('job_offers/recruiter/' . $recruiterId);
+        $response = $this->api->get('job_offers/recruiter/' . $recruiterId);
         if ($response->successful()) {
             $offers = $response->json()['data'];
             return view('account.recruiter.jobs.index', compact('offers'));
@@ -61,7 +67,7 @@ class JobOfferController extends Controller
         return view('account.recruiter.jobs.create');
     }
 
-    public function store(Request $request, DiscorevApiService $api)
+    public function store(Request $request,)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -69,10 +75,10 @@ class JobOfferController extends Controller
             'location' => 'required|string|max:255',
             'salary' => 'nullable|numeric',
             'requirements' => 'nullable|string',
-            'salary_range' => 'nullable|string|max:255',
-            'employment_type' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
+            'salaryRange' => 'nullable|string|max:255',
+            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
             'remote' => 'nullable|boolean',
-            'expiration_date' => 'nullable|date',
+            'expirationDate' => 'nullable|date',
             'status' => 'required|string|in:active,inactive,draft',
         ]);
 
@@ -82,21 +88,19 @@ class JobOfferController extends Controller
         }
 
         $data = array_merge($validated, [
-            'recruiter_id' => $recruiter->id,
+            'recruiterId' => $recruiter->id,
         ]);
-
-        $response = $api->post('job_offers', $data);
+        $response = $this->api->post('job_offers', $data);
 
         if ($response->successful()) {
             return redirect()->route('recruiter.jobs.index')->with('success', 'Offre créée avec succès.');
         }
-
         return Redirect::back()->withErrors(['error' => 'Erreur lors de la création de l\'offre.']);
     }
 
-    public function edit(DiscorevApiService $api, $id)
+    public function edit($id)
     {
-        $response = $api->get('job_offers/' . $id);
+        $response = $this->api->get('job_offers/' . $id);
 
         if ($response->successful()) {
             $offer = $response->json()['data']['jobOffer'];
@@ -106,7 +110,7 @@ class JobOfferController extends Controller
         abort(500, 'Erreur lors de la récupération de l\'offre.');
     }
 
-    public function update(Request $request, DiscorevApiService $api, $id)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -114,10 +118,10 @@ class JobOfferController extends Controller
             'location' => 'required|string|max:255',
             'salary' => 'nullable|numeric',
             'requirements' => 'nullable|string',
-            'salary_range' => 'nullable|string|max:255',
-            'employment_type' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
+            'salaryRange' => 'nullable|string|max:255',
+            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
             'remote' => 'nullable|boolean',
-            'expiration_date' => 'nullable|date',
+            'expirationDate' => 'nullable|date',
             'status' => 'required|string|in:active,inactive,draft',
         ]);
 
@@ -127,10 +131,10 @@ class JobOfferController extends Controller
         }
 
         $data = array_merge($validated, [
-            'recruiter_id' => $recruiter->id,
+            'recruiterId' => $recruiter->id,
         ]);
 
-        $response = $api->put('job_offers/' . $id, $data);
+        $response = $this->api->put('job_offers/' . $id, $data);
 
         if ($response->successful()) {
             return redirect()->route('recruiter.jobs.index')->with('success', 'Offre modifiée avec succès.');
@@ -139,9 +143,9 @@ class JobOfferController extends Controller
         return Redirect::back()->withErrors(['error' => 'Erreur lors de la modification de l\'offre.']);
     }
 
-    public function destroy(DiscorevApiService $api, $id)
+    public function destroy($id)
     {
-        $response = $api->delete('job_offers/' . $id);
+        $response = $this->api->delete('job_offers/' . $id);
 
         if ($response->successful()) {
             return redirect()->route('recruiter.jobs.index')->with('success', 'Offre supprimée avec succès.');

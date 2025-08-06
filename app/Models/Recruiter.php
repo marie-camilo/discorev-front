@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\RecruiterTeamMember;
 
 class Recruiter extends Model
 {
@@ -24,4 +25,9 @@ class Recruiter extends Model
         'teamSize',
         'contactPerson',
     ];
+
+    public function teamMembers()
+    {
+        return $this->hasMany(RecruiterTeamMember::class);
+    }
 }

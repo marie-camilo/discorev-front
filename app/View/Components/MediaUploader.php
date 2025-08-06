@@ -16,16 +16,18 @@ class MediaUploader extends Component
     public $targetType;
     public $title;
     public $targetId;
+    public $isMultiple;
 
-    public function __construct($label, $medias = [], $type, $context, $targetType, $title, $targetId)
+    public function __construct($label, $medias = [], $type, $context, $targetType, $title, $targetId, $isMultiple)
     {
-        $this->label = $label;
+        $this->label = $label ?? null;
         $this->medias = $medias;
         $this->type = $type;
         $this->context = $context;
         $this->targetType = $targetType;
         $this->title = $title;
         $this->targetId = $targetId;
+        $this->isMultiple = $isMultiple ?? false;
     }
 
     public function render()

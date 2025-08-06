@@ -1,6 +1,9 @@
 <div class="row justify-content-between">
-    <div class="col-12 col-md-6">
-        <form action="{{ route('recruiter.update', $recruiter['id']) }}" method="POST" enctype="multipart/form-data">
+    <div class="col-12 col-md-6 mb-4">
+
+        <h5 class="fw-bold">Général</h5>
+        <form action="{{ route('recruiter.update', $recruiter['id']) }}" method="POST" enctype="multipart/form-data"
+            id="recruiter-profile-form">
             @csrf
             @method('PUT')
 
@@ -46,8 +49,9 @@
             </div>
 
             <div class="mb-3">
-                <label for="contactPerson" class="form-label">Personne à contacter</label>
-                <textarea class="form-control" id="contactPerson" name="contactPerson" rows="2">{{ old('contactPerson', $recruiter['contactPerson'] ?? '') }}</textarea>
+                <label for="contactPerson" class="form-label">Contact (e-mail)</label>
+                <input type="email" class="form-control" id="contactPerson" name="contactPerson"
+                    value="{{ old('contactPerson', $recruiter['contactPerson'] ?? '') }}">
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -56,7 +60,20 @@
         </form>
     </div>
     <div class="col-12 col-md-6">
-        <x-media-uploader :label="'logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
-            target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" />
+        <div class="mb-3">
+            <x-media-uploader :label="'logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
+                target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple=false />
+        </div>
+
+        <div class="mb-3">
+            <x-recruiter-team-member-form :recruiter="$recruiter" />
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="mb-3">
+            <x-media-uploader :label="'photos de l\'entreprise'" :medias="$recruiter['medias']" type="company_image" context="company_page"
+                target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple=true />
+
+        </div>
     </div>
 </div>

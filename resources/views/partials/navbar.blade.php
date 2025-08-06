@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center text-white fw-bold fs-4" href="{{ route('home') }}"
                 title="Accueil">
-                <img src="{{ asset('img/logo-png.png') }}" alt="logo Discorev" height="40" class="me-2">
+                <img src="{{ asset('img/logos/logo-white.svg') }}" alt="logo Discorev" height="40" class="me-2">
                 Discorev
             </a>
             <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse"
@@ -102,7 +102,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="guestDropdown"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="material-symbols-outlined fs-4">account_circle</span>
+                                <span class="material-symbols-outlined text-white fs-4">account_circle</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
                                 <li><a class="dropdown-item" href="{{ route('auth', ['tab' => 'login']) }}">

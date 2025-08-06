@@ -30,19 +30,19 @@
             </div>
 
             <div class="mb-3">
-                <label for="salary_range" class="form-label">Fourchette salariale</label>
-                <input type="text" class="form-control" id="salary_range" name="salary_range"
-                    value="{{ old('salary_range', $jobOffer['salary_range'] ?? '') }}">
+                <label for="salaryRange" class="form-label">Fourchette salariale</label>
+                <input type="text" class="form-control" id="salaryRange" name="salaryRange"
+                    value="{{ old('salaryRange', $jobOffer['salaryRange'] ?? '') }}">
             </div>
 
             <div class="mb-3">
-                <label for="employment_type" class="form-label">Type de contrat</label>
-                <select class="form-select" id="employment_type" name="employment_type" required>
+                <label for="employmentType" class="form-label">Type de contrat</label>
+                <select class="form-select" id="employmentType" name="employmentType" required>
                     @php $types = ['cdi' => 'CDI', 'cdd' => 'CDD', 'freelance' => 'Freelance', 'alternance' => 'Alternance', 'stage' => 'Stage']; @endphp
                     <option value="">Sélectionner</option>
                     @foreach ($types as $value => $label)
                         <option value="{{ $value }}"
-                            {{ old('employment_type', $jobOffer['employment_type'] ?? '') === $value ? 'selected' : '' }}>
+                            {{ old('employmentType', $jobOffer['employmentType'] ?? '') === $value ? 'selected' : '' }}>
                             {{ $label }}
                         </option>
                     @endforeach
@@ -62,9 +62,9 @@
             </div>
 
             <div class="mb-3">
-                <label for="expiration_date" class="form-label">Date d'expiration</label>
-                <input type="date" class="form-control" id="expiration_date" name="expiration_date"
-                    value="{{ old('expiration_date', isset($jobOffer['expiration_date']) ? \Carbon\Carbon::parse($jobOffer['expiration_date'])->format('Y-m-d') : '') }}">
+                <label for="expirationDate" class="form-label">Date d'expiration</label>
+                <input type="date" class="form-control" id="expirationDate" name="expirationDate"
+                    value="{{ old('expirationDate', isset($jobOffer['expirationDate']) ? \Carbon\Carbon::parse($jobOffer['expirationDate'])->format('Y-m-d') : '') }}">
             </div>
 
             <div class="mb-3">
