@@ -27,5 +27,5 @@
         <a href="#" class="forgot-password-link">Mot de passe oublié ?</a>
     </div>
 
-    <button type="submit" class="btn cta-button-login">Se connecter</button>
+    <button type="submit" class="btn btn-success w-100">Se connecter</button>
 </form>

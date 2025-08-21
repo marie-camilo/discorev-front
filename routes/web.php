@@ -62,10 +62,11 @@ Route::middleware(['auth', 'web', 'token.valid'])->group(function () {
 
 // Accès public
 Route::get('/job_offers', [JobOfferController::class, 'index'])->name('job_offers.index');
+Route::get('/job_offers/search', [JobOfferController::class, 'index'])->name('job_offers.search');
 
 // Accès aux fiches entreprises
 Route::get('/companies', [RecruiterController::class, 'index'])->name('companies.index');
-Route::get('/companies/{name}', [RecruiterController::class, 'show'])->name('companies.show');
+Route::get('/companies/{identifier}', [RecruiterController::class, 'show'])->name('companies.show');
 
 // Pour recruteurs
 Route::middleware(['auth', 'web', 'recruiter', 'token.valid'])->group(function () {

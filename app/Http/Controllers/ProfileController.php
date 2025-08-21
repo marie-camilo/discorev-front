@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Api\Admin;
+use App\Models\Api\Recruiter;
+use App\Models\Api\Candidate;
 
 class ProfileController extends Controller
 {
@@ -26,6 +29,8 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $type = $user->accountType;
+
+        // Tabs selon le type
         $tabs =
             $type === 'recruiter'
             ? [
@@ -34,33 +39,60 @@ class ProfileController extends Controller
                 'page' => ['label' => 'Ma page', 'icon' => 'monitor'],
                 'help' => ['label' => 'Aide et support', 'icon' => 'help'],
             ]
-            : [
-                'profile' => ['label' => 'Mon profil', 'icon' => 'face'],
-                'account-candidate' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
-                'cv' => ['label' => 'Mon CV', 'icon' => 'contact_page'],
-                'help' => ['label' => 'Aide et support', 'icon' => 'help'],
-            ];
-        // Appel API pour récupérer les données selon le type de compte
-        $endpoint = $user->accountType === 'recruiter' ? 'recruiters/' : 'candidates/';
-        $response = $this->api->get($endpoint . $user->id);
-        $json = $response->json();
+            : ($type === 'candidate'
+                ? [
+                    'profile' => ['label' => 'Mon profil', 'icon' => 'face'],
+                    'account-candidate' => ['label' => 'Mon compte', 'icon' => 'account_circle'],
+                    'cv' => ['label' => 'Mon CV', 'icon' => 'contact_page'],
+                    'help' => ['label' => 'Aide et support', 'icon' => 'help'],
+                ]
+                : [ // cas admin
+                    'dashboard' => ['label' => 'Tableau de bord', 'icon' => 'dashboard'],
+                    'users' => ['label' => 'Gestion des utilisateurs', 'icon' => 'group'],
+                    'settings' => ['label' => 'Paramètres', 'icon' => 'settings'],
+                    'help' => ['label' => 'Aide et support', 'icon' => 'help'],
+                ]);
 
-        if (!$response->successful() || !isset($json['data'])) {
-            $errorMsg = $user->accountType === 'recruiter'
-                ? 'Impossible de récupérer les données du recruteur.'
-                : 'Impossible de récupérer les données du candidat.';
-            return back()->with('error', $errorMsg);
+        // Détermination de l’endpoint API
+        $endpoint = match ($type) {
+            'recruiter' => 'recruiters/user/',
+            'candidate' => 'candidates/user/',
+            'admin' => 'admins/user/',
+            default => null
+        };
+
+        if (!$endpoint) {
+            return back()->with('error', 'Type de compte non reconnu.');
         }
 
-        $data = $json['data'];
+        $response = $this->api->get($endpoint . $user->id);
+
+        if (!$response->successful()) {
+            $errorMsg = match ($type) {
+                'recruiter' => 'Impossible de récupérer les données du recruteur.',
+                'candidate' => 'Impossible de récupérer les données du candidat.',
+                'admin' => 'Impossible de récupérer les données de l’administrateur.',
+                default => 'Erreur inconnue.'
+            };
+            return back()->with('error', $errorMsg);
+        } else {
+            $data = match ($type) {
+                'recruiter' => Recruiter::fromApiData($response),
+                'candidate' => Candidate::fromApiData($response),
+                'admin' => Admin::fromApiData($response)
+            };
+        };
+
         return view('account.profile.edit', [
             'recruiter' => $type === 'recruiter' ? $data : null,
             'candidate' => $type === 'candidate' ? $data : null,
+            'admin' => $type === 'admin' ? $data : null,
             'tabs' => $tabs,
             'type' => $type,
             'user' => $user,
         ]);
     }
+
 
     public function showCompletionForm()
     {

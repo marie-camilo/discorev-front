@@ -57,7 +57,7 @@
 
             <div class="row gy-4 mt-4 mb-5">
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['name' => 'le-petit-jean']) }}" class="company-card">
+                    <a href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}" class="company-card">
                         <img src="{{ asset('img/petit-jean.jpg') }}" alt="Entreprise 1">
                         <h3>Le Petit Jean</h3>
                         <p>Une équipe engagée pour un impact social fort.</p>
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['name' => 'altidom']) }}" class="company-card">
+                    <a href="{{ route('companies.show', ['identifier' => 'altidom']) }}" class="company-card">
                         <img src="{{ asset('img/altidom/altidom.webp') }}" alt="Entreprise 2">
                         <h3>Altidom</h3>
                         <p>Des services à domicile avec l’exigence du monde professionnel.</p>
@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['name' => 'azae']) }}" class="company-card">
+                    <a href="{{ route('companies.show', ['identifier' => 'azae']) }}" class="company-card">
                         <img src="{{ asset('img/azae.jpg') }}" alt="Entreprise 3">
                         <h3>Azaé</h3>
                         <p>Découvrez leurs opportunités et valeurs.</p>
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['name' => 'azae']) }}" class="company-card">
+                    <a href="{{ route('companies.show', ['identifier' => 'azae']) }}" class="company-card">
                         <img src="{{ asset('img/peit-fils.jpg') }}" alt="Entreprise 4">
                         <h3>Petit Fils</h3>
                         <p>Rejoignez une entreprise qui partage vos valeurs.</p>
@@ -110,7 +110,7 @@
                         <img src="{{ asset('img/azae.jpg') }}" alt="Entreprise 5">
                         <h3>Azaé</h3>
                         <p>Découvrez leurs opportunités et valeurs.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['name' => 'azae']) }}">+54 offres</a>
+                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'azae']) }}">+54 offres</a>
                         <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                         <img src="{{ asset('img/petit-jean.jpg') }}" alt="Entreprise 6">
                         <h3>Le Petit Jean</h3>
                         <p>Une équipe engagée pour un impact social fort.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['name' => 'le-petit-jean']) }}">+18
+                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}">+18
                             offres</a>
                         <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
                         </div>
@@ -133,7 +133,7 @@
                         <img src="{{ asset('img/peit-fils.jpg') }}" alt="Entreprise 7">
                         <h3>Petit Fils</h3>
                         <p>Rejoignez une entreprise qui partage vos valeurs.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['name' => 'petit']) }}">+32 offres</a>
+                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'petit']) }}">+32 offres</a>
                         <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
                         </div>
                     </div>

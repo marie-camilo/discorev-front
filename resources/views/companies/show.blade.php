@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', $recruiter['companyName'] . ' | Discorev')
+@section('title', $recruiter->companyName . ' | Discorev')
 
 @section('content')
 
     <div class="company-banner">
-        @if ($bannerMedia)
-            <img src="{{ env('DISCOREV_API_URL') . '/' . $bannerMedia['filePath'] }}" alt="Bandeau entreprise" />
+        @if ($recruiter->banner)
+            <img src="{{ env('DISCOREV_API_URL') . '/' . $recruiter->banner->filePath }}" alt="Bandeau entreprise" />
             <div class="overlay"></div>
         @else
             <div></div>
@@ -15,29 +15,32 @@
 
         <div class="company-header">
             <div class="company-logo">
-                @if (!empty($recruiter['website']))
-                    <a href="{{ $recruiter['website'] }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ $logo ? env('DISCOREV_API_URL') . '/' . $logo['filePath'] : '' }}"
+                @if (!empty($recruiter->website))
+                    <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ $recruiter->logo ? env('DISCOREV_API_URL') . '/' . $recruiter->logo->filePath : '' }}"
                             alt="Logo de l'entreprise" />
                     </a>
                 @else
-                    <img src="{{ $logo ? env('DISCOREV_API_URL') . '/' . $logo['filePath'] : '' }}"
+                    <img src="{{ $recruiter->logo ? env('DISCOREV_API_URL') . '/' . $recruiter->logo->filePath : '' }}"
                         alt="Logo de l'entreprise" />
                 @endif
             </div>
             <div class="company-info">
                 <div class="d-flex align-items-center">
-                    <h1>{{ $recruiter['companyName'] }}</h1>
+                    <h1>{{ $recruiter->companyName }}</h1>
                 </div>
-                <p><i class="fa-solid fa-briefcase"></i> Secteur : {{ $recruiter['sector'] }}</p>
-                <p><i class="fa-solid fa-map-pin"></i> Localisation : {{ $recruiter['location'] }}</p>
-                <p><i class="fa-solid fa-users"></i> Taille de l'équipe : {{ $recruiter['teamSize'] }}</p>
+                <p><span class="material-symbols-outlined text-white">business_center</span> Secteur :
+                    {{ $recruiter->sector }}</p>
+                <p><span class="material-symbols-outlined text-white">location_on</span> Localisation :
+                    {{ $recruiter->location }}</p>
+                <p><span class="material-symbols-outlined text-white">groups</span> Taille de l'équipe :
+                    {{ $recruiter->teamSize }}</p>
             </div>
         </div>
     </div>
 
     <div class="container content-wrapper" role="main"
-        aria-label="Présentation de l'entreprise {{ $recruiter['companyName'] }}">
+        aria-label="Présentation de l'entreprise {{ $recruiter->companyName }}">
         <div class="main-content">
 
             {{-- Navigation locale dynamique --}}
@@ -60,28 +63,28 @@
                     <h2>{{ $section['label'] }}</h2>
 
                     @if ($section['type'] === 'text')
-                        <p>{{ $recruiter[$section['key']] }}</p>
+                        <p>{{ $recruiter->{$section['key']} }}</p>
                     @elseif ($section['type'] === 'array' && $section['key'] === 'teamMembers')
                         <p>Découvrez <strong>l'équipe</strong> de la société
-                            <strong>{{ $recruiter['companyName'] }}</strong>.
+                            <strong>{{ $recruiter->companyName }}</strong>.
                         </p>
                         <div class="row">
-                            @foreach ($recruiter['teamMembers'] as $member)
+                            @foreach ($recruiter->teamMembers as $member)
                                 <article class="col-12 col-md-4 team-member" role="listitem">
-                                    <img src="{{ asset('img/default-avatar.png') }}" alt="{{ $member['name'] }}" />
-                                    <h3>{{ $member['name'] }}</h3>
-                                    <p><strong>{{ $member['role'] }}</strong></p>
-                                    <p>{{ $member['email'] }}</p>
+                                    <img src="{{ asset('img/default-avatar.png') }}" alt="{{ $member->name }}" />
+                                    <h3>{{ $member->name }}</h3>
+                                    <p><strong>{{ $member->role }}</strong></p>
+                                    <p>{{ $member->email }}</p>
                                 </article>
                             @endforeach
                         </div>
                     @elseif ($section['type'] === 'media')
                         <div class="row">
-                            @foreach ($recruiter['medias'] as $media)
-                                @if ($media['type'] === 'company_image' && $media['context'] === 'company_page')
+                            @foreach ($recruiter->medias as $media)
+                                @if ($media->type === 'company_image' && $media->context === 'company_page')
                                     <div class="col">
-                                        <img class="rounded" src="{{ env('DISCOREV_API_URL') . '/' . $media['filePath'] }}"
-                                            alt="{{ $media['title'] }}">
+                                        <img class="rounded" src="{{ env('DISCOREV_API_URL') . '/' . $media->filePath }}"
+                                            alt="{{ $media->title }}">
                                     </div>
                                 @endif
                             @endforeach
@@ -96,26 +99,26 @@
             <section class="sidebar-infos" aria-labelledby="sidebar-infos-title">
                 <h3 id="sidebar-infos-title" class="sidebar-title">À propos</h3>
                 <ul class="infos-list">
-                    @if (!empty($recruiter['contactPerson']))
+                    @if (!empty($recruiter->contactPerson))
                         <li><span class="material-symbols-outlined">alternate_email
-                            </span><a class="text-decoration-none text-dark"
-                                href="mailto:{{ $recruiter['contactPerson'] }}" target="_blank"><span>
-                                    {{ $recruiter['contactPerson'] }}</span></a>
+                            </span><a class="text-decoration-none text-dark" href="mailto:{{ $recruiter->contactPerson }}"
+                                target="_blank"><span>
+                                    {{ $recruiter->contactPerson }}</span></a>
                         </li>
                     @endif
-                    @if (!empty($recruiter['website']))
+                    @if (!empty($recruiter->website))
                         <li><span class="material-symbols-outlined">public</span><a class="text-decoration-none text-dark"
-                                href="{{ $recruiter['website'] }}" target="_blank"><span>
-                                    {{ $recruiter['website'] }}</span></a>
+                                href="{{ $recruiter->website }}" target="_blank"><span>
+                                    {{ $recruiter->website }}</span></a>
                         </li>
                     @endif
-                    @if (!empty($recruiter['location']))
-                        <li><span class="material-symbols-outlined">home</span> <span>{{ $recruiter['location'] }}</span>
+                    @if (!empty($recruiter->location))
+                        <li><span class="material-symbols-outlined">home</span> <span>{{ $recruiter->location }}</span>
                         </li>
                     @endif
-                    @if (!empty($recruiter['siret']))
+                    @if (!empty($recruiter->siret))
                         <li><span class="material-symbols-outlined">badge</span> <span>SIRET :
-                                {{ $recruiter['siret'] }}</span></li>
+                                {{ $recruiter->siret }}</span></li>
                     @endif
                 </ul>
                 <a href="#" class="contact-btn">Contacter l'entreprise</a>
@@ -124,21 +127,21 @@
             <section class="sidebar-offers" aria-labelledby="sidebar-offers-title">
                 <h3 id="sidebar-offers-title" class="sidebar-title">Dernières offres</h3>
                 <ul class="job-list">
-                    @foreach ($jobOffers as $jobs)
+                    @foreach ($recruiter->jobOffers as $jobs)
                         <li class="job-card">
-                            <h4>{{ $jobs['title'] }}</h4>
-                            <p><i class="material-symbols-outlined me-2">location_on</i>{{ $jobs['title'] }}</p>
+                            <h4>{{ $jobs->title }}</h4>
+                            <p><i class="material-symbols-outlined me-2">location_on</i>{{ $jobs->location }}</p>
                             <p class="text-uppercase"><i
-                                    class="material-symbols-outlined me-2">contract</i>{{ $jobs['employmentType'] }}</p>
+                                    class="material-symbols-outlined me-2">contract</i>{{ $jobs->employmentType }}</p>
                             <p><i class="material-symbols-outlined me-2">calendar_today</i>Publiée le
-                                {{ $jobs['publicationDate'] }}
+                                {{ $jobs->formattedPublicationDate }}
                             </p>
-                            <a href="{{ route('job_offers.show', $jobs['id']) }}" class="apply-btn">Postuler</a>
+                            <a href="{{ route('job_offers.show', $jobs->id) }}" class="apply-btn">Postuler</a>
                         </li>
                     @endforeach
                 </ul>
-                <a href="{{ route('job_offers.index') }}" class="cta-button-transparent"><i
-                        class="fa-solid fa-arrow-right"></i> Voir toutes les
+                <a href="{{ route('job_offers.index') }}" class="cta-button-transparent"><span
+                        class="material-symbols-outlined">arrow_right</span> Voir toutes les
                     offres</a>
             </section>
         </aside>

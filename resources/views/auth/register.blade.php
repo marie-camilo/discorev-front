@@ -58,16 +58,6 @@
         @enderror
     </div>
 
-    {{-- Photo de profil --}}
-    <div class="mb-3">
-        <label for="profilePicture" class="form-label">Photo de profil</label>
-        <input id="profilePicture" type="file" class="form-control @error('profilePicture') is-invalid @enderror"
-            name="profilePicture" accept="image/*">
-        @error('profilePicture')
-            <span class="invalid-feedback">{{ $message }}</span>
-        @enderror
-    </div>
-
     {{-- Type de compte (switch) --}}
     <div class="mb-4">
         <label class="form-label d-block">Vous êtes : <span class="text-danger">*</span></label>

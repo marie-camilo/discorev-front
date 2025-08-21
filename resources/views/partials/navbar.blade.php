@@ -25,96 +25,103 @@
                         <a class="nav-link text-white fw-medium" href="{{ route('job_offers.index') }}">Offres
                             d'emploi</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white fw-medium" href="{{ route('companies.index') }}">Entreprises</a>
+                    </li>
                 </ul>
+            </div>
+            <!-- Dropdowns à droite -->
+            <ul class="navbar-nav align-items-center gap-lg-3">
 
-                <!-- Dropdowns à droite -->
-                <ul class="navbar-nav align-items-center gap-lg-3">
+                @if ($isAuthenticated && isset($user))
+                    @php
+                        $isCandidate = $user['accountType'] === 'candidate';
+                        $isRecruiter = $user['accountType'] === 'recruiter';
+                    @endphp
 
-                    @if ($isAuthenticated && isset($user))
-                        @php
-                            $isCandidate = $user['accountType'] === 'candidate';
-                            $isRecruiter = $user['accountType'] === 'recruiter';
-                        @endphp
-
-                        @if ($isCandidate)
-                            <!-- Dropdown Candidat -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white fw-medium" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Candidat
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('applications.index') }}">Mes
-                                            candidatures</a></li>
-                                </ul>
-                            </li>
-                        @endif
-
-                        @if ($isRecruiter)
-                            <!-- Dropdown Recruteur -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white fw-medium" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Recruteur
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">Publier une
-                                            offre</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">Mes
-                                            offres</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
-                                </ul>
-                            </li>
-                        @endif
-
-                        <!-- Icône profil connecté -->
+                    @if ($isCandidate)
+                        <!-- Dropdown Candidat -->
                         <li class="nav-item dropdown">
-                            @php
-                                $profilePicture = collect($user['medias'] ?? [])->firstWhere('type', 'profile_picture');
-                                $profilePictureUrl = $profilePicture
-                                    ? env('DISCOREV_API_URL') . '/' . $profilePicture['filePath']
-                                    : asset('img/default-avatar.png');
-                            @endphp
-
-                            <a href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ $profilePictureUrl }}" alt="Profil" class="rounded-circle me-2 shadow">
+                            <a class="nav-link dropdown-toggle text-white fw-medium" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Candidat
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile') }}">
-                                        <span class="material-symbols-outlined me-2">person</span> Profil</a></li>
-                                <li><a class="dropdown-item" href="{{ route('settings') }}">
-                                        <span class="material-symbols-outlined me-2">settings</span> Paramètres</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">
-                                            <span class="material-symbols-outlined me-2">logout</span> Déconnexion
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    @else
-                        <!-- Icône profil invité -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="guestDropdown"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="material-symbols-outlined text-white fs-4">account_circle</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
-                                <li><a class="dropdown-item" href="{{ route('auth', ['tab' => 'login']) }}">
-                                        <span class="material-symbols-outlined me-2">login</span> Connexion</a></li>
-                                <li><a class="dropdown-item" href="{{ route('auth', ['tab' => 'register']) }}">
-                                        <span class="material-symbols-outlined me-2">person_add</span> Créer un
-                                        compte</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('applications.index') }}">Mes
+                                        candidatures</a></li>
                             </ul>
                         </li>
                     @endif
-                </ul>
-            </div>
+
+                    @if ($isRecruiter)
+                        <!-- Dropdown Recruteur -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-medium" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Recruteur
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">Publier
+                                        une
+                                        offre</a></li>
+                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">Mes
+                                        offres</a></li>
+                                <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">Cvthèque</a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    <!-- Icône profil connecté -->
+                    <li class="nav-item dropdown">
+                        @php
+                            $profilePicture = collect($user['medias'] ?? [])->firstWhere('type', 'profile_picture');
+                            $profilePictureUrl = $profilePicture
+                                ? env('DISCOREV_API_URL') . '/' . $profilePicture['filePath']
+                                : asset('img/default-avatar.png');
+                        @endphp
+
+                        <a href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ $profilePictureUrl }}" alt="Profil" class="rounded-circle me-2 shadow">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ route('profile') }}">
+                                    <span class="material-symbols-outlined me-2">person</span> Profil</a></li>
+                            <li><a class="dropdown-item" href="{{ route('settings') }}">
+                                    <span class="material-symbols-outlined me-2">settings</span> Paramètres</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-symbols-outlined me-2">logout</span> Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                @else
+                    <!-- Icône profil invité -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="guestDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="material-symbols-outlined text-white fs-4">account_circle</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
+                            <li><a class="dropdown-item" href="{{ route('auth', ['tab' => 'login']) }}">
+                                    <span class="material-symbols-outlined me-2">login</span> Connexion</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ route('auth', ['tab' => 'register']) }}">
+                                    <span class="material-symbols-outlined me-2">person_add</span> Créer un
+                                    compte</a></li>
+                        </ul>
+                    </li>
+                @endif
+            </ul>
+        </div>
         </div>
     </nav>
 </header>

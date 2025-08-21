@@ -2,33 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Recruiter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Services\DiscorevApiService;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Http;
+use App\Services\ApiModelService;
+use App\Models\Api\Recruiter;
+use App\Models\Api\RecruiterTeamMember;
+use App\Models\Api\JobOffer;
+use App\Models\Api\Media;
 use Carbon\Carbon;
+use Illuminate\View\View;
 
 class RecruiterController extends Controller
 {
     private DiscorevApiService $api;
+    private ApiModelService $apiModelService;
 
-    public function __construct(DiscorevApiService $api)
+    public function __construct(DiscorevApiService $api, ApiModelService $apiModelService)
     {
         $this->api = $api;
+        $this->apiModelService = $apiModelService;
     }
 
-    public function index()
+    function slugify(string $text): string
     {
-        $response = $this->api->get('recruiters');
-        if ($response->successful()) {
-            $recruiters = $response->json()['data'];
-            return view('companies.index', compact('recruiters'));
-        }
+        // 1. Convertit en ASCII
+        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
 
-        abort(500, 'Erreur lors de la récupération des entreprises.');
+        // 2. Met en minuscules
+        $text = strtolower($text);
+
+        // 3. Remplace tous les caractères non alphanumériques par des tirets
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+
+        // 4. Supprime les tirets au début et à la fin
+        $text = trim($text, '-');
+
+        return $text;
+    }
+
+
+    public function index(): View
+    {
+        $recruitersData = $this->api->get('recruiters');
+        $jobsData = $this->api->get('job_offers');
+
+        // Convertir les données API en modèles Eloquent avec leurs relations
+        $recruiters = collect($recruitersData)->map(function ($recruiterData) {
+            $recruiter = Recruiter::fromApiData($recruiterData);
+            return $recruiter;
+        });
+
+        // Grouper les offres par recruiter_id
+        $jobsByRecruiter = collect($jobsData)->groupBy('recruiterId');
+
+        // Injecter les jobs dans chaque recruiter
+        $recruiters->each(function ($recruiter) use ($jobsByRecruiter) {
+            $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
+
+            // Convertir les jobs en modèles JobOffer
+            $jobs = $jobsData->map(function ($jobData) {
+                return JobOffer::fromApiData($jobData);
+            });
+
+            $recruiter->setRelation('jobOffers', $jobs);
+            $recruiter->offersCount = $jobs->count();
+        });
+
+        return view('companies.index', compact('recruiters'));
     }
 
     /**
@@ -50,102 +91,76 @@ class RecruiterController extends Controller
         // Envoi de la requête PUT à l'API
         $response = $this->api->put('recruiters/' . $id, $validated);
 
-        if ($response->successful()) {
+        if ($response) {
             return redirect()->back()->with('success', 'Entreprise mise à jour avec succès.');
         }
 
         return redirect()->back()->with('error', "Erreur lors de la mise à jour de l'entreprise.");
     }
 
-    public function show($name)
+    public function show($identifier)
     {
-        $response = $this->api->get('recruiters/company/' . $name);
+        // Récupère les données du recruiter depuis l'API
+        $recruiterData = is_numeric($identifier)
+            ? $this->api->getOne("recruiters/$identifier")
+            : $this->api->getOne("recruiters/company/$identifier");
 
-        if (!$response->successful()) {
-            // Fallback custom view même si API échoue (pour des landing pages personnalisées)
-            $fallbackView = 'companies.' . strtolower($name);
-            if (view()->exists($fallbackView)) {
-                return view($fallbackView); // Pas de compact car pas de data
-            }
-
-            // Sinon erreur
+        if (!$recruiterData) {
+            $fallbackView = 'companies.' . strtolower($identifier);
+            if (view()->exists($fallbackView)) return view($fallbackView);
             abort(404, "Entreprise introuvable.");
         }
 
-        // Récupération des données (après vérif succès)
-        $recruiter = $response->json()['data'] ?? null;
+        // Job offers
+        $jobOffers = $this->api->get("job_offers/recruiter/{$recruiterData['id']}");
 
-        if (!$recruiter) {
-            abort(500, "Données entreprise manquantes.");
-        }
+        // Création du recruiter sous forme d'objet simple + collections
+        $recruiter = $this->apiModelService->createRecruiterWithRelations($recruiterData, null, $recruiterData['teamMembers'], $recruiterData['medias'], $jobOffers);
 
-        // Médias
-        $bannerMedia = collect($recruiter['medias'])->firstWhere('type', 'company_banner');
-        $logo = collect($recruiter['medias'])->firstWhere('type', 'company_logo');
-        $jobsResponse = $this->api->get('job_offers/recruiter/' . $recruiter['id']);
-        $jobOffers = collect($jobsResponse->json()['data'])
-            ->filter(function ($job) {
-                return $job['status'] === 'active';
-            })
-            ->map(function ($job) {
-                $job['publicationDate'] = Carbon::parse($job['publicationDate'])->translatedFormat('d/m/Y');
-                return $job;
-            }) ?? null;
-        // Sections dynamiques
-        $sections = [];
-
-        if (!empty($recruiter['companyDescription'])) {
-            $sections[] = [
+        $sections = collect([
+            [
+                'data' => $recruiter->companyDescription,
                 'key' => 'companyDescription',
                 'label' => "L'entreprise",
                 'anchor' => 'company',
-                'type' => 'text',
-            ];
-        }
-
-        if (!empty($recruiter['teamMembers']) && is_array($recruiter['teamMembers']) && count($recruiter['teamMembers']) > 0) {
-            $sections[] = [
+                'type' => 'text'
+            ],
+            [
+                'data' => $recruiter->teamMembers,
                 'key' => 'teamMembers',
                 'label' => "L'équipe",
                 'anchor' => 'equipe',
-                'type' => 'array',
-            ];
-        }
+                'type' => 'array'
+            ],
+            [
+                'data' => $recruiter->medias->filter(fn($m) => $m->type === 'company_video' && $m->context === 'company_page'),
+                'key' => 'video',
+                'label' => 'Vidéo',
+                'anchor' => 'video',
+                'type' => 'video'
+            ],
+            [
+                'data' => $recruiter->medias->filter(fn($m) => $m->type === 'company_image' && $m->context === 'company_page'),
+                'key' => 'medias',
+                'label' => 'Médias',
+                'anchor' => 'medias',
+                'type' => 'media'
+            ],
+        ])
+            ->filter(function ($s) {
+                $data = $s['data'];
+                if ($data instanceof \Illuminate\Support\Collection) {
+                    return $data->isNotEmpty();
+                }
+                return !empty($data); // pour string ou autres types
+            })
+            ->values()
+            ->all();
+        // Choix de la vue
+        $view = 'companies.' . $this->slugify($recruiter->companyName);
+        if (view()->exists($view)) return view($view, compact('recruiter', 'sections', 'jobOffers'));
+        if (view()->exists('companies.show')) return view('companies.show', compact('recruiter', 'sections', 'jobOffers'));
 
-        if (!empty($recruiter['medias']) && is_array($recruiter['medias'])) {
-            $images = collect($recruiter['medias'])->where('type', 'company_image')->where('context', 'company_page');
-            if ($images->isNotEmpty()) {
-                $sections[] = [
-                    'key' => 'medias',
-                    'label' => 'Médias',
-                    'anchor' => 'medias',
-                    'type' => 'media',
-                ];
-            }
-
-            $videos = collect($recruiter['medias'])->where('type', 'company_video')->where('context', 'company_page');
-            if ($videos->isNotEmpty()) {
-                $sections[] = [
-                    'key' => 'video',
-                    'label' => 'Vidéo',
-                    'anchor' => 'video',
-                    'type' => 'video',
-                ];
-            }
-        }
-
-        // Vue personnalisée ?
-        $customView = 'companies.' . str_replace(' ', '-', strtolower(iconv('UTF-8', 'ASCII//TRANSLIT', $recruiter['companyName'])));
-        if (view()->exists($customView)) {
-            return view($customView, compact('recruiter', 'logo', 'bannerMedia', 'sections', 'jobOffers'));
-        }
-
-        // Vue par défaut
-        if (view()->exists('companies.show')) {
-            return view('companies.show', compact('recruiter', 'logo', 'bannerMedia', 'sections', 'jobOffers'));
-        }
-
-        // Fallback ultime
         abort(500, 'Aucune vue disponible pour afficher cette entreprise.');
     }
 }

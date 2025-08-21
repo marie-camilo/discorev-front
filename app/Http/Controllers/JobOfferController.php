@@ -3,154 +3,316 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use App\Services\ApiModelService;
+use App\Models\Api\JobOffer;
+use App\Models\Api\Recruiter;
+use App\Models\Api\Application;
+use App\Models\Api\Candidate;
+use App\Models\Api\User;
+use App\Models\Api\Media;
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class JobOfferController extends Controller
 {
     private DiscorevApiService $api;
+    private ApiModelService $apiModelService;
 
-    public function __construct(DiscorevApiService $api)
+    public function __construct(DiscorevApiService $api, ApiModelService $apiModelService)
     {
         $this->api = $api;
+        $this->apiModelService = $apiModelService;
     }
 
-    public function index()
+    /**
+     * Liste des offres d'emploi
+     */
+    public function index(Request $request): View
     {
-        $response = $this->api->get('job_offers');
+        $jobOffersData = $this->api->get('job_offers');
 
-        if ($response->successful()) {
-            $offers = $response->json()['data'];
-            return view('job_offers.index', compact('offers'));
+        // Convertir en modèles JobOffer
+        $jobOffers = collect($jobOffersData)->map(function ($jobData) {
+            return JobOffer::fromApiData($jobData);
+        });
+
+        // Filtrer par statut si demandé
+        if ($request->has('status')) {
+            $jobOffers = $jobOffers->filter(function ($job) use ($request) {
+                return $job->status === $request->status;
+            });
         }
 
-        abort(500, 'Erreur lors de la récupération des offres.');
-    }
-
-    public function show($id)
-    {
-        $response = $this->api->get('job_offers/' . $id);
-
-        if ($response->successful()) {
-            $offer = $response->json()['data']['jobOffer'];
-            $recruiter = $response->json()['data']['recruiter'];
-            return view('job_offers.show', compact('offer', 'recruiter'));
+        // Filtrer par type d'emploi si demandé
+        if ($request->has('employment_type')) {
+            $jobOffers = $jobOffers->filter(function ($job) use ($request) {
+                return $job->employmentType === $request->employment_type;
+            });
         }
 
-        abort(500, 'Erreur lors de la récupération des offres.');
+        // Trier par date de publication
+        $jobOffers = $jobOffers->sortByDesc('publicationDate');
+
+        return view('job_offers.index', compact('jobOffers'));
     }
 
-    public function myOffers()
+    /**
+     * Détail d'une offre d'emploi
+     */
+    public function show($id): View
     {
-        $recruiter = auth()->user()->recruiter;
+        $jobOfferData = $this->api->get("job_offers/{$id}");
+        $recruiterData = $this->api->get("recruiters/{$jobOfferData['recruiterId']}");
+        $applicationData = $this->api->get("applications/job_offer/{$id}");
 
-        if ($recruiter) {
-            $recruiterId = $recruiter->id;
-        } else {
-            Redirect::back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
+        $jobOffer = $this->apiModelService->createJobOfferWithRelations(
+            $jobOfferData,
+            $recruiterData,
+            $applicationData ?? null,
+        );
+
+        return view('job_offers.show', compact('jobOffer'));
+    }
+
+    /**
+     * Offres d'emploi d'un recruteur
+     */
+    public function offersFromRecruiter($recruiterId): View
+    {
+        $jobOfferData = $this->api->get('job_offers/recruiter/' . $recruiterId);
+
+        if (!$jobOfferData) {
+            abort(404, 'Offre d\'emploi introuvable.');
         }
 
-        $response = $this->api->get('job_offers/recruiter/' . $recruiterId);
-        if ($response->successful()) {
-            $offers = $response->json()['data'];
-            return view('account.recruiter.jobs.index', compact('offers'));
+        // Créer le modèle JobOffer
+        $jobOffer = JobOffer::fromApiData($jobOfferData);
+
+        // Récupérer le recruteur
+        if ($jobOffer->recruiterId) {
+            $recruiterData = $this->api->get('recruiters/' . $jobOffer->recruiterId);
+            if ($recruiterData) {
+                $recruiter = Recruiter::fromApiData($recruiterData);
+                $jobOffer->setRelation('recruiter', $recruiter);
+            }
         }
 
-        abort(500, 'Erreur lors de la récupération des offres.');
+        // Récupérer les candidatures si l'utilisateur est connecté et est le recruteur
+        $applications = collect();
+        if (auth()->check() && auth()->user()->isRecruiter()) {
+            $applicationsData = $this->api->get('job_offers/' . $id . '/applications');
+            if ($applicationsData) {
+                $applications = collect($applicationsData)->map(function ($applicationData) {
+                    $application = Application::fromApiData($applicationData);
+
+                    // Récupérer les données du candidat
+                    if (isset($applicationData['candidate'])) {
+                        $candidate = Candidate::fromApiData($applicationData['candidate']);
+                        $application->setRelation('candidate', $candidate);
+
+                        // Récupérer les données de l'utilisateur
+                        if (isset($applicationData['candidate']['user'])) {
+                            $user = User::fromApiData($applicationData['candidate']['user']);
+                            $candidate->setRelation('user', $user);
+                        }
+                    }
+
+                    return $application;
+                });
+            }
+        }
+
+        return view('job_offers.show', compact('jobOffer', 'applications'));
     }
 
-    public function create()
+    /**
+     * Créer une nouvelle offre d'emploi
+     */
+    public function create(): View
     {
-        return view('account.recruiter.jobs.create');
+        return view('job_offers.create');
     }
 
-    public function store(Request $request,)
+    /**
+     * Enregistrer une nouvelle offre d'emploi
+     */
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'location' => 'required|string|max:255',
-            'salary' => 'nullable|numeric',
             'requirements' => 'nullable|string',
-            'salaryRange' => 'nullable|string|max:255',
-            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
-            'remote' => 'nullable|boolean',
-            'expirationDate' => 'nullable|date',
-            'status' => 'required|string|in:active,inactive,draft',
+            'salaryRange' => 'nullable|string|max:50',
+            'employmentType' => 'required|in:cdi,cdd,freelance,alternance,stage',
+            'location' => 'required|string|max:255',
+            'remote' => 'boolean',
+            'expirationDate' => 'nullable|date|after:today',
         ]);
 
-        $recruiter = auth()->user()->recruiter;
-        if (!$recruiter) {
-            return Redirect::back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
+        // Ajouter les valeurs par défaut
+        $validated['status'] = 'draft';
+        $validated['publicationDate'] = now();
+
+        // Envoyer à l'API
+        $response = $this->api->post('job_offers', $validated);
+
+        if ($response) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Offre d\'emploi créée avec succès.',
+                'jobOffer' => JobOffer::fromApiData($response)
+            ]);
         }
 
-        $data = array_merge($validated, [
-            'recruiterId' => $recruiter->id,
-        ]);
-        $response = $this->api->post('job_offers', $data);
-
-        if ($response->successful()) {
-            return redirect()->route('recruiter.jobs.index')->with('success', 'Offre créée avec succès.');
-        }
-        return Redirect::back()->withErrors(['error' => 'Erreur lors de la création de l\'offre.']);
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la création de l\'offre d\'emploi.'
+        ], 500);
     }
 
-    public function edit($id)
+    /**
+     * Modifier une offre d'emploi
+     */
+    public function edit($id): View
     {
-        $response = $this->api->get('job_offers/' . $id);
+        $jobOfferData = $this->api->get('job_offers/' . $id);
 
-        if ($response->successful()) {
-            $offer = $response->json()['data']['jobOffer'];
-            return view('account.recruiter.jobs.edit', compact('offer'));
+        if (!$jobOfferData) {
+            abort(404, 'Offre d\'emploi introuvable.');
         }
 
-        abort(500, 'Erreur lors de la récupération de l\'offre.');
+        $jobOffer = JobOffer::fromApiData($jobOfferData);
+
+        return view('job_offers.edit', compact('jobOffer'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Mettre à jour une offre d'emploi
+     */
+    public function update(Request $request, $id): JsonResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'location' => 'required|string|max:255',
-            'salary' => 'nullable|numeric',
             'requirements' => 'nullable|string',
-            'salaryRange' => 'nullable|string|max:255',
-            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
-            'remote' => 'nullable|boolean',
-            'expirationDate' => 'nullable|date',
-            'status' => 'required|string|in:active,inactive,draft',
+            'salaryRange' => 'nullable|string|max:50',
+            'employmentType' => 'required|in:cdi,cdd,freelance,alternance,stage',
+            'location' => 'required|string|max:255',
+            'remote' => 'boolean',
+            'status' => 'required|in:active,inactive,draft',
+            'expirationDate' => 'nullable|date|after:today',
         ]);
 
-        $recruiter = auth()->user()->recruiter;
-        if (!$recruiter) {
-            return Redirect::back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
+        // Envoyer à l'API
+        $response = $this->api->put('job_offers/' . $id, $validated);
+
+        if ($response) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Offre d\'emploi mise à jour avec succès.',
+                'jobOffer' => JobOffer::fromApiData($response)
+            ]);
         }
 
-        $data = array_merge($validated, [
-            'recruiterId' => $recruiter->id,
-        ]);
-
-        $response = $this->api->put('job_offers/' . $id, $data);
-
-        if ($response->successful()) {
-            return redirect()->route('recruiter.jobs.index')->with('success', 'Offre modifiée avec succès.');
-        }
-
-        return Redirect::back()->withErrors(['error' => 'Erreur lors de la modification de l\'offre.']);
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la mise à jour de l\'offre d\'emploi.'
+        ], 500);
     }
 
-    public function destroy($id)
+    /**
+     * Supprimer une offre d'emploi
+     */
+    public function destroy($id): JsonResponse
     {
         $response = $this->api->delete('job_offers/' . $id);
 
-        if ($response->successful()) {
-            return redirect()->route('recruiter.jobs.index')->with('success', 'Offre supprimée avec succès.');
+        if ($response) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Offre d\'emploi supprimée avec succès.'
+            ]);
         }
 
-        return Redirect::back()->withErrors(['error' => 'Erreur lors de la suppression de l\'offre.']);
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression de l\'offre d\'emploi.'
+        ], 500);
+    }
+
+    /**
+     * Postuler à une offre d'emploi
+     */
+    public function apply(Request $request, $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'notes' => 'nullable|string',
+        ]);
+
+        $applicationData = [
+            'jobOfferId' => $id,
+            'candidateId' => auth()->user()->candidate->id,
+            'status' => 'sent',
+            'dateApplied' => now(),
+            'notes' => $validated['notes'] ?? null,
+        ];
+
+        $response = $this->api->post('applications', $applicationData);
+
+        if ($response) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Candidature envoyée avec succès.',
+                'application' => Application::fromApiData($response)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de l\'envoi de la candidature.'
+        ], 500);
+    }
+
+    /**
+     * API pour récupérer les statistiques d'une offre
+     */
+    public function stats($id): JsonResponse
+    {
+        $jobOfferData = $this->api->get('job_offers/' . $id);
+
+        if (!$jobOfferData) {
+            return response()->json(['error' => 'Offre introuvable'], 404);
+        }
+
+        $jobOffer = JobOffer::fromApiData($jobOfferData);
+
+        // Récupérer les candidatures
+        $applicationsData = $this->api->get('job_offers/' . $id . '/applications');
+        $applications = collect($applicationsData)->map(function ($applicationData) {
+            return Application::fromApiData($applicationData);
+        });
+
+        $stats = [
+            'totalApplications' => $applications->count(),
+            'statusBreakdown' => [
+                'sent' => $applications->where('status', 'sent')->count(),
+                'viewed' => $applications->where('status', 'viewed')->count(),
+                'interview' => $applications->where('status', 'interview')->count(),
+                'pending' => $applications->where('status', 'pending')->count(),
+                'rejected' => $applications->where('status', 'rejected')->count(),
+                'accepted' => $applications->where('status', 'accepted')->count(),
+            ],
+            'jobOffer' => [
+                'title' => $jobOffer->title,
+                'status' => $jobOffer->getStatusLabel(),
+                'employmentType' => $jobOffer->getEmploymentTypeLabel(),
+                'isActive' => $jobOffer->isActive(),
+                'isExpired' => $jobOffer->isExpired(),
+            ]
+        ];
+
+        return response()->json($stats);
     }
 }

@@ -4,13 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
+use App\Services\ApiModelService;
 use Illuminate\Support\Facades\Session;
 use App\Services\ApiErrorTranslator;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use App\Models\Api\User;
 
 class AuthController extends Controller
 {
+    private DiscorevApiService $api;
+    private ApiModelService $modelService;
+    private Request $request;
+
+    public function __construct(DiscorevApiService $api, ApiModelService $modelService, Request $request)
+    {
+        $this->api = $api;
+        $this->modelService = $modelService;
+        $this->request = $request;
+    }
+
     public function show($tab = 'login')
     {
         return view('auth.show', ['tab' => $tab]);
@@ -18,13 +30,13 @@ class AuthController extends Controller
 
 
     // ✅ Traite le formulaire d'inscription
-    public function register(Request $request, DiscorevApiService $api, ApiErrorTranslator $translator)
+    public function register(ApiErrorTranslator $translator)
     {
-        $request->merge([
-            'newsletter' => $request->has('newsletter'),
+        $this->request->merge([
+            'newsletter' => $this->request->has('newsletter'),
         ]);
 
-        $request->validate([
+        $this->request->validate([
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'email' => 'required|email',
@@ -38,22 +50,22 @@ class AuthController extends Controller
         ]);
 
         $data = [
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'email' => $request->email,
-            'password' => $request->password,
-            'phoneNumber' => $request->phoneNumber,
-            'accountType' => $request->accountType,
-            'newsletter' => $request->newsletter,
+            'firstName' => $this->request->firstName,
+            'lastName' => $this->request->lastName,
+            'email' => $this->request->email,
+            'password' => $this->request->password,
+            'phoneNumber' => $this->request->phoneNumber,
+            'accountType' => $this->request->accountType,
+            'newsletter' => $this->request->newsletter,
         ];
 
         // Handle profile picture upload if present
-        if ($request->hasFile('profilePicture')) {
-            $data['profilePicture'] = $request->file('profilePicture');
+        if ($this->request->hasFile('profilePicture')) {
+            $data['profilePicture'] = $this->request->file('profilePicture');
         }
 
         // Envoi à l'API
-        $response = $api->post('auth/register', $data);
+        $response = $this->api->post('auth/register', $data);
 
         if (!$response->successful()) {
             $errorMessage = $response->json('message') ?? 'Une erreur est survenue lors de l’inscription.';
@@ -62,9 +74,9 @@ class AuthController extends Controller
         }
 
         // Une fois que l'inscription a réussi, on lance la requête login automatique
-        $credentials = $request->only('email', 'password');
+        $credentials = $this->request->only('email', 'password');
 
-        $loginResponse = $api->post('auth/login', $credentials);
+        $loginResponse = $this->api->post('auth/login', $credentials);
 
         $loginData = $loginResponse->json();
 
@@ -85,27 +97,30 @@ class AuthController extends Controller
         return back()->withErrors(['warning' => 'Inscription réussie, mais la connexion automatique a échoué. Veuillez vous connecter manuellement.']);
     }
 
-    public function login(Request $request, DiscorevApiService $api)
+    public function login()
     {
-        $request->validate([
+        $this->request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        $response = $api->post('auth/login', $request->only('email', 'password'));
+        // On récupère aussi le champ remember
+        $credentials = $this->request->only('email', 'password');
+        $remember = $this->request->has('remember'); // true/false
 
-        $responseData = $response->json();
+        // On envoie tout au backend (si le backend accepte remember)
+        $response = $this->api->post('auth/login', array_merge($credentials, [
+            'remember' => $remember,
+        ]));
 
-        if ($response->successful() && isset($responseData['token'])) {
+        if ($response && isset($response['token'])) {
             // Rechercher l'utilisateur dans la BDD à partir de son email (ou id)
-            $user = User::where('email', $responseData['data']['email'])->first();
-            // Vérifie qu'on l'a bien trouvé
-            if ($user) {
-                Auth::login($user);
-            }
+            // Correct : utiliser la colonne réelle, ici 'email' ou 'id'
+            $authUser = \App\Models\User::where('email', $response['user']['email'])->first();
+            Auth::login($authUser, null);
 
-            Session::put('accessToken', $responseData['token']);
-            Session::put('refreshToken', $responseData['refreshToken']);
-            Session::put('user', $responseData['data']);
+            Session::put('accessToken', $response['token']);
+            Session::put('refreshToken', $response['refreshToken']);
+            Session::put('user', $response['user']);
 
             return redirect()->route('home')->with('success', 'Connexion réussie !');
         }
@@ -113,12 +128,12 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Identifiants incorrects.']);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $this->request->session()->invalidate();
+        $this->request->session()->regenerateToken();
 
         return redirect()->route('home')->with('success', 'Vous avez été déconnecté avec succès.');
     }
