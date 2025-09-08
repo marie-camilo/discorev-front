@@ -1,72 +1,164 @@
 @extends('layouts.app')
 
-@section('title', 'Liste des offres')
+@section('title', 'Offres d\'emploi')
 
 @section('content')
-    <section class="container search-section">
-        <h1>Vous aussi, trouvez le <span class="highlight">job idéal</span></h1>
+    <div class="container py-4">
+        <h1 class="mb-4">Offres d'emploi</h1>
 
-        <div class="container-fluid">
-            <div class="search-bar">
-                <div class="input-wrapper">
-                    <i class="fas fa-search"></i>
-                    <input type="text" name="query" placeholder="Recherchez par job, mot-clé ou entreprise"
-                        value="{{ request('query') }}">
-                </div>
-
-                <div class="input-wrapper">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <input type="text" name="location" placeholder="France" value="{{ request('location') }}">
-                </div>
-
-                <select name="job_type">
-                    <option value="" selected disabled>Type de job</option>
-                    <option value="CDI" {{ request('job_type') == 'CDI' ? 'selected' : '' }}>CDI</option>
-                    <option value="CDD" {{ request('job_type') == 'CDD' ? 'selected' : '' }}>CDD</option>
-                    <option value="Stage" {{ request('job_type') == 'Stage' ? 'selected' : '' }}>Stage</option>
-                </select>
-
-                <button type="submit" class="btn btn-primary">Rechercher</button>
-            </div>
-            {{--        <form action="{{ route('offers.search') }}" method="GET" class="search-bar"> </form> --}}
-        </div>
-
-
-        <div class="filters">
-            <button type="button" data-filter="remote"><i class="fa-solid fa-house-laptop"></i> Télétravail</button>
-            <button type="button" data-filter="profession"><i class="fa-solid fa-users"></i> Professions</button>
-            <button type="button" data-filter="sector"><i class="fa-solid fa-building"></i> Secteur</button>
-            <button type="button" class="black" data-filter="all"><i class="fa-solid fa-sliders"></i> Tous les filtres
-            </button>
-        </div>
-    </section>
-
-    @if (!$isAuthenticated && !isset($user))
-        <section class="cta-banner">
-            <img src="https://img.icons8.com/ios/100/calendar--v1.png" alt="Illustration">
-            <div class="cta-content">
-                <h2>Ne cherchez plus. Créez votre profil et recevez chaque jour notre sélection de jobs faits pour
-                    vous.</h2>
-                <a href="{{ route('register') }}" class="cta-button">Créer mon profil</a>
-            </div>
-        </section>
-    @endif
-
-    <section id="offers-list-container" class="offers-list-container">
-        <div class="container">
-            <div id="offers-list" class="offers-list">
-                @if (!empty($offers) && count($offers))
-                    @foreach ($offers as $offer)
-                        <div class="offer-card">
-                            <h3>{{ $offer['title'] }}</h3>
-                            <p>{{ $offer['location'] }}</p>
-                            <a href="{{ route('job_offers.show', $offer['id']) }}" class="btn btn-link">Voir l'offre</a>
+        <!-- Barre de recherche + filtres -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form id="filter-form" class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <span class="material-symbols-outlined">search</span>
+                            </span>
+                            <input type="text" name="q" id="search" class="form-control"
+                                placeholder="Titre ou description">
                         </div>
-                    @endforeach
-                @else
-                    <p>Aucune offre trouvée.</p>
-                @endif
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="location" id="location">
+                            <option value="">Toutes localisations</option>
+                            <option value="Paris">Paris</option>
+                            <option value="Lyon">Lyon</option>
+                            <option value="Marseille">Marseille</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="sector" id="sector">
+                            <option value="">Tous secteurs</option>
+                            <option value="IT">Informatique</option>
+                            <option value="Finance">Finance</option>
+                            <option value="RH">Ressources humaines</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <span class="material-symbols-outlined">filter_alt</span> Filtrer
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+
+        <!-- Loader -->
+        <div id="loader" class="text-center my-4 d-none">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2">Chargement des offres...</p>
+        </div>
+
+        <!-- Liste des offres -->
+        <div id="offers-list" class="row g-3">
+            <!-- Offres insérées ici par JS -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav>
+                <ul id="pagination" class="pagination"></ul>
+            </nav>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const offersList = document.getElementById('offers-list');
+            const loader = document.getElementById('loader');
+            const pagination = document.getElementById('pagination');
+
+            let currentPage = 1;
+            const limit = 6;
+
+            function fetchOffers(page = 1) {
+                loader.classList.remove('d-none');
+                offersList.innerHTML = '';
+                pagination.innerHTML = '';
+                currentPage = page;
+
+                const params = new URLSearchParams({
+                    page: page,
+                    limit: limit,
+                    includeRecruiter: 1,
+                    q: document.getElementById('search').value,
+                    location: document.getElementById('location').value,
+                    sector: document.getElementById('sector').value
+                });
+                console.log('Envoi requête à :', `/job_offers?${params.toString()}`);
+
+                axios.get(`/api/job_offers?${params.toString()}`)
+                    .then(response => {
+                        const offers = response.data.data
+                        console.log(response);
+
+                        if (offers.length === 0) {
+                            offersList.innerHTML =
+                                `<div class="col-12 text-center"><p>Aucune offre trouvée.</p></div>`;
+                        } else {
+                            offers.forEach(offer => {
+                                offersList.innerHTML += `
+                            <div class="col-md-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${offer.title}</h5>
+                                        <p class="text-muted mb-2">${offer.location} • ${offer.employmentType}</p>
+                                        <p class="mb-3">${offer.description.substring(0, 100)}...</p>
+                                        <div class="mt-auto">
+                                            <p class="fw-bold text-success">${offer.salaryMin ? offer.salaryMin + '€' : ''} - ${offer.salaryMax ? offer.salaryMax + '€' : ''}</p>
+                                            <a href="/job_offers/${offer.id}" class="btn btn-outline-primary w-100">
+                                                Voir l'offre
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                            });
+                        }
+
+                        // Pagination (simple)
+                        const totalPages = offers.length < limit ? page : page + 1;
+                        if (totalPages > 1) {
+                            for (let i = 1; i <= totalPages; i++) {
+                                pagination.innerHTML += `
+                            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                                <a class="page-link" href="#" data-page="${i}">${i}</a>
+                            </li>`;
+                            }
+                        }
+                    })
+                    .catch((e) => {
+                        offersList.innerHTML =
+                            `<div class="col-12 text-center"><p class="text-danger">Erreur lors du chargement des offres.</p></div>`;
+                        console.error('Erreur Axios :', e);
+
+                    })
+                    .finally(() => {
+                        loader.classList.add('d-none');
+                    });
+            }
+
+            // Listener filtres
+            document.getElementById('filter-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetchOffers(1);
+            });
+
+            // Pagination click
+            pagination.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const page = parseInt(e.target.dataset.page);
+                    fetchOffers(page);
+                }
+            });
+
+            fetchOffers();
+        });
+    </script>
+@endpush

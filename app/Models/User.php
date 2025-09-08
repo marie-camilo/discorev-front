@@ -58,14 +58,4 @@ class User extends Authenticatable
     {
         return $this->accountType === 'recruiter';
     }
-
-    public function recruiter()
-    {
-        return $this->hasOne(Recruiter::class);
-    }
-
-    public function candidate()
-    {
-        return $this->hasOne(Candidate::class);
-    }
 }

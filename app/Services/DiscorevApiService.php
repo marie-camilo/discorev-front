@@ -47,6 +47,15 @@ class DiscorevApiService
         });
     }
 
+    public function patch(string $endpoint)
+    {
+        return $this->withAutoRefresh(function () use ($endpoint) {
+            return Http::withToken(Session::get('accessToken'))
+                ->patch("{$this->baseUrl}/{$endpoint}");
+        });
+    }
+
+
     public function uploadMedia(array $data, UploadedFile $file)
     {
         return $this->withAutoRefresh(function () use ($data, $file) {
@@ -84,10 +93,11 @@ class DiscorevApiService
         $refresh = Http::withOptions([
             'base_uri' => $this->baseUrl,
             'cookies' => true, // <-- Permet d’envoyer les cookies existants (dont HttpOnly)
+            'withCredentials' => true
         ])->post('/auth/refresh-token');
 
         if ($refresh->successful()) {
-            $newToken = $refresh['accessToken'] ?? null;
+            $newToken = $refresh->json('data');
             if ($newToken) {
                 Session::put('accessToken', $newToken);
                 return true;

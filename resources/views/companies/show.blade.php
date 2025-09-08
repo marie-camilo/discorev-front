@@ -96,11 +96,18 @@
             <section class="sidebar-infos" aria-labelledby="sidebar-infos-title">
                 <h3 id="sidebar-infos-title" class="sidebar-title">À propos</h3>
                 <ul class="infos-list">
-                    @if (!empty($recruiter['contactPerson']))
+                    @if (!empty($recruiter['contactEmail']))
                         <li><span class="material-symbols-outlined">alternate_email
-                            </span><a class="text-decoration-none text-dark"
-                                href="mailto:{{ $recruiter['contactPerson'] }}" target="_blank"><span>
-                                    {{ $recruiter['contactPerson'] }}</span></a>
+                            </span><a class="text-decoration-none text-dark" href="mailto:{{ $recruiter['contactEmail'] }}"
+                                target="_blank"><span>
+                                    {{ $recruiter['contactEmail'] }}</span></a>
+                        </li>
+                    @endif
+                    @if (!empty($recruiter['contactPhone']))
+                        <li><span class="material-symbols-outlined">call
+                            </span><a class="text-decoration-none text-dark" href="tel:{{ $recruiter['contactPhone'] }}"
+                                target="_blank"><span>
+                                    {{ $recruiter['contactPhone'] }}</span></a>
                         </li>
                     @endif
                     @if (!empty($recruiter['website']))

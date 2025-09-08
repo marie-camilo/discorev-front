@@ -31,12 +31,12 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
 // Routes with auth needed
-Route::middleware(['auth', 'web', 'token.valid'])->group(function () {
+Route::middleware(['token.valid'])->group(function () {
 
     //Profile
     Route::get('/complete-profile', [ProfileController::class, 'showCompletionForm'])->name('complete-profile');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/{id}', [ProfileController::class, 'update'])->name('profile.update');
 
     // Paramètres
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
@@ -62,13 +62,14 @@ Route::middleware(['auth', 'web', 'token.valid'])->group(function () {
 
 // Accès public
 Route::get('/job_offers', [JobOfferController::class, 'index'])->name('job_offers.index');
+Route::get('/api/job_offers', [JobOfferController::class, 'api']);
 
 // Accès aux fiches entreprises
 Route::get('/companies', [RecruiterController::class, 'index'])->name('companies.index');
-Route::get('/companies/{name}', [RecruiterController::class, 'show'])->name('companies.show');
+Route::get('/companies/{identifier}', [RecruiterController::class, 'show'])->name('companies.show');
 
 // Pour recruteurs
-Route::middleware(['auth', 'web', 'recruiter', 'token.valid'])->group(function () {
+Route::middleware(['token.valid', 'recruiter'])->group(function () {
     Route::get('/recruiter/my-job_offers', [JobOfferController::class, 'myOffers'])->name('recruiter.jobs.index');
     Route::get('/job_offers/create', [JobOfferController::class, 'create'])->name('recruiter.jobs.create');
     Route::post('/job_offers', [JobOfferController::class, 'store'])->name('recruiter.jobs.store');

@@ -49,9 +49,15 @@
             </div>
 
             <div class="mb-3">
-                <label for="contactPerson" class="form-label">Contact (e-mail)</label>
-                <input type="email" class="form-control" id="contactPerson" name="contactPerson"
-                    value="{{ old('contactPerson', $recruiter['contactPerson'] ?? '') }}">
+                <label for="contactPhone" class="form-label">Contact (téléphone)</label>
+                <input type="email" class="form-control" id="contactPhone" name="contactPhone"
+                    value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="contactEmail" class="form-label">Contact (e-mail)</label>
+                <input type="email" class="form-control" id="contactEmail" name="contactEmail"
+                    value="{{ old('contactEmail', $recruiter['contactEmail'] ?? '') }}">
             </div>
 
             <button type="submit" class="btn btn-primary">
