@@ -1,4 +1,4 @@
-name: Deploy Front Build
+name: Deploy Laravel Front to VPS
 
 on:
   push:
@@ -10,33 +10,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupérer ton dépôt
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Installer Node.js et builder
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22"
-
-      - name: Install npm dependencies
-        run: npm install
-
-      - name: Build assets
-        run: npm run build
-
-      # 3. Préparer SSH
       - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_DEPLOY_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY_FRONT }}" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.VPS_SSH_PORT }} -H ${{ secrets.VPS_IPV4 }} >> ~/.ssh/known_hosts
 
-      # 4. Déployer uniquement le dossier build
-      - name: Deploy build to VPS
+      - name: Copy front to VPS
+        env:
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
         run: |
-          rsync -azP -e "ssh -p ${{ secrets.VPS_SSH_PORT }}" \
-          ./public/build/ \
-          ubuntu@${{ secrets.VPS_IPV4 }}:/var/www/discorev-front/
+          ssh-keyscan -H $VPS_IP >> ~/.ssh/known_hosts
+          rsync -azP -e "ssh -p $VPS_SSH_PORT" --delete ./ ubuntu@$VPS_IP:/var/www/discorev-front/
+
+      - name: Build front (if using Laravel Mix / Vite)
+        env:
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
+        run: |
+          ssh -p $VPS_SSH_PORT ubuntu@$VPS_IP "
+            cd /var/www/discorev-front &&
+            npm install &&
+            npm run build
+          "
+
+      - name: Set permissions
+        env:
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
+        run: |
+          ssh -p $VPS_SSH_PORT ubuntu@$VPS_IP "
+            cd /var/www/discorev-front &&
+            sudo chown -R www-data:www-data storage bootstrap/cache &&
+            sudo chmod -R 775 storage bootstrap/cache
+          "
