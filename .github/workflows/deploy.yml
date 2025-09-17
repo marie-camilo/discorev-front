@@ -39,4 +39,4 @@ jobs:
         run: |
           rsync -azP -e "ssh -p ${{ secrets.VPS_SSH_PORT }}" \
           ./public/build/ \
-          ubuntu@${{ secrets.VPS_IPV4 }}:/var/www/discorev-front/public/build/
+          ubuntu@${{ secrets.VPS_IPV4 }}:/var/www/discorev-front/
