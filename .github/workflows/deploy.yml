@@ -1,9 +1,9 @@
-name: Deploy Laravel Front to VPS
+name: Deploy Frontend to VPS
 
 on:
   push:
     branches:
-      - main
+      - main # Déploie quand la branche main reçoit un merge
 
 jobs:
   deploy:
@@ -13,40 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: Install Node.js (si besoin pour build)
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      - name: Build frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_DEPLOY_KEY }}
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Copy front to VPS
-        env:
-          VPS_IP: ${{ secrets.VPS_IPV4 }}
-          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
-        run: |
           ssh-keyscan -H $VPS_IP >> ~/.ssh/known_hosts
-          rsync -azP -e "ssh -p $VPS_SSH_PORT" --delete ./ ubuntu@$VPS_IP:/var/www/discorev-front/
-
-      - name: Build front (if using Laravel Mix / Vite)
-        env:
-          VPS_IP: ${{ secrets.VPS_IPV4 }}
-          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
-        run: |
-          ssh -p $VPS_SSH_PORT ubuntu@$VPS_IP "
-            cd /var/www/discorev-front &&
-            npm install &&
-            npm run build
-          "
-
-      - name: Set permissions
-        env:
-          VPS_IP: ${{ secrets.VPS_IPV4 }}
-          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
-        run: |
-          ssh -p $VPS_SSH_PORT ubuntu@$VPS_IP "
-            cd /var/www/discorev-front &&
-            sudo chown -R www-data:www-data storage bootstrap/cache &&
-            sudo chmod -R 775 storage bootstrap/cache
-          "
+          # Rsync du build en excluant le .env
+          rsync -azP -e "ssh -p $VPS_SSH_PORT" --rsync-path="sudo rsync" --delete \
+            --exclude ".env" ./public/build/ ubuntu@$VPS_IP:/var/www/discorev-front/
