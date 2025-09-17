@@ -1,0 +1,42 @@
+name: Deploy Front Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer ton dépôt
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Installer Node.js et builder
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Build assets
+        run: npm run build
+
+      # 3. Préparer SSH
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY_FRONT }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.VPS_SSH_PORT }} -H ${{ secrets.VPS_IPV4 }} >> ~/.ssh/known_hosts
+
+      # 4. Déployer uniquement le dossier build
+      - name: Deploy build to VPS
+        run: |
+          rsync -azP -e "ssh -p ${{ secrets.VPS_SSH_PORT }}" \
+          ./public/build/ \
+          ubuntu@${{ secrets.VPS_IPV4 }}:/var/www/discorev-front/public/build/

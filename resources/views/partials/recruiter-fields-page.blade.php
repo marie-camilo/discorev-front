@@ -1,6 +1,7 @@
 <div class="position-relative">
     <div class="position-absolute end-0 top-0">
-        <a href="{{ route('companies.show', $recruiter['companyName']) }}" class="btn btn-primary">Voir ma page</a>
+        <a href="{{ route('companies.show', $recruiter['companyName'] ? $recruiter['companyName'] : $recruiter['id']) }}"
+            class="btn btn-primary">Voir ma page</a>
     </div>
 </div>
 <h5 class="fw-bold mb-4">Page entreprise</h5>

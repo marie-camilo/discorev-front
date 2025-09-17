@@ -7,8 +7,8 @@
         $isLogin = $tab === 'login';
     @endphp
 
-    <div class="container d-flex justify-content-center align-items-start py-5">
-        <div class="card shadow rounded-4 p-4" style="max-width: 500px; width: 100%;">
+    <div class="container d-flex justify-content-center align-items-start min-vh-100 py-5">
+        <div class="card shadow rounded-4 p-4" style="max-width: 600px; width: 100%;">
             {{-- Logo --}}
             <div class="text-center mb-4">
                 <img src="{{ asset('img/logos/logo-blue.svg') }}" alt="Logo" class="img-fluid" style="width: 60px;">

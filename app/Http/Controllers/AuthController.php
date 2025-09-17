@@ -13,14 +13,10 @@ use App\Models\Api\User;
 class AuthController extends Controller
 {
     private DiscorevApiService $api;
-    private ApiModelService $modelService;
-    private Request $request;
 
-    public function __construct(DiscorevApiService $api, ApiModelService $modelService, Request $request)
+    public function __construct(DiscorevApiService $api)
     {
         $this->api = $api;
-        $this->modelService = $modelService;
-        $this->request = $request;
     }
 
     public function show($tab = 'login')
@@ -30,7 +26,7 @@ class AuthController extends Controller
 
 
     // ✅ Traite le formulaire d'inscription
-    public function register(ApiErrorTranslator $translator)
+    public function register(Request $request, ApiErrorTranslator $translator)
     {
         $this->request->merge([
             'newsletter' => $this->request->has('newsletter'),
@@ -39,10 +35,9 @@ class AuthController extends Controller
         $this->request->validate([
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => 'required|email',
-            'password' => 'required|min:6|confirmed',
+            'registerEmail' => 'required|email',
+            'registerPassword' => 'required|min:8|confirmed',
             'phoneNumber' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            'profilePicture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'accountType' => 'required|in:candidate,recruiter',
             'accept-cgu' => 'accepted',
             'accept-confidentiality' => 'accepted',
@@ -50,19 +45,14 @@ class AuthController extends Controller
         ]);
 
         $data = [
-            'firstName' => $this->request->firstName,
-            'lastName' => $this->request->lastName,
-            'email' => $this->request->email,
-            'password' => $this->request->password,
-            'phoneNumber' => $this->request->phoneNumber,
-            'accountType' => $this->request->accountType,
-            'newsletter' => $this->request->newsletter,
+            'firstName' => $request->firstName,
+            'lastName' => $request->lastName,
+            'email' => $request->registerEmail,
+            'password' => $request->registerPassword,
+            'phoneNumber' => $request->phoneNumber,
+            'accountType' => $request->accountType,
+            'newsletter' => $request->newsletter,
         ];
-
-        // Handle profile picture upload if present
-        if ($this->request->hasFile('profilePicture')) {
-            $data['profilePicture'] = $this->request->file('profilePicture');
-        }
 
         // Envoi à l'API
         $response = $this->api->post('auth/register', $data);
@@ -74,53 +64,51 @@ class AuthController extends Controller
         }
 
         // Une fois que l'inscription a réussi, on lance la requête login automatique
-        $credentials = $this->request->only('email', 'password');
+        $loginData = [
+            'email' => $request->registerEmail,
+            'password' => $request->registerPassword,
+        ];
 
-        $loginResponse = $this->api->post('auth/login', $credentials);
+        $loginResponse = $this->api->post('auth/login', $loginData);
 
-        $loginData = $loginResponse->json();
-
-        if ($loginResponse->successful() && isset($loginData['token'])) {
-            Session::put('accessToken', $loginData['token']);
-            Session::put('refreshToken', $loginData['refreshToken']);
-            Session::put('user', $loginData['data']);
-
-            $user = User::where('email', $loginData['data']['email'])->first();
-
-            if ($user) {
-                Auth::login($user);
-            }
-            return redirect()->route('complete-profile')->with('success', 'Connexion réussie !');
+        if ($loginResponse->successful()) {
+            $data = $loginResponse->json()['data'];
+            // Stocker tokens en session
+            Session::put('accessToken', $data['token']);
+            Session::put('user', $data['user']);
+            Session::put('token_exp', time() + 3600); // token 1h
+            return redirect()->route('home')->with('success', 'Création réussie. Bienvenue chez Discorev !');
         }
 
         // Si la connexion automatique échoue, on peut afficher un message d’erreur friendly
         return back()->withErrors(['warning' => 'Inscription réussie, mais la connexion automatique a échoué. Veuillez vous connecter manuellement.']);
     }
 
-    public function login()
+    public function login(Request $request)
     {
         $this->request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
-        // On récupère aussi le champ remember
-        $credentials = $this->request->only('email', 'password');
-        $remember = $this->request->has('remember'); // true/false
 
-        // On envoie tout au backend (si le backend accepte remember)
-        $response = $this->api->post('auth/login', array_merge($credentials, [
-            'remember' => $remember,
-        ]));
+        $response = $this->api->post('auth/login', [
+            'email' => $request->email,
+            'password' => $request->password,
+            'remember' => $request->boolean('remember')
+        ]);
 
-        if ($response && isset($response['token'])) {
-            // Rechercher l'utilisateur dans la BDD à partir de son email (ou id)
-            // Correct : utiliser la colonne réelle, ici 'email' ou 'id'
-            $authUser = \App\Models\User::where('email', $response['user']['email'])->first();
-            Auth::login($authUser, null);
+        if ($response->successful()) {
+            $data = $response->json()['data'];
 
-            Session::put('accessToken', $response['token']);
-            Session::put('refreshToken', $response['refreshToken']);
-            Session::put('user', $response['user']);
+            // Stocker tokens en session
+            Session::put('accessToken', $data['token']);
+            Session::put('user', $data['user']);
+            Session::put('token_exp', time() + 3600); // token 1h
+
+            // ✅ refreshToken : inutile si cookie httpOnly est déjà envoyé
+            if (!empty($data['refreshToken'])) {
+                Session::put('refreshToken', $data['refreshToken']);
+            }
 
             return redirect()->route('home')->with('success', 'Connexion réussie !');
         }
@@ -128,12 +116,28 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Identifiants incorrects.']);
     }
 
-    public function logout()
+
+    public function logout(Request $request)
     {
+        // Appel API pour invalider le refresh token (optionnel mais sécurisé)
+        if (Session::has('refreshToken')) {
+            try {
+                $this->api->post('/auth/logout', [
+                    'refreshToken' => Session::get('refreshToken')
+                ]);
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Supprime les infos API en session
+        Session::forget(['accessToken', 'refreshToken', 'user', 'token_exp']);
+
+        // Déconnecte Laravel (si Auth utilisé en parallèle)
         Auth::logout();
 
-        $this->request->session()->invalidate();
-        $this->request->session()->regenerateToken();
+        // Invalide la session et régénère le CSRF token
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect()->route('home')->with('success', 'Vous avez été déconnecté avec succès.');
     }

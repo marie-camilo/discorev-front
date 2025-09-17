@@ -91,7 +91,7 @@
                 if (file.type.startsWith('image/')) {
                     const preview = document.createElement('img');
                     preview.src = URL.createObjectURL(file);
-                    preview.className = 'mt-2 w-25 rounded-circle me-2';
+                    preview.className = 'mt-2 w-25 rounded me-2';
                     previewContainer.appendChild(preview);
                 }
             }

@@ -85,13 +85,13 @@ class RecruiterController extends Controller
             'website' => 'nullable|string|max:255',
             'sector' => 'nullable|string|max:100',
             'teamSize' => 'nullable|string|max:50',
-            'contactPerson' => 'nullable|string',
+            'contactPhone' => 'nullable|string|min:20',
+            'contactEmail' => 'nullable|string',
         ]);
 
         // Envoi de la requête PUT à l'API
         $response = $this->api->put('recruiters/' . $id, $validated);
-
-        if ($response) {
+        if ($response->successful()) {
             return redirect()->back()->with('success', 'Entreprise mise à jour avec succès.');
         }
 
@@ -102,65 +102,92 @@ class RecruiterController extends Controller
     {
         // Récupère les données du recruiter depuis l'API
         $recruiterData = is_numeric($identifier)
-            ? $this->api->getOne("recruiters/$identifier")
-            : $this->api->getOne("recruiters/company/$identifier");
+            ? $this->api->get("recruiters/$identifier")
+            : $this->api->get("recruiters/company/$identifier");
 
-        if (!$recruiterData) {
+        $json = $recruiterData->json();
+        $recruiter = $json['data'][0];
+
+        if (!$recruiter) {
             $fallbackView = 'companies.' . strtolower($identifier);
             if (view()->exists($fallbackView)) return view($fallbackView);
-            abort(404, "Entreprise introuvable.");
+            return redirect()->back()->with('error', "Entreprise introuvable.");
         }
+        $recruiterId = $recruiter['id'];
 
         // Job offers
-        $jobOffers = $this->api->get("job_offers/recruiter/{$recruiterData['id']}");
+        $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId")->json()['data'];
+        $medias = collect($recruiter['medias'] ?? []);
+        // Variables spécifiques pour la bannière et le logo
+        $bannerMedia = $medias->firstWhere('type', 'company_banner');
+        $logo = $medias->firstWhere('type', 'company_logo');
 
-        // Création du recruiter sous forme d'objet simple + collections
-        $recruiter = $this->apiModelService->createRecruiterWithRelations($recruiterData, null, $recruiterData['teamMembers'], $recruiterData['medias'], $jobOffers);
-
-        $sections = collect([
+        $sectionsConfig = [
             [
-                'data' => $recruiter->companyDescription,
                 'key' => 'companyDescription',
                 'label' => "L'entreprise",
                 'anchor' => 'company',
-                'type' => 'text'
+                'type' => 'text',
+                'data' => $recruiter['companyDescription'] ?? null
             ],
             [
-                'data' => $recruiter->teamMembers,
                 'key' => 'teamMembers',
                 'label' => "L'équipe",
                 'anchor' => 'equipe',
-                'type' => 'array'
+                'type' => 'array',
+                'data' => $recruiter['teamMembers'] ?? []
             ],
             [
-                'data' => $recruiter->medias->filter(fn($m) => $m->type === 'company_video' && $m->context === 'company_page'),
                 'key' => 'video',
                 'label' => 'Vidéo',
                 'anchor' => 'video',
-                'type' => 'video'
+                'type' => 'video',
+                'data' => $medias->where('type', 'company_video')->where('context', 'company_page')
             ],
             [
-                'data' => $recruiter->medias->filter(fn($m) => $m->type === 'company_image' && $m->context === 'company_page'),
                 'key' => 'medias',
                 'label' => 'Médias',
                 'anchor' => 'medias',
-                'type' => 'media'
-            ],
-        ])
-            ->filter(function ($s) {
-                $data = $s['data'];
+                'type' => 'media',
+                'data' => $medias->where('type', 'company_image')->where('context', 'company_page')
+            ]
+        ];
+
+        $sections = collect($sectionsConfig)
+            ->filter(function ($section) {
+                $data = $section['data'];
                 if ($data instanceof \Illuminate\Support\Collection) {
                     return $data->isNotEmpty();
                 }
-                return !empty($data); // pour string ou autres types
+                if (is_array($data)) {
+                    return !empty($data);
+                }
+                return !empty($data);
             })
             ->values()
             ->all();
         // Choix de la vue
-        $view = 'companies.' . $this->slugify($recruiter->companyName);
-        if (view()->exists($view)) return view($view, compact('recruiter', 'sections', 'jobOffers'));
-        if (view()->exists('companies.show')) return view('companies.show', compact('recruiter', 'sections', 'jobOffers'));
+        $view = 'companies.' . $this->slugify($recruiter['companyName']);
+        if (view()->exists($view)) return view($view, compact('recruiter', 'sections', 'jobOffers', 'bannerMedia', 'logo'));
+        if (view()->exists('companies.show')) return view('companies.show', compact('recruiter', 'sections', 'jobOffers', 'bannerMedia', 'logo'));
 
-        abort(500, 'Aucune vue disponible pour afficher cette entreprise.');
+        return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
+    }
+
+    function slugify(string $text): string
+    {
+        // 1. Convertit en ASCII
+        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+
+        // 2. Met en minuscules
+        $text = strtolower($text);
+
+        // 3. Remplace tous les caractères non alphanumériques par des tirets
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+
+        // 4. Supprime les tirets au début et à la fin
+        $text = trim($text, '-');
+
+        return $text;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class UserIsRecruiter
+class UserIsCandidate
 {
     /**
      * Handle an incoming request.
@@ -22,8 +22,8 @@ class UserIsRecruiter
         }
 
         // Vérifie si c'est bien un recruteur (en fonction de ton API : type = recruiter)
-        if (!isset($user['accountType']) || $user['accountType'] !== 'recruiter') {
-            abort(403, 'Accès interdit : vous devez être recruteur.');
+        if (!isset($user['accountType']) || $user['accountType'] !== 'candidate') {
+            abort(403, 'Accès interdit : vous devez être candidat.');
         }
 
         return $next($request);

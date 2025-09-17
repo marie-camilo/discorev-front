@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\UserIsRecruiter;
+use App\Http\Middleware\UserIsCandidate;
+use App\Http\Middleware\UserIsAdmin;
 use App\Http\Middleware\EnsureTokenIsValid;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'recruiter' => UserIsRecruiter::class,
+            'candidate' => UserIsCandidate::class,
+            'admin' => UserIsAdmin::class,
             'token.valid' => EnsureTokenIsValid::class,
         ]);
     })
