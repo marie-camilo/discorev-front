@@ -3,7 +3,7 @@ name: Deploy Frontend to VPS
 on:
   push:
     branches:
-      - main # Déploie quand la branche main reçoit un merge
+      - main # la branche que tu merges pour déployer
 
 jobs:
   deploy:
@@ -13,22 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Node.js (si besoin pour build)
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "22"
 
-      - name: Build frontend
-        run: |
-          npm install
-          npm run build
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build front
+        run: npm run build # ou vite build si tu utilises Vite
 
       - name: Deploy to VPS
         env:
           VPS_IP: ${{ secrets.VPS_IPV4 }}
           VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_FRONT }}
         run: |
           mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $VPS_IP >> ~/.ssh/known_hosts
           # Rsync du build en excluant le .env
           rsync -azP -e "ssh -p $VPS_SSH_PORT" --rsync-path="sudo rsync" --delete \
