@@ -35,5 +35,5 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $VPS_IP >> ~/.ssh/known_hosts
           # Rsync du build en excluant le .env
-          rsync -azP -e "ssh -p $VPS_SSH_PORT" --rsync-path="sudo rsync" --delete \
+          rsync -azP -e "ssh -p $VPS_SSH_PORT" --delete \
             --exclude ".env" ./public/build/ ubuntu@$VPS_IP:/var/www/discorev-front/
