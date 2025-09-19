@@ -28,11 +28,11 @@ class AuthController extends Controller
     // ✅ Traite le formulaire d'inscription
     public function register(Request $request, ApiErrorTranslator $translator)
     {
-        $this->request->merge([
-            'newsletter' => $this->request->has('newsletter'),
+        $request->merge([
+            'newsletter' => $request->has('newsletter'),
         ]);
 
-        $this->request->validate([
+        $request->validate([
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'registerEmail' => 'required|email',
@@ -86,7 +86,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $this->request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
