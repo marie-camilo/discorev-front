@@ -1,9 +1,9 @@
-name: Deploy Frontend to VPS
+name: Deploy Laravel Front to VPS
 
 on:
   push:
     branches:
-      - main # la branche que tu merges pour déployer
+      - main
 
 jobs:
   deploy:
@@ -13,27 +13,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22"
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build front
-        run: npm run build # ou vite build si tu utilises Vite
-
-      - name: Deploy to VPS
+      - name: Copy files to VPS (exclude .env, node_modules, vendor)
         env:
-          VPS_IP: ${{ secrets.VPS_IPV4 }}
-          VPS_SSH_PORT: ${{ secrets.VPS_SSH_PORT }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_FRONT }}
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_PORT: ${{ secrets.VPS_SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $VPS_IP >> ~/.ssh/known_hosts
-          # Rsync du build en excluant le .env
-          rsync -azP -e "ssh -p $VPS_SSH_PORT" --delete \
-            --exclude ".env" ./public/build/ ubuntu@$VPS_IP:/var/www/discorev-front/
+          ssh-keyscan -p $VPS_PORT -H $VPS_IP >> ~/.ssh/known_hosts
+
+          # Synchronisation sans .env, vendor et node_modules
+          rsync -avz --delete \
+            -e "ssh -p $VPS_PORT -i ~/.ssh/id_rsa" \
+            --exclude='.env' \
+            --exclude='vendor' \
+            --exclude='node_modules' \
+            ./ ubuntu@$VPS_IP:/var/www/discorev-front/
+
+      - name: Install dependencies and optimize Laravel
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_FRONT }}
+          VPS_IP: ${{ secrets.VPS_IPV4 }}
+          VPS_PORT: ${{ secrets.VPS_SSH_PORT }}
+        run: |
+          ssh -p $VPS_PORT -i ~/.ssh/id_rsa ubuntu@$VPS_IP << 'EOF'
+            cd /var/www/discorev-front
+
+            echo "📦 Installation des dépendances PHP..."
+            composer install --no-dev --optimize-autoloader
+
+            echo "📦 Installation des dépendances Node (build frontend)..."
+            npm install --omit=dev
+            npm run build
+
+            echo "⚡ Optimisation Laravel..."
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan config:cache
+
+            echo "✅ Déploiement terminé pour le front."
+          EOF
