@@ -37,6 +37,7 @@
                     @php
                         $isCandidate = $user['accountType'] === 'candidate';
                         $isRecruiter = $user['accountType'] === 'recruiter';
+                        $isAdmin = $user['accountType'] === 'admin';
                     @endphp
 
                     @if ($isCandidate)
@@ -61,13 +62,28 @@
                                 Recruteur
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">Publier
-                                        une
+                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">Publier une
                                         offre</a></li>
                                 <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">Mes
                                         offres</a></li>
-                                <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">Cvthèque</a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if ($isAdmin)
+                        <!-- Dropdown Administrateur -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-medium" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Administrateur
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">Publier une
+                                        offre</a></li>
+                                <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">Mes
+                                        offres</a></li>
+                                <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
                             </ul>
                         </li>
                     @endif
@@ -75,7 +91,10 @@
                     <!-- Icône profil connecté -->
                     <li class="nav-item dropdown">
                         @php
-                            $profilePicture = collect($user['medias'] ?? [])->firstWhere('type', 'profile_picture');
+                            $profilePicture = collect(session('user.medias') ?? [])->firstWhere(
+                                'type',
+                                'profile_picture',
+                            );
                             $profilePictureUrl = $profilePicture
                                 ? env('DISCOREV_API_URL') . '/' . $profilePicture['filePath']
                                 : asset('img/default-avatar.png');

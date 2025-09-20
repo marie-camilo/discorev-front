@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
 use App\Services\DiscorevApiService;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class MediaController extends Controller
 {
@@ -73,6 +72,8 @@ class MediaController extends Controller
             $response = $this->api->uploadMedia($data, $files);
 
             if ($response->successful()) {
+                $user = $this->api->get('users/' . $data['targetId'])->json()['data'];
+                Session::put('user', $user);
                 return redirect()->back()->with('success', 'Fichier envoyé avec succès.');
             }
 

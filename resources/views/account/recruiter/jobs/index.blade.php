@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Liste des offres')
+@section('title', 'Liste des offres | Discorev')
 
 @section('content')
 
-    <section id="offers-list-container" class="offers-list-container">
+    <section id="offers-list-container" class="container min-vh-100 py-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-end">
                 <h1>Mes offres créees</h1>

@@ -23,29 +23,30 @@
 
     {{-- Email --}}
     <div class="mb-3">
-        <label for="loginEmail" class="form-label">Email <span class="text-danger">*</span></label>
-        <input id="loginEmail" type="email" class="form-control @error('loginEmail') is-invalid @enderror"
-            name="loginEmail" value="{{ old('email') }}" required>
-        @error('loginEmail')
+        <label for="registerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+        <input id="registerEmail" type="email" class="form-control @error('registerEmail') is-invalid @enderror"
+            name="registerEmail" value="{{ old('email') }}" required>
+        @error('registerEmail')
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
     </div>
 
     {{-- Mot de passe --}}
     <div class="mb-3">
-        <label for="loginPassword" class="form-label">Mot de passe <span class="text-danger">*</span></label>
-        <input id="loginPassword" type="password" class="form-control @error('loginPassword') is-invalid @enderror"
-            name="loginPassword" required>
-        @error('loginPassword')
+        <label for="registerPassword" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+        <input id="registerPassword" type="password"
+            class="form-control @error('registerPassword') is-invalid @enderror" name="registerPassword" required>
+        @error('registerPassword')
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
     </div>
 
     {{-- Confirmation mot de passe --}}
     <div class="mb-3">
-        <label for="password_confirmation" class="form-label">Confirmer le mot de passe <span
+        <label for="registerPassword_confirmation" class="form-label">Confirmer le mot de passe <span
                 class="text-danger">*</span></label>
-        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
+        <input id="registerPassword_confirmation" type="password" class="form-control"
+            name="registerPassword_confirmation" required>
     </div>
 
     {{-- Téléphone --}}
