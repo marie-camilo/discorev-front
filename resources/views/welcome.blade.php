@@ -1,50 +1,69 @@
 @extends('layouts.app')
 
-@section('title', 'Liste des offres')
+@section('title', 'Discorev')
 
 @section('content')
 
-    <section class="hero container py-5">
-        <div class="container row align-items-center">
-            <div class="col-lg-6 hero-left">
-                <h1 class="mb-4">L'emploi social, <br>à portée de main.</h1>
-                <h2 class="mb-4">
+    <section class="hero container-fluid py-5">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 col-md-8 hero-left text-center text-md-start">
+                <h1 class="mb-4 display-5 display-md-4 display-lg-3">
+                    L'emploi social,<br>à portée de main.
+                </h1>
+
+                <h2 class="mb-4 fs-6 fs-sm-5 fs-md-4">
                     Construisez votre carrière dans le
                     <span class="highlight-blue">social</span> et accédez à des offres d’emploi
                     <span class="highlight-orange">proche</span> de chez vous avec ou sans expérience.
                 </h2>
 
-                <form class="search-bar-welcome d-flex align-items-center mb-4" role="search">
-                    <div class="search-input-container d-flex align-items-center flex-grow-1 me-3">
-                        <span class="material-symbols-outlined me-2 text-secondary">search</span>
-                        <input type="text" class="form-control me-3" placeholder="Job, secteur, mots-clés ..."
-                            aria-label="Job, secteur, mots-clés">
-                        <span class="separator mx-2 d-none d-md-block"></span>
-                        <span class="material-symbols-outlined me-2 text-secondary">location_on</span>
-                        <input type="text" class="form-control location" placeholder="Lieu" aria-label="Lieu"
-                            style="max-width: 150px;">
+                <form class="search-bar-welcome d-flex flex-column flex-lg-row align-items-stretch gap-2 mb-4 w-100" role="search">
+                    <div class="search-input-container d-flex flex-column flex-lg-row gap-2 w-100">
+                        <!-- Champ Job -->
+                        <div class="input-group flex-grow-1 flex-nowrap" style="min-width:0;">
+                        <span class="input-group-text bg-white border-end-0">
+                            <span class="material-symbols-outlined text-secondary">search</span>
+                        </span>
+                            <input type="text" class="form-control border-start-0"
+                                   placeholder="Job, secteur, mots-clés ..." aria-label="Job, secteur, mots-clés">
+                        </div>
+
+                        <!-- Champ Lieu -->
+                        <div class="input-group flex-grow-1 flex-nowrap" style="min-width:0;">
+                        <span class="input-group-text bg-white border-end-0">
+                            <span class="material-symbols-outlined text-secondary">location_on</span>
+                        </span>
+                            <input type="text" class="form-control border-start-0"
+                                   placeholder="Lieu" aria-label="Lieu">
+                        </div>
                     </div>
-                    <button type="submit" class="cta-button-transparent btn-primary px-4">Rechercher</button>
+
+                    <!-- Bouton -->
+                    <button type="submit"
+                            class="cta-button-transparent btn btn-primary search-btn-small px-3 mt-2 mt-lg-0 flex-shrink-0">
+                        Rechercher
+                    </button>
                 </form>
 
-                <div class="btn-container d-flex gap-3 flex-wrap">
-                    <a href="{{ route('login') }}" style="text-decoration:none;">
-                        <button class="cta-button-transparent d-flex align-items-center gap-2">
+                <!-- Boutons CTA -->
+                <div class="btn-container d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start">
+                    <a href="{{ route('login') }}" class="text-decoration-none">
+                        <button class="cta-button-transparent d-flex align-items-center gap-2 w-100 w-sm-auto">
                             <span class="material-symbols-outlined">work</span> Je recrute
                         </button>
                     </a>
 
-                    <a href="{{ route('login') }}" style="text-decoration:none;">
-                        <button class="cta-button-transparent d-flex align-items-center gap-2">
+                    <a href="{{ route('login') }}" class="text-decoration-none">
+                        <button class="cta-button-transparent d-flex align-items-center gap-2 w-100 w-sm-auto">
                             <span class="material-symbols-outlined">search</span> Je cherche un emploi
                         </button>
                     </a>
-
                 </div>
             </div>
 
-            <div class="welcome-img col-lg-6 hero-right text-center mt-4 mt-lg-0">
-                <img src="{{ asset('img/accueil.png') }}" alt="Illustration" class="img-fluid">
+            <!-- Image -->
+            <div class="welcome-img col-md-4 hero-right text-center mt-4 mt-md-0 d-none d-lg-block">
+                <img src="{{ asset('img/accueil.png') }}" alt="Illustration" class="img-fluid hero-img-small">
             </div>
         </div>
     </section>
@@ -210,87 +229,110 @@
     </section>
 
 
-    <section class="user-choice">
-        <h2 style="margin-bottom: 3rem">Que vous soyez recruteur ou candidat, <br> notre plateforme vous accompagne.</h2>
+    <section class="user-choice container py-5">
+        <h2 class="text-center mb-5">
+            Que vous soyez recruteur ou candidat, <br class="d-none d-md-block">
+            notre plateforme vous accompagne.
+        </h2>
 
-        <div class="choice-container">
+        <div class="row g-4 justify-content-center">
             <!-- Carte Employeur -->
-            <a href="{{ route('register') }}" class="choice-card employer">
-                <h3>Je suis employeur</h3>
-                <p>Publiez des offres et recrutez les meilleurs talents facilement.</p>
-                <span class="cta-button">Accéder au service</span>
-            </a>
+            <div class="col-12 col-sm-10 col-md-5">
+                <a href="{{ route('register') }}" class="choice-card employer d-block text-center h-100 p-4 mx-auto">
+                    <h3>Je suis employeur</h3>
+                    <p>Publiez des offres et recrutez les meilleurs talents facilement.</p>
+                    <span class="cta-button mt-3 d-inline-block">Accéder au service</span>
+                </a>
+            </div>
 
             <!-- Carte Candidat -->
-            <a href="{{ route('register') }}" class="choice-card candidate">
-                <h3>Je suis candidat</h3>
-                <p>Recherchez un emploi et déposez votre CV en quelques clics.</p>
-                <span class="cta-button">Trouver un job</span>
-            </a>
+            <div class="col-12 col-sm-10 col-md-5">
+                <a href="{{ route('register') }}" class="choice-card candidate d-block text-center h-100 p-4 mx-auto">
+                    <h3>Je suis candidat</h3>
+                    <p>Recherchez un emploi et déposez votre CV en quelques clics.</p>
+                    <span class="cta-button mt-3 d-inline-block">Trouver un job</span>
+                </a>
+            </div>
         </div>
     </section>
 
-    <section class="competences">
+    <section class="competences py-5">
         <div class="container">
-            <h2 class="mb-4">Trouver un job facilement avec Discorev</h2>
-            <p class="mb-5">Notre plateforme vous aide à décrocher l'emploi qui correspond à votre profil, avec des
-                outils et un accompagnement dédié.</p>
+            <h2 class="mb-4 text-center">Trouver un job facilement avec Discorev</h2>
+            <p class="mb-5 text-center">
+                Notre plateforme vous aide à décrocher l'emploi qui correspond à votre profil,
+                avec des outils et un accompagnement dédié.
+            </p>
 
             <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="feature text-start h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-3"
-                                style="background-color: var(--orangish); color: white;">
+                <!-- Offres ciblées -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
+                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
+                                 style="background-color: var(--orangish); color: white;">
                                 <span class="material-symbols-outlined text-white">search</span>
                             </div>
-                            <h3 class="mb-0">Offres ciblées</h3>
+                            <h3 class="mb-0 text-break">Offres ciblées</h3>
                         </div>
-                        <p>Des opportunités adaptées à votre expérience et votre localisation.</p>
+                        <p class="mb-0 text-break">
+                            Des opportunités adaptées à votre expérience et votre localisation.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="feature text-start h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-3"
-                                style="background-color: var(--aquamarine); color: white;">
+                <!-- Candidature rapide -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
+                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
+                                 style="background-color: var(--aquamarine); color: white;">
                                 <span class="material-symbols-outlined text-white">bolt</span>
                             </div>
-                            <h3 class="mb-0">Candidature rapide</h3>
+                            <h3 class="mb-0 text-break">Candidature rapide</h3>
                         </div>
-                        <p>Postulez en un clic, avec ou sans CV.</p>
+                        <p class="mb-0 text-break">
+                            Postulez en un clic, avec ou sans CV.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="feature text-start h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-3"
-                                style="background-color: var(--indigo); color: white;">
+                <!-- Employeurs fiables -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
+                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
+                                 style="background-color: var(--indigo); color: white;">
                                 <span class="material-symbols-outlined text-white">verified</span>
                             </div>
-                            <h3 class="mb-0">Employeurs fiables</h3>
+                            <h3 class="mb-0 text-break">Employeurs fiables</h3>
                         </div>
-                        <p>Des entreprises engagées et vérifiées dans le secteur social.</p>
+                        <p class="mb-0 text-break">
+                            Des entreprises engagées et vérifiées dans le secteur social.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="feature text-start h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-3"
-                                style="background-color: var(--larch-bolete); color: white;">
+                <!-- Communauté active -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
+                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
+                                 style="background-color: var(--larch-bolete); color: white;">
                                 <span class="material-symbols-outlined text-white">groups</span>
                             </div>
-                            <h3 class="mb-0">Communauté active</h3>
+                            <h3 class="mb-0 text-break">Communauté active</h3>
                         </div>
-                        <p>Échangez avec des professionnels du secteur et partagez votre expérience.</p>
+                        <p class="mb-0 text-break">
+                            Échangez avec des professionnels du secteur et partagez votre expérience.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+
 
     <section class="download-app py-5">
         <div class="container">

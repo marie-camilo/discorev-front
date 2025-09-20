@@ -188,6 +188,18 @@ img {
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
 }
 
+.btn-login {
+    background-color: var(--white);
+    color: var(--indigo);
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover,
+.btn-login:focus {
+    background-color: var(--orangish);
+    color: #ffffff;
+}
+
 /* Responsive : menu déroulant en mobile */
 @media (max-width: 991.98px) {
     .navbar-nav {
@@ -581,6 +593,11 @@ img {
     justify-content: center;
 }
 
+.hero-left {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
 .hero-left h1 {
     font-weight: 700;
     font-size: 2.5rem;
@@ -695,7 +712,6 @@ img {
 /* User choice */
 .user-choice {
     text-align: center;
-    margin: 3rem 0;
 }
 
 .choice-container {
@@ -714,11 +730,12 @@ img {
     box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
     color: #444;
     text-decoration: none;
-    transition: box-shadow 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .choice-card:hover {
     box-shadow: 0 8px 18px rgb(0 0 0 / 0.15);
+    transform: translateY(-5px);
     color: #222;
 }
 
@@ -903,6 +920,7 @@ img {
     text-align: left;
     height: 100%;
     cursor: pointer;
+    word-wrap: break-word;
 }
 
 .feature:hover {
@@ -922,8 +940,8 @@ img {
 }
 
 .icon-circle {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     font-size: 1.5rem;
     display: flex;
@@ -1158,8 +1176,26 @@ img {
         font-size: 1.1rem;
     }
 
-    .company-card img {
-        height: 120px;
+    .search-bar-welcome {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem;
+    }
+
+    .search-input-container {
+        flex-direction: column !important;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .search-bar-welcome button {
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0.5rem;
+    }
+
+    .hero-right {
+        display: none !important;
     }
 }
 
@@ -1167,14 +1203,18 @@ img {
     .search-input-container {
         flex-direction: column;
         gap: 0.75rem;
+        width: 100%;
     }
 
-    .search-input-container input.form-control {
-        max-width: 100%;
+    .search-input-container .input-group {
+        flex-wrap: nowrap;
+        min-width: 0;
     }
 
-    .btn-container {
-        justify-content: center;
+    .search-bar-welcome button {
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 0.5rem;
     }
 
     .choice-container {
@@ -1188,5 +1228,18 @@ img {
 
     .download-app .app-buttons {
         justify-content: center !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-left {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .hero {
+        padding: 10rem;
     }
 }
