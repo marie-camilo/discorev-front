@@ -81,6 +81,8 @@ class DiscorevApiService
             $response = Http::withToken(Session::get('accessToken'))
                 ->post("{$this->baseUrl}/{$endpoint}", $data);
 
+            dd($response);
+
             return $this->mapIfPossible($endpoint, $response);
         });
     }
