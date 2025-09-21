@@ -13,7 +13,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MediaController;
 
-Route::permanentRedirect('/', '/home');
+Route::permanentRedirect('/home', '/');
 
 Route::get('/', function () {
     return view('welcome');
