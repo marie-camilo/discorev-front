@@ -24,24 +24,6 @@ class RecruiterController extends Controller
         $this->apiModelService = $apiModelService;
     }
 
-    function slugify(string $text): string
-    {
-        // 1. Convertit en ASCII
-        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-
-        // 2. Met en minuscules
-        $text = strtolower($text);
-
-        // 3. Remplace tous les caractères non alphanumériques par des tirets
-        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-
-        // 4. Supprime les tirets au début et à la fin
-        $text = trim($text, '-');
-
-        return $text;
-    }
-
-
     public function index(): View
     {
         $recruitersData = $this->api->get('recruiters');
