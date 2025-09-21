@@ -6,30 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
 use App\Services\ApiModelService;
-use App\Models\Api\JobOffer;
-use App\Models\Api\Recruiter;
-use App\Models\Api\Application;
-use App\Models\Api\Candidate;
-use App\Models\Api\User;
-use App\Models\Api\Media;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 
 class JobOfferController extends Controller
 {
     private DiscorevApiService $api;
-    private ApiModelService $apiModelService;
 
-    public function __construct(DiscorevApiService $api, ApiModelService $apiModelService)
+    public function __construct(DiscorevApiService $api)
     {
         $this->api = $api;
-        $this->apiModelService = $apiModelService;
     }
 
     /**
      * Liste des offres d'emploi
      */
-    public function index(Request $request): View
+    public function index(): View
     {
         return view('job_offers.index');
     }
@@ -85,7 +77,7 @@ class JobOfferController extends Controller
     /**
      * Enregistrer une nouvelle offre d'emploi
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -127,7 +119,7 @@ class JobOfferController extends Controller
     /**
      * Modifier une offre d'emploi
      */
-    public function edit($id): View
+    public function edit($id)
     {
         $response = $this->api->get('job_offers/' . $id);
         if ($response->successful()) {
@@ -181,7 +173,7 @@ class JobOfferController extends Controller
     /**
      * Supprimer une offre d'emploi
      */
-    public function destroy($id): JsonResponse
+    public function destroy($id)
     {
         $response = $this->api->delete('job_offers/' . $id);
         dd($response->json());
