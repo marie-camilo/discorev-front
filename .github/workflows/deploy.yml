@@ -51,11 +51,12 @@ jobs:
           VPS_PORT: ${{ secrets.VPS_SSH_PORT }}
         run: |
           rsync -avz --delete \
-            -e "ssh -p $VPS_PORT -i ~/.ssh/id_rsa" \
-            --exclude='.env' \
-            --exclude='node_modules' \
-            --exclude='storage/logs/*' \
-            ./ ubuntu@$VPS_IP:/var/www/discorev-front/
+          -e "ssh -p $VPS_PORT -i ~/.ssh/id_rsa" \
+          --exclude='.env' \
+          --exclude='node_modules' \
+          --exclude='storage/logs/*' \
+          --no-times --no-perms \
+          ./ ubuntu@$VPS_IP:/var/www/discorev-front/
 
       - name: Post-deploy setup
         env:
