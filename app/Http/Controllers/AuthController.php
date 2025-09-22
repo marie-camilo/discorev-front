@@ -55,7 +55,7 @@ class AuthController extends Controller
         // ✅ Appel API
         $response = $this->api->post('auth/register', $data);
 
-        if (empty($response['success']) || !$response['success']) {
+        if (empty($response) || !$response) {
             $errorMessage = $response['message'] ?? 'Une erreur est survenue lors de l’inscription.';
             $translated = $translator->translate($errorMessage);
             return back()->withErrors(['auth.register' => $translated])->withInput();
@@ -69,7 +69,7 @@ class AuthController extends Controller
 
         $loginResponse = $this->api->post('auth/login', $loginData);
 
-        if (!empty($loginResponse['success']) && $loginResponse['success']) {
+        if (!empty($loginResponse) && $loginResponse) {
             $data = $loginResponse['data'];
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
@@ -94,7 +94,7 @@ class AuthController extends Controller
             'remember' => $request->boolean('remember')
         ]);
 
-        if (!empty($response['success']) && $response['success']) {
+        if (!empty($response) && $response) {
             $data = $response['data'];
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
