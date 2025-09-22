@@ -68,7 +68,6 @@ class ProfileController extends Controller
         $response = $this->api->get($endpoint . $userAuth->id);
         $json = $response->json();
         $data = $json['data'];
-        //dd($response->json());
         if (!$response->successful() || !isset($data)) {
             $errorMsg = match ($type) {
                 'recruiter' => 'Impossible de récupérer les données du recruteur.',

@@ -176,7 +176,6 @@ class JobOfferController extends Controller
     public function destroy($id)
     {
         $response = $this->api->delete('job_offers/' . $id);
-        dd($response->json());
         if ($response->successful()) {
             return redirect()->route('recruiter.jobs.index')->with('success', 'Offre supprimée avec succès.');
         }

@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
-use App\Services\ApiModelService;
 use Illuminate\Support\Facades\Session;
 use App\Services\ApiErrorTranslator;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Api\User;
 
 class AuthController extends Controller
 {
