@@ -82,7 +82,7 @@ class DiscorevApiService
                 ->acceptJson();
             $http = $http->asJson();
             $response = $http->post("{$this->baseUrl}/{$endpoint}", $data);
-
+            dump($response);
             return $this->mapIfPossible($endpoint, $response);
         });
     }

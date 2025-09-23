@@ -94,8 +94,6 @@ class AuthController extends Controller
             'remember' => $request->boolean('remember')
         ]);
 
-        dump($response); // s'affiche mais continue
-
         if (!empty($response) && $response) {
             $data = $response;
             Session::put('accessToken', $data['token']);
