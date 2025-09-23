@@ -78,8 +78,11 @@ class DiscorevApiService
     public function post(string $endpoint, array $data)
     {
         return $this->withAutoRefresh(function () use ($endpoint, $data) {
-            $response = Http::withToken(Session::get('accessToken'))
-                ->post("{$this->baseUrl}/{$endpoint}", $data);
+            $http = Http::withToken(Session::get('accessToken'))
+                ->acceptJson();
+            $http = $http->asJson();
+            $response = $http->post("{$this->baseUrl}/{$endpoint}", $data);
+
             return $this->mapIfPossible($endpoint, $response);
         });
     }
@@ -87,8 +90,10 @@ class DiscorevApiService
     public function put(string $endpoint, array $data)
     {
         return $this->withAutoRefresh(function () use ($endpoint, $data) {
-            $response = Http::withToken(Session::get('accessToken'))
-                ->put("{$this->baseUrl}/{$endpoint}", $data);
+            $http = Http::withToken(Session::get('accessToken'))
+                ->acceptJson();
+            $http = $http->asJson();
+            $response = $http->put("{$this->baseUrl}/{$endpoint}", $data);
 
             return $this->mapIfPossible($endpoint, $response);
         });
@@ -102,11 +107,15 @@ class DiscorevApiService
         });
     }
 
-    public function patch(string $endpoint)
+    public function patch(string $endpoint, array $data)
     {
-        return $this->withAutoRefresh(function () use ($endpoint) {
-            return Http::withToken(Session::get('accessToken'))
-                ->patch("{$this->baseUrl}/{$endpoint}");
+        return $this->withAutoRefresh(function () use ($endpoint, $data) {
+            $http = Http::withToken(Session::get('accessToken'))
+                ->acceptJson();
+            $http = $http->asJson();
+            $response = $http->patch("{$this->baseUrl}/{$endpoint}", $data);
+
+            return $this->mapIfPossible($endpoint, $response);
         });
     }
 
