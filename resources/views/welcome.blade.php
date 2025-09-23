@@ -71,110 +71,56 @@
 
     <section class="explore-companies">
         <div class="container">
-            <h2>Explorer les entreprises</h2>
+            <h2 class="mb-2">Explorer les entreprises</h2>
             <h4>Découvrez des entreprises qui recrutent activement dans le secteur santé, social et médico-social.</h4>
 
             <div class="row gy-4 mt-4 mb-5">
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}" class="company-card">
-                        <img src="{{ asset('img/petit-jean.jpg') }}" alt="Entreprise 1">
-                        <h3>Le Petit Jean</h3>
-                        <p>Une équipe engagée pour un impact social fort.</p>
-                        <div class="offers-text">+54 offres</div>
-                        <div class="card-icon">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </a>
+                    <x-company-card
+                        name="Le Petit Jean"
+                        image="{{ asset('img/petit-jean.jpg') }}"
+                        description="Une équipe engagée pour un impact social fort."
+                        offers="+54 offres"
+                        url="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}"
+                    />
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'altidom']) }}" class="company-card">
-                        <img src="{{ asset('img/altidom/altidom.webp') }}" alt="Entreprise 2">
-                        <h3>Altidom</h3>
-                        <p>Des services à domicile avec l’exigence du monde professionnel.</p>
-                        <div class="offers-text">+10 offres</div>
-                        <div class="card-icon">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </a>
+                    <x-company-card
+                        name="Altidom"
+                        image="{{ asset('img/altidom/altidom.webp') }}"
+                        description="Des services à domicile avec l’exigence du monde professionnel."
+                        offers="+10 offres"
+                        url="{{ route('companies.show', ['identifier' => 'altidom']) }}"
+                    />
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'azae']) }}" class="company-card">
-                        <img src="{{ asset('img/azae.jpg') }}" alt="Entreprise 3">
-                        <h3>Azaé</h3>
-                        <p>Découvrez leurs opportunités et valeurs.</p>
-                        <div class="offers-text">+54 offres</div>
-                        <div class="card-icon">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </a>
+                    <x-company-card
+                        name="Azaé"
+                        image="{{ asset('img/azae.jpg') }}"
+                        description="Découvrez leurs opportunités et valeurs."
+                        offers="+54 offres"
+{{--                        url="{{ route('companies.show', ['identifier' => 'azae']) }}"--}}
+                    />
                 </div>
 
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'azae']) }}" class="company-card">
-                        <img src="{{ asset('img/peit-fils.jpg') }}" alt="Entreprise 4">
-                        <h3>Petit Fils</h3>
-                        <p>Rejoignez une entreprise qui partage vos valeurs.</p>
-                        <div class="offers-text">+54 offres</div>
-                        <div class="card-icon">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Répétition des entreprises -->
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="company-card">
-                        <img src="{{ asset('img/azae.jpg') }}" alt="Entreprise 5">
-                        <h3>Azaé</h3>
-                        <p>Découvrez leurs opportunités et valeurs.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'azae']) }}">+54 offres</a>
-                        <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="company-card">
-                        <img src="{{ asset('img/petit-jean.jpg') }}" alt="Entreprise 6">
-                        <h3>Le Petit Jean</h3>
-                        <p>Une équipe engagée pour un impact social fort.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}">+18
-                            offres</a>
-                        <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="company-card">
-                        <img src="{{ asset('img/peit-fils.jpg') }}" alt="Entreprise 7">
-                        <h3>Petit Fils</h3>
-                        <p>Rejoignez une entreprise qui partage vos valeurs.</p>
-                        <a class="cta-link" href="{{ route('companies.show', ['identifier' => 'petit']) }}">+32 offres</a>
-                        <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="company-card">
-                        <img src="{{ asset('img/senior-compagnie.png') }}" alt="Entreprise 8">
-                        <h3>Senior Compagnie</h3>
-                        <p>Rejoignez une entreprise qui partage vos valeurs.</p>
-                        <a class="cta-link" href="#">+142 offres</a>
-                        <div class="card-icon"><span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
+                    <x-company-card
+                        name="Petit Fils"
+                        image="{{ asset('img/peit-fils.jpg') }}"
+                        description="Rejoignez une entreprise qui partage vos valeurs."
+                        offers="+54 offres"
+{{--                        url="{{ route('companies.show', ['identifier' => 'azae']) }}"--}}
+                    />
                 </div>
             </div>
-
-            <div class="text-center mt-16 pt-4">
+            <div class="text-center">
                 <x-button href="{{ route('companies.index') }}">Voir plus d'entreprises</x-button>
             </div>
         </div>
     </section>
+
 
 
     <section class="find-job py-5">
