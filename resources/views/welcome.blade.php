@@ -170,8 +170,8 @@
                 </div>
             </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ route('companies.index') }}" class="cta-button-transparent">Voir plus d'entreprises</a>
+            <div class="text-center mt-16 pt-4">
+                <x-button href="{{ route('companies.index') }}">Voir plus d'entreprises</x-button>
             </div>
         </div>
     </section>
@@ -192,9 +192,8 @@
                 <div class="col-lg-6">
                     <h2>Suivez votre candidature en temps réel</h2>
                     <p>Ne restez plus dans le flou ! Postulez et suivez l’avancée de vos candidatures à chaque étape.
-                        Vous
-                        êtes informé dès qu’il y a du nouveau.</p>
-                    <a href="{{ route('job_offers.index') }}" class="cta-button-transparent">Explorer les offres</a>
+                        Vous êtes informé dès qu’il y a du nouveau.</p>
+                    <x-button href="{{ route('job_offers.index') }}">Explorer les offres</x-button>
                 </div>
             </div>
 
@@ -205,10 +204,8 @@
                 </div>
                 <div class="col-lg-6">
                     <h2>Des offres d’emploi sans surprise</h2>
-                    <p>Fini les annonces vagues ! Salaire, conditions de travail, avantages… Vous avez toutes les infos
-                        pour
-                        choisir en toute confiance.</p>
-                    <a href="{{ route('job_offers.index') }}" class="cta-button-transparent">Chercher un job</a>
+                    <p>Fini les annonces vagues ! Salaire, conditions de travail, avantages… Vous avez toutes les infos pour choisir en toute confiance.</p>
+                    <x-button href="{{ route('job_offers.index') }}">Chercher un job </x-button>
                 </div>
             </div>
 
@@ -222,36 +219,9 @@
                     <p>Découvrez des entreprises qui recrutent activement et qui partagent leurs valeurs, leurs
                         processus et
                         leurs opportunités en toute transparence.</p>
-                    <a href="{{ route('companies.index') }}" class="cta-button-transparent">Découvrir les entreprises</a>
+                    <x-button href="{{ route('companies.index') }}">Découvrir les entreprises</x-button>
+
                 </div>
-            </div>
-        </div>
-    </section>
-
-
-    <section class="user-choice container py-5">
-        <h2 class="text-center mb-5">
-            Que vous soyez recruteur ou candidat, <br class="d-none d-md-block">
-            notre plateforme vous accompagne.
-        </h2>
-
-        <div class="row g-4 justify-content-center">
-            <!-- Carte Employeur -->
-            <div class="col-12 col-sm-10 col-md-5">
-                <a href="{{ route('register') }}" class="choice-card employer d-block text-center h-100 p-4 mx-auto">
-                    <h3>Je suis employeur</h3>
-                    <p>Publiez des offres et recrutez les meilleurs talents facilement.</p>
-                    <span class="cta-button mt-3 d-inline-block">Accéder au service</span>
-                </a>
-            </div>
-
-            <!-- Carte Candidat -->
-            <div class="col-12 col-sm-10 col-md-5">
-                <a href="{{ route('register') }}" class="choice-card candidate d-block text-center h-100 p-4 mx-auto">
-                    <h3>Je suis candidat</h3>
-                    <p>Recherchez un emploi et déposez votre CV en quelques clics.</p>
-                    <span class="cta-button mt-3 d-inline-block">Trouver un job</span>
-                </a>
             </div>
         </div>
     </section>

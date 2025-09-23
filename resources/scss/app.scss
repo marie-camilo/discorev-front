@@ -1165,6 +1165,24 @@ img {
     transform: translateY(-2px);
 }
 
+/* Solutions et tarifs */
+.pricing-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.pricing-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+.pricing-card.highlight {
+    border: 2px solid var(--aquamarine);
+}
+.pricing-card.premium {
+    border: 2px solid var(--orangish);
+}
+
 
 /* Responsive tweaks */
 @media (max-width: 991.98px) {
