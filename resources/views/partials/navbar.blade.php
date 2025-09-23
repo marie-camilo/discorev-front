@@ -24,6 +24,7 @@
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('home') }}">Accueil</a></li>
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('job_offers.index') }}">Offres</a></li>
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('companies.index') }}">Entreprises</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('recruiters.tarifs') }}">Recruteurs</a></li>
                     </ul>
                     <div>
                         @if($isAuthenticated && isset($user))
@@ -41,6 +42,7 @@
                     <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('home') }}">Accueil</a></li>
                     <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('job_offers.index') }}">Offres</a></li>
                     <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('companies.index') }}">Entreprises</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('recruiters.tarifs') }}">Recruteurs</a></li>
                 </ul>
 
                 @if($isAuthenticated && isset($user))

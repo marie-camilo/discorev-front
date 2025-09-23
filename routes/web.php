@@ -82,3 +82,4 @@ Route::middleware(['token.valid', 'recruiter'])->group(function () {
 });
 
 Route::get('/job_offers/{id}', [JobOfferController::class, 'show'])->name('job_offers.show');
+Route::get('/tarifs', function () {return view('account.recruiter.tarifs-recruiters');})->name('recruiters.tarifs');
