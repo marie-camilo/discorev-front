@@ -70,7 +70,7 @@ class AuthController extends Controller
         $loginResponse = $this->api->post('auth/login', $loginData);
 
         if (!empty($loginResponse) && $loginResponse) {
-            $data = $loginResponse['data'];
+            $data = $loginResponse;
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
             Session::put('token_exp', time() + 3600);
@@ -95,7 +95,7 @@ class AuthController extends Controller
         ]);
 
         if (!empty($response) && $response) {
-            $data = $response['data'];
+            $data = $response;
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
             Session::put('token_exp', time() + 3600);
