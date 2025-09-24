@@ -85,7 +85,6 @@
                         price="0€"
                         :features="[
                         '3 annonces offertes',
-                        'Mise en ligne : 48h',
                         'Profil & page auto-personnalisés',
                         'Dépôt d\'annonces'
                     ]"
@@ -101,7 +100,6 @@
                         period="/mois"
                         :features="[
                         '2 annonces / mois',
-                        'Mise en ligne : 48h',
                         'Profil & page auto-personnalisés',
                         'Dépôt d\'annonces'
                     ]"
@@ -116,7 +114,6 @@
                         period="/mois"
                         :features="[
                         '4 annonces / mois',
-                        'Mise en ligne : 48h',
                         'Profil & page auto-personnalisés',
                         'Dépôt d\'annonces'
                     ]"
@@ -131,7 +128,6 @@
                         period="/mois"
                         :features="[
                         'Annonces illimitées (réactivation 30j)',
-                        'Mise en ligne : 48h',
                         'Profil & page auto-personnalisés',
                         'Dépôt d\'annonces'
                     ]"
@@ -148,12 +144,12 @@
                         price="1890€"
                         period="/an"
                         :features="[
-                        'Payable en 4 fois (acompte 472,5€)',
-                        'Annonces illimitées (réactivation 30j)',
+                        'Payable en 4 fois - Acompte de 472,5€',
+                        'Annonces illimitées',
                         'Page employeur sur mesure & copywriting',
                         'Contenu média : 3 interviews, 10 photos',
                         'Audit de marque employeur',
-                        'Accès prioritaire aux nouvelles features (CVthèque)'
+                        'Accès prioritaire aux nouvelles features - CVthèque'
                     ]"
                         button-text="Contacter l'équipe"
                         :button-url="route('register')"

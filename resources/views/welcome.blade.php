@@ -4,275 +4,740 @@
 
 @section('content')
 
-    <section class="hero container-fluid py-5">
-        <div class="row align-items-center justify-content-center">
-            <div class="col-12 col-md-8 hero-left text-center text-md-start">
-                <h1 class="mb-4 display-5 display-md-4 display-lg-3">
-                    L'emploi social,<br>à portée de main.
-                </h1>
-
-                <h2 class="mb-4 fs-6 fs-sm-5 fs-md-4">
-                    Construisez votre carrière dans le
-                    <span class="highlight-blue">social</span> et accédez à des offres d’emploi
-                    <span class="highlight-orange">proche</span> de chez vous avec ou sans expérience.
-                </h2>
-
-                <form class="search-bar-welcome d-flex flex-column flex-lg-row align-items-stretch gap-2 mb-4 w-100" role="search">
-                    <div class="search-input-container d-flex flex-column flex-lg-row gap-2 w-100">
-                        <!-- Champ Job -->
-                        <div class="input-group flex-grow-1 flex-nowrap" style="min-width:0;">
-                        <span class="input-group-text bg-white border-end-0">
-                            <span class="material-symbols-outlined text-secondary">search</span>
-                        </span>
-                            <input type="text" class="form-control border-start-0"
-                                   placeholder="Job, secteur, mots-clés ..." aria-label="Job, secteur, mots-clés">
-                        </div>
-
-                        <!-- Champ Lieu -->
-                        <div class="input-group flex-grow-1 flex-nowrap" style="min-width:0;">
-                        <span class="input-group-text bg-white border-end-0">
-                            <span class="material-symbols-outlined text-secondary">location_on</span>
-                        </span>
-                            <input type="text" class="form-control border-start-0"
-                                   placeholder="Lieu" aria-label="Lieu">
-                        </div>
+    <section class="hero-modern">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                    <div class="section-badge badge-teal mb-3">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
+                        L'emploi social réinventé
                     </div>
 
-                    <!-- Bouton -->
-                    <button type="submit"
-                            class="cta-button-transparent btn btn-primary search-btn-small px-3 mt-2 mt-lg-0 flex-shrink-0">
-                        Rechercher
-                    </button>
-                </form>
+                    <h1 class="display-3 fw-bold mb-4">
+                        L'emploi social,<br>
+                        <span class="gradient-text">à portée de main.</span>
+                    </h1>
 
-                <!-- Boutons CTA -->
-                <div class="btn-container d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start">
-                    <a href="{{ route('login') }}" class="text-decoration-none">
-                        <button class="cta-button-transparent d-flex align-items-center gap-2 w-100 w-sm-auto">
+                    <p class="fs-5 mb-4" style="color: var(--text-secondary); line-height: 1.6;">
+                        Construisez votre carrière dans le <span class="fw-bold" style="color: var(--aquamarine);">social</span>
+                        et accédez à des offres d'emploi <span class="fw-bold" style="color: var(--orangish);">proches</span>
+                        de chez vous avec ou sans expérience.
+                    </p>
+
+                    <div class="search-bar-modern mb-4">
+                        <form class="search-form-modern" role="search">
+                            <input type="text" class="form-control search-input-modern" placeholder="Job, secteur, mots-clés ...">
+                            <input type="text" class="form-control search-input-modern" placeholder="Lieu">
+                            <button type="submit" class="btn-modern btn-primary-modern">
+                                Rechercher
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <a href="{{ route('login') }}" class="btn-modern btn-outline-modern">
                             <span class="material-symbols-outlined">work</span> Je recrute
-                        </button>
-                    </a>
-
-                    <a href="{{ route('login') }}" class="text-decoration-none">
-                        <button class="cta-button-transparent d-flex align-items-center gap-2 w-100 w-sm-auto">
+                        </a>
+                        <a href="{{ route('login') }}" class="btn-modern btn-outline-modern-secondary">
                             <span class="material-symbols-outlined">search</span> Je cherche un emploi
-                        </button>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-container">
+                        <div class="hero-image-bg"></div>
+                        <div class="hero-image-wrapper">
+                            <img src="{{ asset('img/accueil.png') }}" alt="Illustration Discorev" class="img-fluid rounded">
+                        </div>
+                        <div class="floating-element floating-element-1">
+                            <span class="material-symbols-outlined text-white fs-5">work</span>
+                        </div>
+                        <div class="floating-element floating-element-2">
+                            <span class="material-symbols-outlined text-white fs-5">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background: #F9FAFB;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <div class="section-badge badge-orange">
+                    Entreprises partenaires
+                </div>
+                <h2 class="display-4 fw-bold mb-3">Explorer les entreprises</h2>
+                <p class="fs-5" style="color: var(--text-secondary);">
+                    Découvrez des entreprises qui recrutent activement dans le secteur santé, social et médico-social.
+                </p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}" class="company-card-modern">
+                        <img src="{{ asset('img/petit-jean.jpg') }}" alt="Le Petit Jean" class="company-card-image">
+                        <div class="company-card-body">
+                            <h3 class="company-card-title">Le Petit Jean</h3>
+                            <p class="company-card-desc">Une équipe engagée pour un impact social fort.</p>
+                            <p class="company-card-offers">+54 offres</p>
+                        </div>
+                        <div class="company-card-arrow">
+                            <span class="material-symbols-outlined text-white">arrow_forward</span>
+                        </div>
                     </a>
                 </div>
-            </div>
 
-            <!-- Image -->
-            <div class="welcome-img col-md-4 hero-right text-center mt-4 mt-md-0 d-none d-lg-block">
-                <img src="{{ asset('img/accueil.png') }}" alt="Illustration" class="img-fluid hero-img-small">
-            </div>
-        </div>
-    </section>
-
-
-    <section class="explore-companies">
-        <div class="container">
-            <h2 class="mb-2">Explorer les entreprises</h2>
-            <h4>Découvrez des entreprises qui recrutent activement dans le secteur santé, social et médico-social.</h4>
-
-            <div class="row gy-4 mt-4 mb-5">
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <x-company-card
-                        name="Le Petit Jean"
-                        image="{{ asset('img/petit-jean.jpg') }}"
-                        description="Une équipe engagée pour un impact social fort."
-                        offers="+54 offres"
-                        url="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}"
-                    />
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ route('companies.show', ['identifier' => 'altidom']) }}" class="company-card-modern">
+                        <img src="{{ asset('img/altidom/altidom.webp') }}" alt="Altidom" class="company-card-image">
+                        <div class="company-card-body">
+                            <h3 class="company-card-title">Altidom</h3>
+                            <p class="company-card-desc">Des services à domicile avec l'exigence du monde professionnel.</p>
+                            <p class="company-card-offers">+10 offres</p>
+                        </div>
+                        <div class="company-card-arrow">
+                            <span class="material-symbols-outlined text-white">arrow_forward</span>
+                        </div>
+                    </a>
                 </div>
 
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <x-company-card
-                        name="Altidom"
-                        image="{{ asset('img/altidom/altidom.webp') }}"
-                        description="Des services à domicile avec l’exigence du monde professionnel."
-                        offers="+10 offres"
-                        url="{{ route('companies.show', ['identifier' => 'altidom']) }}"
-                    />
+                <div class="col-sm-6 col-lg-3">
+                    <div class="company-card-modern">
+                        <img src="{{ asset('img/azae.jpg') }}" alt="Azaé" class="company-card-image">
+                        <div class="company-card-body">
+                            <h3 class="company-card-title">Azaé</h3>
+                            <p class="company-card-desc">Découvrez leurs opportunités et valeurs.</p>
+                            <p class="company-card-offers">+54 offres</p>
+                        </div>
+                        <div class="company-card-arrow">
+                            <span class="material-symbols-outlined text-white">arrow_forward</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <x-company-card
-                        name="Azaé"
-                        image="{{ asset('img/azae.jpg') }}"
-                        description="Découvrez leurs opportunités et valeurs."
-                        offers="+54 offres"
-{{--                        url="{{ route('companies.show', ['identifier' => 'azae']) }}"--}}
-                    />
-                </div>
-
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <x-company-card
-                        name="Petit Fils"
-                        image="{{ asset('img/peit-fils.jpg') }}"
-                        description="Rejoignez une entreprise qui partage vos valeurs."
-                        offers="+54 offres"
-{{--                        url="{{ route('companies.show', ['identifier' => 'azae']) }}"--}}
-                    />
+                <div class="col-sm-6 col-lg-3">
+                    <div class="company-card-modern">
+                        <img src="{{ asset('img/peit-fils.jpg') }}" alt="Petit Fils" class="company-card-image">
+                        <div class="company-card-body">
+                            <h3 class="company-card-title">Petit Fils</h3>
+                            <p class="company-card-desc">Rejoignez une entreprise qui partage vos valeurs.</p>
+                            <p class="company-card-offers">+54 offres</p>
+                        </div>
+                        <div class="company-card-arrow">
+                            <span class="material-symbols-outlined text-white">arrow_forward</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="text-center">
-                <x-button href="{{ route('companies.index') }}">Voir plus d'entreprises</x-button>
+                <a href="{{ route('companies.index') }}" class="btn-modern btn-primary-modern">
+                    Voir plus d'entreprises
+                </a>
             </div>
         </div>
     </section>
 
-
-
-    <section class="find-job py-5">
-        <div class="container container-fluid">
-            <div class="mb-5">
-                <h2>Trouvez votre job en toute simplicité</h2>
-                <h4>Avec Discorev, tout devient plus clair.</h4>
-            </div>
-
-            <!-- Bloc 1 -->
-            <div class="row align-items-center mb-5">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{{ asset('img/following.jpg') }}" alt="Suivi des candidatures" class="img-fluid rounded">
-                </div>
-                <div class="col-lg-6">
-                    <h2>Suivez votre candidature en temps réel</h2>
-                    <p>Ne restez plus dans le flou ! Postulez et suivez l’avancée de vos candidatures à chaque étape.
-                        Vous êtes informé dès qu’il y a du nouveau.</p>
-                    <x-button href="{{ route('job_offers.index') }}">Explorer les offres</x-button>
-                </div>
-            </div>
-
-            <!-- Bloc 2 -->
-            <div class="row align-items-center flex-lg-row-reverse mb-5">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{{ asset('img/paperwork.jpg') }}" alt="Offres transparentes" class="img-fluid rounded">
-                </div>
-                <div class="col-lg-6">
-                    <h2>Des offres d’emploi sans surprise</h2>
-                    <p>Fini les annonces vagues ! Salaire, conditions de travail, avantages… Vous avez toutes les infos pour choisir en toute confiance.</p>
-                    <x-button href="{{ route('job_offers.index') }}">Chercher un job </x-button>
-                </div>
-            </div>
-
-            <!-- Bloc 3 -->
-            <div class="row align-items-center mb-5">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{{ asset('img/team.jpg') }}" alt="Recruteurs transparents" class="img-fluid rounded">
-                </div>
-                <div class="col-lg-6">
-                    <h2>Des recruteurs à votre écoute</h2>
-                    <p>Découvrez des entreprises qui recrutent activement et qui partagent leurs valeurs, leurs
-                        processus et
-                        leurs opportunités en toute transparence.</p>
-                    <x-button href="{{ route('companies.index') }}">Découvrir les entreprises</x-button>
-
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="competences py-5">
+    <section class="feature-section">
         <div class="container">
-            <h2 class="mb-4 text-center">Trouver un job facilement avec Discorev</h2>
-            <p class="mb-5 text-center">
-                Notre plateforme vous aide à décrocher l'emploi qui correspond à votre profil,
-                avec des outils et un accompagnement dédié.
-            </p>
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-3">Trouvez votre job en toute simplicité</h2>
+                <p class="fs-5" style="color: var(--text-secondary);">Avec Discorev, tout devient plus clair.</p>
+            </div>
+
+            <div class="feature-block">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="feature-image-container">
+                            <div class="feature-image-bg blue"></div>
+                            <img src="{{ asset('img/following.jpg') }}" alt="Suivi des candidatures" class="feature-image">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="section-badge badge-blue">
+                            Transparence totale
+                        </div>
+                        <h3 class="display-6 fw-bold mb-4">Suivez votre candidature en temps réel</h3>
+                        <p class="fs-5 mb-4" style="color: var(--text-secondary); line-height: 1.6;">
+                            Ne restez plus dans le flou ! Postulez et suivez l'avancée de vos candidatures à chaque étape.
+                            Vous êtes informé dès qu'il y a du nouveau.
+                        </p>
+                        <a href="{{ route('job_offers.index') }}" class="btn-modern btn-primary-modern">
+                            Explorer les offres
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-block">
+                <div class="row align-items-center flex-lg-row-reverse">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="feature-image-container">
+                            <div class="feature-image-bg orange"></div>
+                            <img src="{{ asset('img/paperwork.jpg') }}" alt="Offres transparentes" class="feature-image">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="section-badge badge-orange">
+                            Informations complètes
+                        </div>
+                        <h3 class="display-6 fw-bold mb-4">Des offres d'emploi sans surprise</h3>
+                        <p class="fs-5 mb-4" style="color: var(--text-secondary); line-height: 1.6;">
+                            Fini les annonces vagues ! Salaire, conditions de travail, avantages…
+                            Vous avez toutes les infos pour choisir en toute confiance.
+                        </p>
+                        <a href="{{ route('job_offers.index') }}" class="btn-modern btn-secondary-modern">
+                            Chercher un job
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-block">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="feature-image-container">
+                            <div class="feature-image-bg teal"></div>
+                            <img src="{{ asset('img/team.jpg') }}" alt="Recruteurs transparents" class="feature-image">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="section-badge badge-teal">
+                            Accompagnement humain
+                        </div>
+                        <h3 class="display-6 fw-bold mb-4">Des recruteurs à votre écoute</h3>
+                        <p class="fs-5 mb-4" style="color: var(--text-secondary); line-height: 1.6;">
+                            Découvrez des entreprises qui recrutent activement et qui partagent leurs valeurs,
+                            leurs processus et leurs opportunités en toute transparence.
+                        </p>
+                        <a href="{{ route('companies.index') }}" class="btn-modern btn-primary-modern">
+                            Découvrir les entreprises
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold mb-4">Trouver un job facilement avec Discorev</h2>
+                <p class="fs-5" style="color: var(--text-secondary);">
+                    Notre plateforme vous aide à décrocher l'emploi qui correspond à votre profil,
+                    avec des outils et un accompagnement dédié.
+                </p>
+            </div>
 
             <div class="row g-4">
-                <!-- Offres ciblées -->
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
-                                 style="background-color: var(--orangish); color: white;">
-                                <span class="material-symbols-outlined text-white">search</span>
-                            </div>
-                            <h3 class="mb-0 text-break">Offres ciblées</h3>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-orange">
+                            <span class="material-symbols-outlined text-white fs-2">search</span>
                         </div>
-                        <p class="mb-0 text-break">
-                            Des opportunités adaptées à votre expérience et votre localisation.
-                        </p>
+                        <h3 class="fs-4 fw-bold mb-3">Offres ciblées</h3>
+                        <p style="color: var(--text-secondary);">Des opportunités adaptées à votre expérience et votre localisation.</p>
                     </div>
                 </div>
 
-                <!-- Candidature rapide -->
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
-                                 style="background-color: var(--aquamarine); color: white;">
-                                <span class="material-symbols-outlined text-white">bolt</span>
-                            </div>
-                            <h3 class="mb-0 text-break">Candidature rapide</h3>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-teal">
+                            <span class="material-symbols-outlined text-white fs-2">bolt</span>
                         </div>
-                        <p class="mb-0 text-break">
-                            Postulez en un clic, avec ou sans CV.
-                        </p>
+                        <h3 class="fs-4 fw-bold mb-3">Candidature rapide</h3>
+                        <p style="color: var(--text-secondary);">Postulez en un clic, avec ou sans CV.</p>
                     </div>
                 </div>
 
-                <!-- Employeurs fiables -->
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
-                                 style="background-color: var(--indigo); color: white;">
-                                <span class="material-symbols-outlined text-white">verified</span>
-                            </div>
-                            <h3 class="mb-0 text-break">Employeurs fiables</h3>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-blue">
+                            <span class="material-symbols-outlined text-white fs-2">verified</span>
                         </div>
-                        <p class="mb-0 text-break">
-                            Des entreprises engagées et vérifiées dans le secteur social.
-                        </p>
+                        <h3 class="fs-4 fw-bold mb-3">Employeurs fiables</h3>
+                        <p style="color: var(--text-secondary);">Des entreprises engagées et vérifiées dans le secteur social.</p>
                     </div>
                 </div>
 
-                <!-- Communauté active -->
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="feature text-center text-sm-start h-100 p-3 overflow-hidden">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start align-items-center mb-3">
-                            <div class="icon-circle d-flex justify-content-center align-items-center me-0 me-sm-3 mb-2 mb-sm-0"
-                                 style="background-color: var(--larch-bolete); color: white;">
-                                <span class="material-symbols-outlined text-white">groups</span>
-                            </div>
-                            <h3 class="mb-0 text-break">Communauté active</h3>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-amber">
+                            <span class="material-symbols-outlined text-white fs-2">groups</span>
                         </div>
-                        <p class="mb-0 text-break">
-                            Échangez avec des professionnels du secteur et partagez votre expérience.
-                        </p>
+                        <h3 class="fs-4 fw-bold mb-3">Communauté active</h3>
+                        <p style="color: var(--text-secondary);">Échangez avec des professionnels du secteur et partagez votre expérience.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-
-
-    <section class="download-app py-5">
+    <section class="app-section">
         <div class="container">
             <div class="row align-items-center">
-                <!-- Image mockup -->
-                <div class="col-12 col-lg-6 text-center mb-4 mb-lg-0">
-                    <img class="img-fluid app-mockup" src="{{ asset('img/mockup-app.png') }}"
-                        alt="Apercu de l'app Discorev">
+                <!-- Mockup -->
+                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                    <div class="app-mockup-container text-center">
+                        <img src="{{ asset('img/mockup-app.png') }}" alt="Aperçu de l'app Discorev" class="app-mockup img-fluid rounded">
+                    </div>
                 </div>
 
-                <!-- Text and buttons -->
-                <div class="col-12 col-lg-6 app-infos text-center text-lg-start">
-                    <h1 class="mb-3">Votre carrière, toujours à portée de main</h1>
-                    <p class="mb-4">Accédez aux meilleures offres d'emploi où que vous soyez et postulez en un clic.</p>
-                    <div class="app-buttons d-flex justify-content-center justify-content-lg-start gap-3 flex-wrap">
-                        <a href="#" class="cta-button-transparent d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined text-white">android</span> Google Play
-                        </a>
-                        <a href="#" class="cta-button-transparent d-flex align-items-center gap-2">
-                            <i class="fa-brands fa-app-store-ios"></i> App Store
-                        </a>
+                <div class="col-12 col-lg-6 text-center text-lg-start">
+                    <div class="section-badge badge-teal mb-3">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">smartphone</span>
+                        Application mobile - En cours de développement !
                     </div>
+                    <h2 class="display-4 fw-bold mb-4">Votre carrière, toujours à portée de main</h2>
+                    <p class="fs-5 mb-5" style="line-height: 1.6; color: var(--text-secondary);">
+                        Accédez aux meilleures offres d'emploi où que vous soyez
+                        et postulez en un clic.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 @endsection
+
+<style>
+    :root {
+        --gradient-primary: linear-gradient(135deg, #022C30, #2E6B73);
+        --gradient-secondary: linear-gradient(135deg, #E17333, #FF8C50);
+        --gradient-tertiary: linear-gradient(135deg, #B8D4E3, #7A9BB8);
+        --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.12);
+        --aquamarine: #06B6D4;
+        --orangish: #F97316;
+        --indigo: #1E3A8A;
+        --text-primary: #1E293B;
+        --text-secondary: #64748B;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-primary);
+        line-height: 1.7;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .hero-modern {
+        background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 50%, #EFF6FF 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 5rem 0;
+    }
+
+    .gradient-text {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-image-container {
+        position: relative;
+        max-width: 80%;
+        margin: 0 auto;
+    }
+
+    .hero-image-bg {
+        position: absolute;
+        inset: 0;
+        background: var(--gradient-primary);
+        border-radius: 1.5rem;
+        transform: rotate(4deg);
+        z-index: 1;
+    }
+
+    .hero-image-wrapper {
+        position: relative;
+        background: white;
+        border-radius: 1.5rem;
+        padding: 10px;
+        box-shadow: var(--shadow-hover);
+        z-index: 2;
+    }
+
+    .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-soft);
+        z-index: 3;
+    }
+
+    .floating-element-1 {
+        top: -1.25rem;
+        right: -1.25rem;
+        width: 5.5rem;
+        height: 5.5rem;
+        background: var(--gradient-tertiary);
+    }
+
+    .floating-element-2 {
+        bottom: -1.25rem;
+        left: -1.25rem;
+        width: 4.5rem;
+        height: 4.5rem;
+        background: var(--gradient-secondary);
+    }
+
+    .search-form-modern {
+        display: flex;
+        flex-wrap: wrap; /* reste responsive */
+        gap: 0.75rem;
+    }
+
+    .search-input-modern,
+    .btn-primary-modern {
+        height: 54px; /* 🔥 même hauteur pour tout */
+        border-radius: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .search-input-modern:focus {
+        background: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        outline: none;
+    }
+
+    .btn-modern {
+        padding: 0.85rem 1.75rem;
+        border-radius: 0.85rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    .btn-primary-modern {
+        background: var(--gradient-secondary);
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+        background: linear-gradient(135deg, #FF8C50, #E17333);
+    }
+
+    .btn-outline-modern {
+        background: white;
+        color: var(--text-primary);
+        border: 2px solid #E5E7EB;
+    }
+
+    .btn-outline-modern:hover {
+        border-color: var(--aquamarine);
+        color: var(--aquamarine);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-outline-modern-secondary {
+        background: white;
+        color: var(--text-primary);
+        border: 2px solid #E5E7EB;
+    }
+
+    .btn-outline-modern-secondary:hover {
+        border-color: var(--orangish);
+        color: var(--orangish);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-secondary-modern {
+        background: var(--gradient-secondary);
+    }
+
+    .btn-secondary-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+        background: linear-gradient(135deg, #FF8C50, #E17333);
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        backdrop-filter: blur(4px);
+    }
+
+    .badge-orange {
+        background: rgba(249, 115, 22, 0.15);
+        color: var(--orangish);
+        border: 1px solid rgba(249, 115, 22, 0.25);
+    }
+
+    .badge-blue {
+        background: rgba(59, 130, 246, 0.15);
+        color: #2563EB;
+        border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .badge-teal {
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--aquamarine);
+        border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .company-card-modern {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        text-decoration: none;
+        display: block;
+    }
+
+    .company-card-modern:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .company-card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .company-card-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .company-card-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--indigo);
+        margin-bottom: 0.75rem;
+    }
+
+    .company-card-desc {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        flex-grow: 1;
+        font-size: 0.95rem;
+    }
+
+    .company-card-offers {
+        color: var(--orangish);
+        font-weight: 600;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    .company-card-arrow {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--aquamarine);
+        transition: transform 0.3s ease;
+    }
+
+    .company-card-modern:hover .company-card-arrow {
+        transform: translateX(6px);
+    }
+
+    .feature-section {
+        background: #F9FAFB;
+        padding: 5rem 0;
+    }
+
+    .feature-block {
+        margin-bottom: 5rem;
+    }
+
+    .feature-image-container {
+        position: relative;
+    }
+
+    .feature-image-bg {
+        position: absolute;
+        inset: 0;
+        border-radius: 1.5rem;
+        transform: rotate(-3deg);
+        z-index: 1;
+    }
+
+    .feature-image-bg.blue {
+        background: var(--gradient-primary);
+    }
+
+    .feature-image-bg.orange {
+        background: var(--gradient-secondary);
+        transform: rotate(3deg);
+    }
+
+    .feature-image-bg.teal {
+        background: var(--gradient-tertiary);
+        transform: rotate(-2deg);
+    }
+
+    .feature-image {
+        position: relative;
+        width: 100%;
+        border-radius: 1.5rem;
+        box-shadow: var(--shadow-hover);
+        z-index: 2;
+    }
+
+    .benefit-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s ease;
+        height: 100%;
+        text-align: center;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .benefit-icon {
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .benefit-card:hover .benefit-icon {
+        transform: scale(1.15);
+    }
+
+    .icon-orange { background: var(--gradient-secondary); }
+    .icon-teal { background: var(--gradient-tertiary); }
+    .icon-blue { background: var(--gradient-primary); }
+    .icon-amber { background: linear-gradient(135deg, #F59E0B, #EA580C); }
+
+    .app-section {
+        background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 50%, #E0F2FE 100%) !important;
+        color: var(--text-primary);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
+    .app-section h2,
+    .app-section p,
+    .app-section .section-badge {
+        color: var(--text-primary);
+    }
+
+    .app-mockup-container {
+        position: relative;
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .app-mockup {
+        position: relative;
+        width: 100%;
+        z-index: 2;
+    }
+
+    .btn-app svg {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-app:hover svg {
+        transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+        .hero-modern {
+            padding: 3.5rem 0;
+        }
+
+        .hero-image-container {
+            max-width: 90%;
+        }
+
+        .floating-element-1 {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .floating-element-2 {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .search-bar-modern {
+            padding: 10px;
+        }
+
+        .search-input-modern {
+            padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-modern {
+            padding: 0.7rem 1.3rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-section {
+            padding: 3.5rem 0;
+        }
+
+        .feature-block {
+            margin-bottom: 3.5rem;
+        }
+
+        .app-section {
+            padding: 4rem 0;
+        }
+
+        .app-mockup-container {
+            max-width: 280px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .app-section {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
