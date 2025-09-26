@@ -21,7 +21,6 @@
                 </div>
                 <div class="offcanvas-body">
                     <ul class="navbar-nav mb-3">
-                        <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('home') }}">Accueil</a></li>
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('job_offers.index') }}">Offres</a></li>
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('companies.index') }}">Entreprises</a></li>
                         <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('recruiters.tarifs') }}">Recruteurs</a></li>
@@ -39,10 +38,9 @@
             <!-- Liens desktop -->
             <div class="d-none d-lg-flex align-items-center ms-auto gap-3">
                 <ul class="navbar-nav d-flex flex-row gap-3 mb-0">
-                    <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('home') }}">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('job_offers.index') }}">Offres</a></li>
-                    <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('companies.index') }}">Entreprises</a></li>
-                    <li class="nav-item"><a class="nav-link text-white fw-medium" href="{{ route('recruiters.tarifs') }}">Recruteurs</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-regular" href="{{ route('job_offers.index') }}">Offres d'emploi</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-regular" href="{{ route('companies.index') }}">Les entreprises</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fw-regular" href="{{ route('recruiters.tarifs') }}">Espace recruteur</a></li>
                 </ul>
 
                 @if($isAuthenticated && isset($user))

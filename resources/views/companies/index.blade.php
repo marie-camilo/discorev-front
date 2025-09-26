@@ -3,9 +3,9 @@
 @section('title', 'Entreprises | Discorev')
 
 @section('content')
-    <div class="container my-5">
-        <h1 class="fw-bold mb-4">Entreprises</h1>
-        <form id="recruiter-filters" method="GET" action="{{ route('companies.index') }}" class="mb-5">
+    <div class="container py-4">
+        <h1 class="fw-bold mb-4 gradient-text">Entreprises</h1>
+        <form id="recruiter-filters" method="GET" action="{{ route('companies.index') }}" class="mb-4">
             <div class="row align-items-end gy-3">
                 <div class="col-md-4">
                     <label for="location" class="form-label">Localisation</label>
@@ -36,14 +36,14 @@
                 </div>
 
                 <div class="col-12 text-end mt-3">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-filter me-2"></i>Filtrer
                     </button>
                 </div>
             </div>
         </form>
 
-        <div class="row gy-4">
+        <div class="row gy-4 min-vh-100">
             @forelse ($recruiters as $recruiter)
                 <div class="col-12 col-md-6 col-lg-4">
                     <a class="text-decoration-none" href="{{ route('companies.show', $recruiter->companyName) }}"

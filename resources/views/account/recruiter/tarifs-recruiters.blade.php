@@ -15,20 +15,6 @@
             }
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, var(--indigo), var(--aquamarine));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .gradient-text-orange {
-            background: linear-gradient(135deg, var(--orangish), var(--larch-bolete));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
         .feature-badge {
             background: rgba(249, 137, 72, 0.15);
             color: var(--orangish);

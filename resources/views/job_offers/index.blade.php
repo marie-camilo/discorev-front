@@ -3,20 +3,21 @@
 @section('title', 'Offres d\'emploi')
 
 @section('content')
-    <div class="container py-4">
-        <h1 class="mb-4">Offres d'emploi</h1>
+    <div class="container py-4 pt-5">
+        <h1 class="fw-bold mb-4 gradient-text">Offres d'emploi</h1>
 
+        <!-- Barre de recherche + filtres -->
         <!-- Barre de recherche + filtres -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <form id="filter-form" class="row g-3">
+                <form id="filter-form" class="row g-3 align-items-end">
                     <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <span class="material-symbols-outlined">search</span>
-                            </span>
+                    <span class="input-group-text">
+                        <span class="material-symbols-outlined">search</span>
+                    </span>
                             <input type="text" name="q" id="search" class="form-control"
-                                placeholder="Titre ou description">
+                                   placeholder="Titre ou description">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -35,9 +36,9 @@
                             <option value="RH">Ressources humaines</option>
                         </select>
                     </div>
-                    <div class="col-md-2 text-end">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <span class="material-symbols-outlined">filter_alt</span> Filtrer
+                    <div class="col-md-2 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-filter me-2"></i>Filtrer
                         </button>
                     </div>
                 </form>
@@ -51,9 +52,7 @@
         </div>
 
         <!-- Liste des offres -->
-        <div id="offers-list" class="row g-3">
-            <!-- Offres insérées ici par JS -->
-        </div>
+        <div id="offers-list" class="row g-3 min-vh-100"></div>
 
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">

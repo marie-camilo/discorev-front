@@ -62,7 +62,7 @@
         </div>
     </section>
 
-    <section class="py-5" style="background: #F9FAFB;">
+    <section class="py-5">
         <div class="container">
             <div class="text-center mb-5">
                 <div class="section-badge badge-orange">
@@ -76,7 +76,7 @@
 
             <div class="row g-4 mb-5">
                 <div class="col-sm-6 col-lg-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'le-petit-jean']) }}" class="company-card-modern">
+                    <div class="company-card-modern">
                         <img src="{{ asset('img/petit-jean.jpg') }}" alt="Le Petit Jean" class="company-card-image">
                         <div class="company-card-body">
                             <h3 class="company-card-title">Le Petit Jean</h3>
@@ -86,11 +86,11 @@
                         <div class="company-card-arrow">
                             <span class="material-symbols-outlined text-white">arrow_forward</span>
                         </div>
-                    </a>
+                    </div>
                 </div>
 
                 <div class="col-sm-6 col-lg-3">
-                    <a href="{{ route('companies.show', ['identifier' => 'altidom']) }}" class="company-card-modern">
+                    <div class="company-card-modern">
                         <img src="{{ asset('img/altidom/altidom.webp') }}" alt="Altidom" class="company-card-image">
                         <div class="company-card-body">
                             <h3 class="company-card-title">Altidom</h3>
@@ -100,7 +100,7 @@
                         <div class="company-card-arrow">
                             <span class="material-symbols-outlined text-white">arrow_forward</span>
                         </div>
-                    </a>
+                    </div>
                 </div>
 
                 <div class="col-sm-6 col-lg-3">
@@ -302,42 +302,11 @@
 @endsection
 
 <style>
-    :root {
-        --gradient-primary: linear-gradient(135deg, #022C30, #2E6B73);
-        --gradient-secondary: linear-gradient(135deg, #E17333, #FF8C50);
-        --gradient-tertiary: linear-gradient(135deg, #B8D4E3, #7A9BB8);
-        --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.08);
-        --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.12);
-        --aquamarine: #06B6D4;
-        --orangish: #F97316;
-        --indigo: #1E3A8A;
-        --text-primary: #1E293B;
-        --text-secondary: #64748B;
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        color: var(--text-primary);
-        line-height: 1.7;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        font-weight: 700;
-        color: var(--text-primary);
-    }
-
     .hero-modern {
         background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 50%, #EFF6FF 100%);
         position: relative;
         overflow: hidden;
         padding: 5rem 0;
-    }
-
-    .gradient-text {
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
     }
 
     .hero-image-container {
@@ -392,13 +361,13 @@
 
     .search-form-modern {
         display: flex;
-        flex-wrap: wrap; /* reste responsive */
+        flex-wrap: wrap;
         gap: 0.75rem;
     }
 
     .search-input-modern,
     .btn-primary-modern {
-        height: 54px; /* 🔥 même hauteur pour tout */
+        height: 54px;
         border-radius: 0.75rem;
         font-size: 1rem;
     }
