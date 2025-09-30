@@ -104,15 +104,22 @@ class ProfileController extends Controller
             'phoneNumber' => 'nullable|string',
         ]);
 
+        // Envoyer la mise à jour à l'API
         $response = $this->api->put('users/' . $id, $validated);
 
-        if (is_array($response) && isset($response['data'])) {
-            $userData = $response['data'];
+        if ($response->successful()) {
+            $userData = $response->json()['data'] ?? null;
+            if (!$userData) {
+                // Cas où l'API ne renvoie pas la data correctement
+                return back()->with('warning', 'La mise à jour a été effectuée mais les données n’ont pas été récupérées.');
+            }
             Session::put('user', $userData);
+
             return back()->with('success', 'Informations mises à jour avec succès.');
         }
 
-        $errorMessage = $response['message'] ?? 'Une erreur est survenue. Veuillez réessayer plus tard.';
+        // Gestion des erreurs
+        $errorMessage = $response->json()['message'] ?? 'Une erreur est survenue. Veuillez réessayer plus tard.';
         return back()->with('error', $errorMessage);
     }
 }

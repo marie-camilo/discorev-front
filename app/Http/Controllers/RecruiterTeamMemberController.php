@@ -30,13 +30,11 @@ class RecruiterTeamMemberController extends Controller
          * ----------------------------------------------------------------*/
         $existingResponse = $this->api->get("recruiters/{$recruiterId}/team");
 
-        // Vérifie que la réponse contient bien des données
-        if (! is_array($existingResponse)) {
+        if (! $existingResponse->successful()) {
             return back()->withErrors('Impossible de récupérer les membres existants.');
         }
 
-        $existing = collect($existingResponse)->keyBy('id');
-
+        $existing      = collect($existingResponse->json())->keyBy('id');
 
         /** ----------------------------------------------------------------
          * 3. Calcul des différences

@@ -39,23 +39,19 @@ class MediaController extends Controller
 
         $files = $request->file('file');
 
-        // 📌 Plusieurs fichiers
+        // S’il y a plusieurs fichiers
         if (is_array($files)) {
             $errors = [];
             foreach ($files as $file) {
-                if (
-                    !$file->isValid()
-                    || !in_array($file->extension(), ['jpeg', 'png', 'jpg', 'gif', 'webp', 'mp4'])
-                    || $file->getSize() > 20480 * 1024
-                ) {
+                // Validation individuelle
+                if (!$file->isValid() || !in_array($file->extension(), ['jpeg', 'png', 'jpg', 'gif', 'webp', 'mp4']) || $file->getSize() > 20480 * 1024) {
                     $errors[] = $file->getClientOriginalName();
                     continue;
                 }
 
                 $response = $this->api->uploadMedia($data, $file);
 
-                // Vérifie si on a bien eu une réponse exploitable
-                if (empty($response)) {
+                if (!$response->successful()) {
                     $errors[] = $file->getClientOriginalName();
                 }
             }
@@ -67,7 +63,7 @@ class MediaController extends Controller
             return redirect()->back()->with('success', 'Tous les fichiers ont été envoyés avec succès.');
         }
 
-        // 📌 Cas d’un seul fichier
+        // Cas d’un seul fichier
         if ($files instanceof \Illuminate\Http\UploadedFile) {
             if (!$files->isValid()) {
                 return redirect()->back()->with('error', 'Fichier invalide.');
@@ -75,11 +71,9 @@ class MediaController extends Controller
 
             $response = $this->api->uploadMedia($data, $files);
 
-            if (!empty($response)) {
-                // ✅ Ici on utilise ton service `get()`, qui renvoie déjà du JSON décodé ou un tableau
-                $user = $this->api->get('users/' . $data['targetId']);
+            if ($response->successful()) {
+                $user = $this->api->get('users/' . $data['targetId'])->json()['data'];
                 Session::put('user', $user);
-
                 return redirect()->back()->with('success', 'Fichier envoyé avec succès.');
             }
 
@@ -89,21 +83,17 @@ class MediaController extends Controller
         return redirect()->back()->with('error', 'Aucun fichier envoyé.');
     }
 
-
     public function delete($id)
     {
         try {
             $response = $this->api->delete('medias/' . $id);
-
-            // Ton service delete() renvoie directement l’array JSON décodé,
-            // donc pas besoin de ->successful() ou ->body().
-            if (!empty($response) && (isset($response['success']) && $response['success'] === true)) {
+            if ($response->successful()) {
                 return response()->json(['success' => true]);
             }
 
             return response()->json([
                 'error' => 'Échec de la suppression',
-                'details' => $response
+                'details' => $response->body()
             ], 500);
         } catch (\Throwable $e) {
             return response()->json([
