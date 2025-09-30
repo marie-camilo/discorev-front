@@ -63,7 +63,7 @@
                                     Candidat
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('applications.index') }}">Mes
+                                    <li><a class="dropdown-item" href="{{ route('applications.candidate') }}">Mes
                                             candidatures</a></li>
                                 </ul>
                             </li>
