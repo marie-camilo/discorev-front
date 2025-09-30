@@ -52,16 +52,16 @@ class AuthController extends Controller
             'newsletter' => $request->newsletter,
         ];
 
-        // ✅ Appel API
+        // Envoi à l'API
         $response = $this->api->post('auth/register', $data);
 
-        if (empty($response) || !$response) {
-            $errorMessage = $response['message'] ?? 'Une erreur est survenue lors de l’inscription.';
+        if (!$response->successful()) {
+            $errorMessage = $response->json('message') ?? 'Une erreur est survenue lors de l’inscription.';
             $translated = $translator->translate($errorMessage);
             return back()->withErrors(['auth.register' => $translated])->withInput();
         }
 
-        // ✅ Connexion auto
+        // Une fois que l'inscription a réussi, on lance la requête login automatique
         $loginData = [
             'email' => $request->registerEmail,
             'password' => $request->registerPassword,
@@ -69,17 +69,18 @@ class AuthController extends Controller
 
         $loginResponse = $this->api->post('auth/login', $loginData);
 
-        if (!empty($loginResponse) && $loginResponse) {
-            $data = $loginResponse;
+        if ($loginResponse->successful()) {
+            $data = $loginResponse->json()['data'];
+            // Stocker tokens en session
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
-            Session::put('token_exp', time() + 3600);
+            Session::put('token_exp', time() + 3600); // token 1h
             return redirect()->route('home')->with('success', 'Création réussie. Bienvenue chez Discorev !');
         }
 
+        // Si la connexion automatique échoue, on peut afficher un message d’erreur friendly
         return back()->withErrors(['warning' => 'Inscription réussie, mais la connexion automatique a échoué. Veuillez vous connecter manuellement.']);
     }
-
 
     public function login(Request $request)
     {
@@ -94,17 +95,22 @@ class AuthController extends Controller
             'remember' => $request->boolean('remember')
         ]);
 
-        if (!empty($response) && $response) {
-            $data = $response;
+        if ($response->successful()) {
+            $data = $response->json()['data'];
+
+            // Stocker tokens en session
             Session::put('accessToken', $data['token']);
             Session::put('user', $data['user']);
-            Session::put('token_exp', time() + 3600);
+            Session::put('token_exp', time() + 3600); // token 1h
 
+            // ✅ refreshToken : inutile si cookie httpOnly est déjà envoyé
             if (!empty($data['refreshToken'])) {
                 Session::put('refreshToken', $data['refreshToken']);
             }
+
             return redirect()->route('home')->with('success', 'Connexion réussie !');
         }
+
         return back()->withErrors(['email' => 'Identifiants incorrects.']);
     }
 

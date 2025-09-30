@@ -82,7 +82,7 @@ class DiscorevApiService
                 ->acceptJson();
             $http = $http->asJson();
             $response = $http->post("{$this->baseUrl}/{$endpoint}", $data);
-            return $this->mapIfPossible($endpoint, $response);
+            return $response;
         });
     }
 
@@ -94,7 +94,7 @@ class DiscorevApiService
             $http = $http->asJson();
             $response = $http->put("{$this->baseUrl}/{$endpoint}", $data);
 
-            return $this->mapIfPossible($endpoint, $response);
+            return $response;
         });
     }
 
@@ -114,7 +114,7 @@ class DiscorevApiService
             $http = $http->asJson();
             $response = $http->patch("{$this->baseUrl}/{$endpoint}", $data);
 
-            return $this->mapIfPossible($endpoint, $response);
+            return $response;
         });
     }
 
@@ -126,74 +126,74 @@ class DiscorevApiService
                 ->attach('file', file_get_contents($file), $file->getClientOriginalName())
                 ->post("{$this->baseUrl}/upload/media", $data);
 
-            return $this->mapIfPossible('media', $response);
+            return $response;
         });
     }
 
-    /**
-     * Devine le modèle et mappe si possible
-     */
-    protected function mapIfPossible(string $endpoint, $response): array|\Illuminate\Support\Collection
-    {
-        // Si c'est un objet Response, on récupère le JSON
-        if ($response instanceof \Illuminate\Http\Client\Response) {
-            $response = $response->json();
-        }
+    // /**
+    //  * Devine le modèle et mappe si possible
+    //  */
+    // protected function mapIfPossible(string $endpoint, $response): array|\Illuminate\Support\Collection
+    // {
+    //     // Si c'est un objet Response, on récupère le JSON
+    //     if ($response instanceof \Illuminate\Http\Client\Response) {
+    //         $response = $response->json();
+    //     }
 
-        // Si la réponse contient une clé "data", on ne garde que ça
-        if (isset($response['data']) && is_array($response['data'])) {
-            $response = $response['data'];
-        }
+    //     // Si la réponse contient une clé "data", on ne garde que ça
+    //     if (isset($response['data']) && is_array($response['data'])) {
+    //         $response = $response['data'];
+    //     }
 
-        // On récupère le nom de modèle attendu
-        $modelClass = $this->guessModelClass($endpoint);
+    //     // On récupère le nom de modèle attendu
+    //     $modelClass = $this->guessModelClass($endpoint);
 
-        // Si c’est un tableau associatif (un seul élément)
-        if (class_exists($modelClass) && $this->isAssoc($response)) {
-            return new $modelClass($response);
-        }
+    //     // Si c’est un tableau associatif (un seul élément)
+    //     if (class_exists($modelClass) && $this->isAssoc($response)) {
+    //         return new $modelClass($response);
+    //     }
 
-        // Si c’est une liste (plusieurs éléments)
-        if (class_exists($modelClass)) {
-            return collect($response)->map(fn($item) => new $modelClass($item));
-        }
+    //     // Si c’est une liste (plusieurs éléments)
+    //     if (class_exists($modelClass)) {
+    //         return collect($response)->map(fn($item) => new $modelClass($item));
+    //     }
 
-        // Sinon on renvoie une collection brute
-        return collect($response);
-    }
+    //     // Sinon on renvoie une collection brute
+    //     return collect($response);
+    // }
 
-    /**
-     * Vérifie si un tableau est associatif (un seul objet)
-     */
-    protected function isAssoc(array $arr): bool
-    {
-        return array_keys($arr) !== range(0, count($arr) - 1);
-    }
+    // /**
+    //  * Vérifie si un tableau est associatif (un seul objet)
+    //  */
+    // protected function isAssoc(array $arr): bool
+    // {
+    //     return array_keys($arr) !== range(0, count($arr) - 1);
+    // }
 
-    /**
-     * Devine la classe du modèle à partir de l’endpoint
-     */
-    protected function guessModelClass(string $endpoint): string
-    {
-        $baseName = explode('/', $endpoint);
-        $baseName = end($baseName);
+    // /**
+    //  * Devine la classe du modèle à partir de l’endpoint
+    //  */
+    // protected function guessModelClass(string $endpoint): string
+    // {
+    //     $baseName = explode('/', $endpoint);
+    //     $baseName = end($baseName);
 
-        $modelName = \Illuminate\Support\Str::studly(\Illuminate\Support\Str::singular($baseName));
+    //     $modelName = \Illuminate\Support\Str::studly(\Illuminate\Support\Str::singular($baseName));
 
-        return "App\\Models\\Api\\{$modelName}";
-    }
+    //     return "App\\Models\\Api\\{$modelName}";
+    // }
 
-    protected function mapToModel(string $modelClass, array $attributes): Model
-    {
-        $model = new $modelClass;
-        $model->forceFill($attributes);
-        return $model;
-    }
+    // protected function mapToModel(string $modelClass, array $attributes): Model
+    // {
+    //     $model = new $modelClass;
+    //     $model->forceFill($attributes);
+    //     return $model;
+    // }
 
-    protected function mapToCollection(string $modelClass, array $items): Collection
-    {
-        return collect($items)->map(fn($item) => $this->mapToModel($modelClass, $item));
-    }
+    // protected function mapToCollection(string $modelClass, array $items): Collection
+    // {
+    //     return collect($items)->map(fn($item) => $this->mapToModel($modelClass, $item));
+    // }
 
     protected function withAutoRefresh(callable $requestCallback): Response|Model|Collection|array
     {
