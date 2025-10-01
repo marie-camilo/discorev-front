@@ -23,17 +23,20 @@ class RecruiterController extends Controller
         $recruitersData = $this->api->get('recruiters');
         $jobsData = $this->api->get('job_offers');
 
-        // Convertir les données API en modèles Eloquent avec leurs relations
+        // Récupérer les filtres depuis la requête
+        $locationFilter = request('location');
+        $sectorFilter = request('sector');
+        $teamSizeFilter = request('team_size');
+
+        // Convertir en modèles Eloquent-like
         $recruiters = collect($recruitersData)->map(function ($recruiterData) {
-            $recruiter = Recruiter::fromApiData($recruiterData);
-            return $recruiter;
+            return Recruiter::fromApiData($recruiterData);
         });
 
         // Grouper les offres par recruiter_id
         $jobsByRecruiter = collect($jobsData)->groupBy('recruiterId');
 
-        // Injecter les jobs dans chaque recruiter
-        $recruiters->each(function ($recruiter) use ($jobsByRecruiter) {
+        $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
 
             // Convertir les jobs en modèles JobOffer
@@ -41,12 +44,64 @@ class RecruiterController extends Controller
                 return JobOffer::fromApiData($jobData);
             });
 
+            // Gestion médias
+            $medias = collect($recruiter->medias ?? []);
+            $bannerMedia = $medias->firstWhere('type', 'company_banner');
+            $logoMedia = $medias->firstWhere('type', 'company_logo');
+
+            // Attacher infos dynamiques
             $recruiter->setRelation('jobOffers', $jobs);
             $recruiter->offersCount = $jobs->count();
+            $recruiter->banner = $bannerMedia['filePath'] ?? null;
+            $recruiter->logo = $logoMedia['filePath'] ?? null;
+
+            // Calculer un score de complétion
+            $fields = [
+                $recruiter->companyName,
+                $recruiter->siret,
+                $recruiter->companyDescription,
+                $recruiter->location,
+                $recruiter->website,
+                $recruiter->sector,
+                $recruiter->teamSize,
+                $recruiter->contactEmail,
+                $recruiter->contactPhone,
+            ];
+
+            $recruiter->completionScore = collect($fields)
+                ->filter(fn($field) => !empty($field))
+                ->count();
+
+            return $recruiter;
         });
+
+        // 🔍 Appliquer les filtres
+        $recruiters = $recruiters->filter(function ($recruiter) use ($locationFilter, $sectorFilter, $teamSizeFilter) {
+            $matches = true;
+
+            if ($locationFilter) {
+                $matches = $matches && stripos($recruiter->location, $locationFilter) !== false;
+            }
+            if ($sectorFilter) {
+                $matches = $matches && $recruiter->sector === $sectorFilter;
+            }
+            if ($teamSizeFilter) {
+                $matches = $matches && $recruiter->teamSize === $teamSizeFilter;
+            }
+
+            return $matches;
+        });
+
+        // 🚀 Trier : d’abord par score de complétion (descendant), puis par nom
+        $recruiters = $recruiters
+            ->filter(fn($r) => $r->completionScore > 0) // éliminer ceux sans infos
+            ->sortByDesc('completionScore')
+            ->values();
 
         return view('companies.index', compact('recruiters'));
     }
+
+
 
     /**
      * Met à jour les informations du recruiter via l'API.

@@ -45,8 +45,6 @@
                             href="{{ route('job_offers.index') }}">Offres</a></li>
                     <li class="nav-item"><a class="nav-link text-white fw-regular"
                             href="{{ route('companies.index') }}">Entreprises</a></li>
-                    <li class="nav-item"><a class="text-white fw-regular btn btn-warning"
-                            href="{{ route('recruiters.tarifs') }}">Premium</a></li>
 
                     @if ($isAuthenticated && isset($user))
                         @php
@@ -105,6 +103,7 @@
                         @endif
                     @endif
                 </ul>
+                <a class="text-white fw-regular btn btn-warning" href="{{ route('recruiters.tarifs') }}">Premium</a>
 
                 @if ($isAuthenticated && isset($user))
                     @php

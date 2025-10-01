@@ -46,15 +46,17 @@
         <div class="row gy-4 min-vh-100">
             @forelse ($recruiters as $recruiter)
                 <div class="col-12 col-md-6 col-lg-4">
-                    <a class="text-decoration-none" href="{{ route('companies.show', $recruiter->companyName) }}"
+                    <a class="text-decoration-none"
+                        href="{{ route('companies.show', $recruiter->companyName ? $recruiter->companyName : $recruiter->id) }}"
                         alt="Vers la page entreprise de {{ $recruiter->companyName }}"
                         title="Vers la page entreprise de {{ $recruiter->companyName }}">
                         <div class="card shadow border-0 h-100 recruiter-card d-flex flex-column align-items-center text-center"
                             style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
                             <div class="position-relative mb-3">
-                                <img class="card-img-top"
-                                    src="{{ env('DISCOREV_API_URL') . '/' . $recruiter->banner->filePath }}"
-                                    alt="Bannière de {{ $recruiter->companyName }}" />
+                                @if ($recruiter->banner)
+                                    <img class="card-img-top" src="{{ env('DISCOREV_API_URL') . '/' . $recruiter->banner }}"
+                                        alt="Bannière de {{ $recruiter->companyName }}" />
+                                @endif
                                 <span
                                     class="rounded-circle p-2 bg-white fs-5 position-absolute top-50 end-0 translate-middle-y">
                                     +{{ $recruiter->offersCount ?? 0 }}
@@ -63,7 +65,7 @@
 
                             @php
                                 $logoUrl = $recruiter->logo
-                                    ? env('DISCOREV_API_URL') . '/' . $recruiter->logo->filePath
+                                    ? env('DISCOREV_API_URL') . '/' . $recruiter->logo
                                     : asset('img/default-avatar.png');
                             @endphp
 
