@@ -10,16 +10,16 @@
                 <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                     <div class="section-badge badge-teal mb-3">
                         <span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
-                        L'emploi social réinventé
+                        L'emploi sanitaire, social et médico-social réinventé
                     </div>
 
                     <h1 class="display-3 fw-bold mb-4">
-                        L'emploi social,<br>
+                        L'emploi<br>
                         <span class="gradient-text">à portée de main.</span>
                     </h1>
 
                     <p class="fs-5 mb-4" style="color: var(--text-secondary); line-height: 1.6;">
-                        Construisez votre carrière dans le <span class="fw-bold" style="color: var(--aquamarine);">social</span>
+                        Construisez votre carrière dans le <span class="fw-bold" style="color: var(--aquamarine);">sanitaire, social et médico-social</span>
                         et accédez à des offres d'emploi <span class="fw-bold" style="color: var(--orangish);">proches</span>
                         de chez vous avec ou sans expérience.
                     </p>
@@ -275,30 +275,30 @@
         </div>
     </section>
 
-    <section class="app-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <!-- Mockup -->
-                <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                    <div class="app-mockup-container text-center">
-                        <img src="{{ asset('img/mockup-app.png') }}" alt="Aperçu de l'app Discorev" class="app-mockup img-fluid rounded">
-                    </div>
-                </div>
+{{--    <section class="app-section">--}}
+{{--        <div class="container">--}}
+{{--            <div class="row align-items-center">--}}
+{{--                <!-- Mockup -->--}}
+{{--                <div class="col-12 col-lg-6 mb-5 mb-lg-0">--}}
+{{--                    <div class="app-mockup-container text-center">--}}
+{{--                        <img src="{{ asset('img/mockup-app.png') }}" alt="Aperçu de l'app Discorev" class="app-mockup img-fluid rounded">--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                <div class="col-12 col-lg-6 text-center text-lg-start">
-                    <div class="section-badge badge-teal mb-3">
-                        <span class="material-symbols-outlined" style="font-size: 16px;">smartphone</span>
-                        Application mobile - En cours de développement !
-                    </div>
-                    <h2 class="display-4 fw-bold mb-4">Votre carrière, toujours à portée de main</h2>
-                    <p class="fs-5 mb-5" style="line-height: 1.6; color: var(--text-secondary);">
-                        Accédez aux meilleures offres d'emploi où que vous soyez
-                        et postulez en un clic.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+{{--                <div class="col-12 col-lg-6 text-center text-lg-start">--}}
+{{--                    <div class="section-badge badge-teal mb-3">--}}
+{{--                        <span class="material-symbols-outlined" style="font-size: 16px;">smartphone</span>--}}
+{{--                        Application mobile - En cours de développement !--}}
+{{--                    </div>--}}
+{{--                    <h2 class="display-4 fw-bold mb-4">Votre carrière, toujours à portée de main</h2>--}}
+{{--                    <p class="fs-5 mb-5" style="line-height: 1.6; color: var(--text-secondary);">--}}
+{{--                        Accédez aux meilleures offres d'emploi où que vous soyez--}}
+{{--                        et postulez en un clic.--}}
+{{--                    </p>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </section>--}}
 @endsection
 
 <style>
