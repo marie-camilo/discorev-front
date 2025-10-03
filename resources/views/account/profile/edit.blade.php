@@ -5,7 +5,8 @@
     <div class="container my-3">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h2>Modifier mon profil {{ $type === 'candidate' ? 'Candidat' : 'Recruteur' }}</h2>
+                <h2>Modifier mon profil</h2>
+                <small class="disabled">{{ $type }}</small>
             </div>
             <div class="card-body">
                 <div class="row">

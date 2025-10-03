@@ -25,9 +25,9 @@ class ProfileController extends Controller
 
     public function edit()
     {
-        $userAuth = Auth::user();
-        $user = $this->api->get('users/' . $userAuth->id);
-        $type = $userAuth->accountType;
+        $userAuth = Session::get('user');
+        $user = $this->api->get('users/' . $userAuth['id']);
+        $type = $userAuth['accountType'];
 
         // Définition des onglets par type de compte
         $tabs = match ($type) {
@@ -65,10 +65,8 @@ class ProfileController extends Controller
         }
 
         // Appel API pour récupérer les données
-        $response = $this->api->get($endpoint . $userAuth->id);
-        $json = $response->json();
-        $data = $json['data'];
-        if (!$response->successful() || !isset($data)) {
+        $response = $this->api->get($endpoint . $userAuth['id']);
+        if (!isset($response)) {
             $errorMsg = match ($type) {
                 'recruiter' => 'Impossible de récupérer les données du recruteur.',
                 'candidate' => 'Impossible de récupérer les données du candidat.',
@@ -79,9 +77,9 @@ class ProfileController extends Controller
         }
 
         return view('account.profile.edit', [
-            'recruiter' => $type === 'recruiter' ? $data : null,
-            'candidate' => $type === 'candidate' ? $data : null,
-            'admin' => $type === 'admin' ? $data : null,
+            'recruiter' => $type === 'recruiter' ? $response : null,
+            'candidate' => $type === 'candidate' ? $response : null,
+            'admin' => $type === 'admin' ? $response : null,
             'tabs' => $tabs,
             'type' => $type,
             'user' => $user,
