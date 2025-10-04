@@ -16,6 +16,11 @@ class RecruiterTeamMemberController extends Controller
 
     public function syncTeamMembers(Request $request, int $recruiterId)
     {
+        $recruiter = $this->api->get('recruiters/' . $recruiterId);
+        if (! $recruiter) {
+            return back()->withErrors('Recruteur inexistant en base de données.');
+        }
+
         /** ----------------------------------------------------------------
          * 1. Préparation des données envoyées depuis le formulaire
          * ----------------------------------------------------------------*/
@@ -28,7 +33,7 @@ class RecruiterTeamMemberController extends Controller
         /** ----------------------------------------------------------------
          * 2. Récupération des membres réellement stockés côté API
          * ----------------------------------------------------------------*/
-        $existingResponse = $this->api->get("recruiters/{$recruiterId}/team");
+        $existingResponse = $this->api->get("recruiters/{$recruiter['id']}/team");
 
         if (empty($existingResponse)) {
             return back()->withErrors('Impossible de récupérer les membres existants.');
