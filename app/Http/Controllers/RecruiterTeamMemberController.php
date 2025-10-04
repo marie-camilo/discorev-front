@@ -34,7 +34,9 @@ class RecruiterTeamMemberController extends Controller
             return back()->withErrors('Impossible de récupérer les membres existants.');
         }
 
-        $existing = collect($existingResponse)->keyBy('id');
+        $existing = collect($existingResponse)
+            ->filter(fn($m) => !empty($m['id']))
+            ->keyBy('id');
 
         /** ----------------------------------------------------------------
          * 3. Calcul des différences
@@ -57,11 +59,11 @@ class RecruiterTeamMemberController extends Controller
         $createCount = $toCreate->count();
 
         //🐞 Debug complet
-        dd([
-            '🔄 À mettre à jour (modifiés)' => $toUpdate->values(),
-            '➕ À créer' => $toCreate,
-            '❌ À supprimer (IDs)' => $toDeleteIds->values(),
-        ]);
+        // dd([
+        //     '🔄 À mettre à jour (modifiés)' => $toUpdate->values(),
+        //     '➕ À créer' => $toCreate,
+        //     '❌ À supprimer (IDs)' => $toDeleteIds->values(),
+        // ]);
 
         /** ----------------------------------------------------------------
          * 4. Appels API
@@ -83,7 +85,7 @@ class RecruiterTeamMemberController extends Controller
                     ? "recruiters/{$recruiterId}/team/bulk"
                     : "recruiters/{$recruiterId}/team";
 
-                $this->api->post($endpoint, $createCount > 1 ? $toCreate : $toCreate->first());
+                $this->api->post($endpoint, $createCount > 1 ? $toCreate->toArray() : $toCreate->first());
             }
         } catch (\Throwable $e) {
             report($e); // log propre
