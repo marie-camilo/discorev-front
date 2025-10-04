@@ -30,9 +30,10 @@ class RecruiterTeamMemberController extends Controller
          * ----------------------------------------------------------------*/
         $existingResponse = $this->api->get("recruiters/{$recruiterId}/team");
 
-        if (! $existingResponse->successful()) {
+        if (empty($existingResponse)) {
             return back()->withErrors('Impossible de récupérer les membres existants.');
         }
+
 
         $existing      = collect($existingResponse->json())->keyBy('id');
 
