@@ -72,7 +72,7 @@ class MediaController extends Controller
             $response = $this->api->uploadMedia($data, $files);
 
             if ($response->successful()) {
-                $user = $this->api->get('users/' . $data['targetId'])->json()['data'];
+                $user = $this->api->get('users/' . $data['targetId']);
                 Session::put('user', $user);
                 return redirect()->back()->with('success', 'Fichier envoyé avec succès.');
             }
