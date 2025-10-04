@@ -34,7 +34,6 @@ class RecruiterTeamMemberController extends Controller
             return back()->withErrors('Impossible de récupérer les membres existants.');
         }
 
-
         $existing = collect($existingResponse)->keyBy('id');
 
         /** ----------------------------------------------------------------
@@ -57,12 +56,12 @@ class RecruiterTeamMemberController extends Controller
         $toCreate = $submittedNew->values();            // on ré-indexe proprement
         $createCount = $toCreate->count();
 
-        // 🐞 Debug complet
-        // dd([
-        //     '🔄 À mettre à jour (modifiés)' => $toUpdate->values(),
-        //     '➕ À créer' => $toCreate,
-        //     '❌ À supprimer (IDs)' => $toDeleteIds->values(),
-        // ]);
+        //🐞 Debug complet
+        dd([
+            '🔄 À mettre à jour (modifiés)' => $toUpdate->values(),
+            '➕ À créer' => $toCreate,
+            '❌ À supprimer (IDs)' => $toDeleteIds->values(),
+        ]);
 
         /** ----------------------------------------------------------------
          * 4. Appels API
