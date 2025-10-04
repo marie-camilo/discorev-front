@@ -85,7 +85,15 @@ class RecruiterTeamMemberController extends Controller
                     ? "recruiters/{$recruiterId}/team/bulk"
                     : "recruiters/{$recruiterId}/team";
 
-                $this->api->post($endpoint, $createCount > 1 ? $toCreate->toArray() : $toCreate->first());
+
+                $payload = $createCount > 1 ? $toCreate->toArray() : $toCreate->first();
+
+                $response = $this->api->post($endpoint, $payload);
+
+                if (! $response->successful()) {
+                    report($response->body());
+                    return back()->withErrors('Impossible de créer les nouveaux membres.');
+                }
             }
         } catch (\Throwable $e) {
             report($e); // log propre
