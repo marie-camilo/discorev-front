@@ -51,7 +51,7 @@
             <div class="mb-3">
                 <label for="contactPhone" class="form-label">Contact (téléphone)</label>
                 <input type="text" class="form-control" id="contactPhone" name="contactPhone"
-                    value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}">
+                    value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}" minlength="10" maxlength="20">
             </div>
 
             <div class="mb-3">

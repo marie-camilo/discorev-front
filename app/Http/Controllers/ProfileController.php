@@ -99,7 +99,7 @@ class ProfileController extends Controller
             'firstName'   => 'nullable|string',
             'lastName'    => 'nullable|string',
             'email'       => 'required|email',
-            'phoneNumber' => 'nullable|string',
+            'phoneNumber' => 'nullable|string|min:10|max:20',
         ]);
 
         // Envoyer la mise à jour à l'API
