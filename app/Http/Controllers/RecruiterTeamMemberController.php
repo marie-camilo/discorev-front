@@ -35,7 +35,7 @@ class RecruiterTeamMemberController extends Controller
         }
 
 
-        $existing      = collect($existingResponse->json())->keyBy('id');
+        $existing = collect($existingResponse)->keyBy('id');
 
         /** ----------------------------------------------------------------
          * 3. Calcul des différences
