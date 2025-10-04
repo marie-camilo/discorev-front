@@ -50,7 +50,7 @@
 
             <div class="mb-3">
                 <label for="contactPhone" class="form-label">Contact (téléphone)</label>
-                <input type="email" class="form-control" id="contactPhone" name="contactPhone"
+                <input type="text" class="form-control" id="contactPhone" name="contactPhone"
                     value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}">
             </div>
 
