@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', $recruiter->companyName . ' | Discorev')
+@section('title', $recruiter->companyName ? $recruiter->companyName : 'Entreprise' . ' | Discorev')
 
 @section('content')
 
     <div class="company-banner">
-        @if ($recruiter->banner)
-            <img src="{{ env('DISCOREV_API_URL') . '/' . $recruiter->banner->filePath }}" alt="Bandeau entreprise" />
+        @if ($banner)
+            <img src="{{ config('app.api') . '/' . $banner->filePath }}" alt="Bandeau entreprise" />
             <div class="overlay"></div>
         @else
             <div></div>
@@ -17,12 +17,11 @@
             <div class="company-logo">
                 @if (!empty($recruiter->website))
                     <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ $recruiter->logo ? env('DISCOREV_API_URL') . '/' . $recruiter->logo->filePath : '' }}"
+                        <img src="{{ $logo ? config('app.api') . '/' . $logo->filePath : '' }}"
                             alt="Logo de l'entreprise" />
                     </a>
                 @else
-                    <img src="{{ $recruiter->logo ? env('DISCOREV_API_URL') . '/' . $recruiter->logo->filePath : '' }}"
-                        alt="Logo de l'entreprise" />
+                    <img src="{{ $logo ? config('app.api') . '/' . $logo->filePath : '' }}" alt="Logo de l'entreprise" />
                 @endif
             </div>
             <div class="company-info">
@@ -83,7 +82,7 @@
                             @foreach ($recruiter->medias as $media)
                                 @if ($media->type === 'company_image' && $media->context === 'company_page')
                                     <div class="col">
-                                        <img class="rounded" src="{{ env('DISCOREV_API_URL') . '/' . $media->filePath }}"
+                                        <img class="rounded" src="{{ config('app.api') . '/' . $media->filePath }}"
                                             alt="{{ $media->title }}">
                                     </div>
                                 @endif

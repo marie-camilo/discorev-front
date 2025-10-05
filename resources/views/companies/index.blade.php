@@ -47,14 +47,14 @@
             @forelse ($recruiters as $recruiter)
                 <div class="col-12 col-md-6 col-lg-4">
                     <a class="text-decoration-none"
-                        href="{{ route('companies.show', $recruiter->companyName ? $recruiter->companyName : $recruiter->id) }}"
+                        href="{{ route('companies.show', $recruiter->id ? $recruiter->id : $recruiter->companyName) }}"
                         alt="Vers la page entreprise de {{ $recruiter->companyName }}"
                         title="Vers la page entreprise de {{ $recruiter->companyName }}">
                         <div class="card shadow border-0 h-100 recruiter-card d-flex flex-column align-items-center text-center"
                             style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
                             <div class="position-relative mb-3">
                                 @if ($recruiter->banner)
-                                    <img class="card-img-top" src="{{ env('DISCOREV_API_URL') . '/' . $recruiter->banner }}"
+                                    <img class="card-img-top" src="{{ config('app.api') . '/' . $recruiter->banner }}"
                                         alt="Bannière de {{ $recruiter->companyName }}" />
                                 @endif
                                 <span
@@ -65,7 +65,7 @@
 
                             @php
                                 $logoUrl = $recruiter->logo
-                                    ? env('DISCOREV_API_URL') . '/' . $recruiter->logo
+                                    ? config('app.api') . '/' . $recruiter->logo
                                     : asset('img/default-avatar.png');
                             @endphp
 

@@ -27,7 +27,7 @@
             @foreach ($existingMedias as $media)
                 @if ($media)
                     <div class="position-relative d-inline-block me-2 mb-2 media-container" style="width: 150px;">
-                        <img src="{{ env('DISCOREV_API_URL') . '/' . $media['filePath'] }}" alt="Media"
+                        <img src="{{ config('app.api') . '/' . $media['filePath'] }}" alt="Media"
                             class="img-fluid rounded media-preview w-100" />
 
                         <div class="media-overlay d-flex justify-content-center align-items-center"

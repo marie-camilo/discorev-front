@@ -76,15 +76,6 @@ abstract class BaseApiModel extends Model
     }
 
     /**
-     * Permet les relations Eloquent
-     */
-    public function newQuery()
-    {
-        // Retourne un builder vide pour permettre les relations
-        return new Builder($this->getConnection());
-    }
-
-    /**
      * Méthode pour créer un modèle à partir de données API
      */
     public static function fromApiData(array $data): static

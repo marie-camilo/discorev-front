@@ -109,7 +109,7 @@
                     @php
                         $profilePicture = collect(session('user.medias') ?? [])->firstWhere('type', 'profile_picture');
                         $profilePictureUrl = $profilePicture
-                            ? env('DISCOREV_API_URL') . '/' . $profilePicture['filePath']
+                            ? config('app.api') . '/' . $profilePicture['filePath']
                             : asset('img/default-avatar.png');
                     @endphp
                     <!-- Dropdown Compte -->

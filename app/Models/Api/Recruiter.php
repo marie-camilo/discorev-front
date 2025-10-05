@@ -25,6 +25,26 @@ class Recruiter extends BaseApiModel
         'medias'
     ];
 
+    public static function fromApiData(array $data): static
+    {
+        $recruiter = parent::fromApiData($data);
+
+        // Team members → objets RecruiterTeamMember
+        $teamMembersData = $data['teamMembers'] ?? [];
+        $recruiter->teamMembers = collect($teamMembersData)
+            ->map(fn($memberData) => RecruiterTeamMember::fromApiData((array)$memberData))
+            ->all();
+
+        // Médias → objets Media
+        $mediasData = $data['medias'] ?? [];
+        $recruiter->medias = collect($mediasData)
+            ->map(fn($mediaData) => Media::fromApiData((array)$mediaData))
+            ->all();
+
+        return $recruiter;
+    }
+
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');

@@ -58,7 +58,10 @@ class RecruiterTeamMemberController extends Controller
         });
 
         // b) Membres à supprimer (présents côté API mais plus dans le formulaire)
-        $toDeleteIds = $existing->keys()->diff($submittedExisting->keys());
+        $toDeleteIds = collect(explode(',', $request->input('deletedIds', '')))
+            ->filter()
+            ->unique()
+            ->values();
 
         // c) Membres à créer (ceux du formulaire sans id)
         $toCreate = $submittedNew->values();            // on ré-indexe proprement
@@ -78,7 +81,6 @@ class RecruiterTeamMemberController extends Controller
             // Mises à jour
             foreach ($toUpdate as $id => $member) {
                 $updateResponse = $this->api->put("recruiters/{$recruiterId}/team/{$id}", $member);
-
                 if (!$updateResponse->successful()) {
                     return back()->withErrors('Erreur lors de la modification des membres');
                 }
@@ -95,13 +97,23 @@ class RecruiterTeamMemberController extends Controller
 
             // Créations (bulk ou unitaire selon la quantité)
             if ($createCount) {
-                $endpoint = $createCount > 1
-                    ? "recruiters/{$recruiterId}/team/bulk"
-                    : "recruiters/{$recruiterId}/team";
+                if ($createCount > 1) {
+                    // ✅ Cas BULK
+                    $endpoint = "recruiters/{$recruiterId}/team/bulk";
 
-                $payload = $createCount > 1
-                    ? $toCreate->map(fn($m) => array_merge($m, ['recruiter_id' => $recruiterId]))->toArray()
-                    : array_merge($toCreate->first(), ['recruiter_id' => $recruiterId]);
+                    $payload = [
+                        'members' => $toCreate->map(function ($m) use ($recruiterId) {
+                            return array_merge($m, ['recruiter_id' => $recruiterId]);
+                        })->toArray()
+                    ];
+                } else {
+                    // ✅ Cas UNITAIRE
+                    $endpoint = "recruiters/{$recruiterId}/team";
+
+                    $payload = array_merge($toCreate->first(), [
+                        'recruiter_id' => $recruiterId
+                    ]);
+                }
 
                 $response = $this->api->post($endpoint, $payload);
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
 use App\Models\Api\Recruiter;
 use App\Models\Api\JobOffer;
+use App\Models\Api\RecruiterTeamMember;
 use Illuminate\View\View;
 
 class RecruiterController extends Controller
@@ -132,22 +133,24 @@ class RecruiterController extends Controller
     public function show($identifier)
     {
         // Récupère les données du recruiter depuis l'API
-        $recruiter = is_numeric($identifier)
+        $recruiterData = is_numeric($identifier)
             ? $this->api->get("recruiters/$identifier")
             : $this->api->get("recruiters/company/$identifier");
 
-        if (!$recruiter) {
+        if (!$recruiterData) {
             $fallbackView = 'companies.' . strtolower($identifier);
             if (view()->exists($fallbackView)) return view($fallbackView);
             return redirect()->back()->with('error', "Entreprise introuvable.");
         }
+
+        $recruiter = Recruiter::fromApiData($recruiterData);
         $recruiterId = $recruiter['id'];
 
         // Job offers
-        $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId")->json()['data'];
+        $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId");
         $medias = collect($recruiter['medias'] ?? []);
         // Variables spécifiques pour la bannière et le logo
-        $bannerMedia = $medias->firstWhere('type', 'company_banner');
+        $banner = $medias->firstWhere('type', 'company_banner');
         $logo = $medias->firstWhere('type', 'company_logo');
 
         $sectionsConfig = [
@@ -194,11 +197,27 @@ class RecruiterController extends Controller
             })
             ->values()
             ->all();
-        // Choix de la vue
-        $view = 'companies.' . $this->slugify($recruiter['companyName']);
-        if (view()->exists($view)) return view($view, compact('recruiter', 'sections', 'jobOffers', 'bannerMedia', 'logo'));
-        if (view()->exists('companies.show')) return view('companies.show', compact('recruiter', 'sections', 'jobOffers', 'bannerMedia', 'logo'));
 
+        // Détermination de la vue en toute sécurité
+        $view = null;
+
+        if (!empty($recruiter['companyName'])) {
+            $slugView = 'companies.' . $this->slugify($recruiter['companyName']);
+            if (view()->exists($slugView)) {
+                $view = $slugView;
+            }
+        }
+
+        // Fallback vers la vue générique si aucune vue spécifique n'existe
+        if (!$view) {
+            $view = view()->exists('companies.show') ? 'companies.show' : null;
+        }
+
+        if ($view) {
+            return view($view, compact('recruiter', 'sections', 'jobOffers', 'banner', 'logo'));
+        }
+
+        // Aucun fallback disponible
         return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
     }
 

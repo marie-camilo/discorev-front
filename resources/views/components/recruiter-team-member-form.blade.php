@@ -4,6 +4,9 @@
     <h5 class="fw-bold mt-4">Membres de l’équipe</h5>
 
     <div id="team-members-list" class="row">
+        {{-- Membres à supprimer --}}
+        <input type="hidden" name="deletedIds" id="deletedIds">
+
         {{-- Membres existants --}}
         @foreach ($recruiter['teamMembers'] ?? [] as $index => $member)
             <div
@@ -45,7 +48,9 @@
 {{-- Script --}}
 <script>
     let memberIndex = {{ count($recruiter['teamMembers'] ?? []) }};
+    const deletedInput = document.getElementById('deletedIds');
 
+    // 🧱 Ajout d’un membre
     document.getElementById('add-member-btn').addEventListener('click', () => {
         const container = document.getElementById('team-members-list');
 
@@ -61,14 +66,26 @@
                 </button>
             </div>
         `;
-
         container.insertAdjacentHTML('beforeend', html);
         memberIndex++;
     });
 
+    // 🗑️ Suppression d’un membre
     document.addEventListener('click', (e) => {
-        if (e.target.closest('.delete-member')) {
-            e.target.closest('.member-card').remove();
+        const btn = e.target.closest('.delete-member');
+        if (!btn) return;
+
+        const card = btn.closest('.member-card');
+        const hiddenId = card.querySelector('input[name*="[id]"]');
+
+        // Si le membre a un ID existant => on l’ajoute à deletedIds
+        if (hiddenId && hiddenId.value) {
+            const currentDeleted = deletedInput.value ? deletedInput.value.split(',') : [];
+            currentDeleted.push(hiddenId.value);
+            deletedInput.value = currentDeleted.join(',');
         }
+
+        // Supprime visuellement
+        card.remove();
     });
 </script>
