@@ -33,16 +33,17 @@ class RecruiterTeamMemberController extends Controller
         /** ----------------------------------------------------------------
          * 2. Récupération des membres réellement stockés côté API
          * ----------------------------------------------------------------*/
-        $existingResponse = $this->api->get("recruiters/{$recruiter['id']}/team");
+        $existingResponse = $this->api->get("recruiters/{$recruiterId}/team");
 
-        if (empty($existingResponse)) {
+        // Si l'appel retourne null ou autre chose qu'un array, c'est une vraie erreur
+        if (!is_array($existingResponse)) {
             return back()->withErrors('Impossible de récupérer les membres existants.');
         }
 
+        // Si c'est un tableau vide, on continue normalement
         $existing = collect($existingResponse)
             ->filter(fn($m) => !empty($m['id']))
             ->keyBy('id');
-
         /** ----------------------------------------------------------------
          * 3. Calcul des différences
          * ----------------------------------------------------------------*/
@@ -76,12 +77,20 @@ class RecruiterTeamMemberController extends Controller
         try {
             // Mises à jour
             foreach ($toUpdate as $id => $member) {
-                $this->api->put("recruiters/{$recruiterId}/team/{$id}", $member);
+                $updateResponse = $this->api->put("recruiters/{$recruiterId}/team/{$id}", $member);
+
+                if (!$updateResponse->successful()) {
+                    return back()->withErrors('Erreur lors de la modification des membres');
+                }
             }
 
             // Suppressions
             foreach ($toDeleteIds as $id) {
-                $this->api->delete("recruiters/{$recruiterId}/team/{$id}");
+                $deleteResponse = $this->api->delete("recruiters/{$recruiterId}/team/{$id}");
+
+                if (!$deleteResponse->successful()) {
+                    return back()->withErrors('Erreur lors de la suppression des membres');
+                }
             }
 
             // Créations (bulk ou unitaire selon la quantité)
@@ -90,14 +99,14 @@ class RecruiterTeamMemberController extends Controller
                     ? "recruiters/{$recruiterId}/team/bulk"
                     : "recruiters/{$recruiterId}/team";
 
-
-                $payload = $createCount > 1 ? $toCreate->toArray() : $toCreate->first();
+                $payload = $createCount > 1
+                    ? $toCreate->map(fn($m) => array_merge($m, ['recruiter_id' => $recruiterId]))->toArray()
+                    : array_merge($toCreate->first(), ['recruiter_id' => $recruiterId]);
 
                 $response = $this->api->post($endpoint, $payload);
 
-                if (! $response->successful()) {
-                    report($response->body());
-                    return back()->withErrors('Impossible de créer les nouveaux membres.');
+                if (!$response->successful()) {
+                    return back()->withErrors('Impossible de créer le(s) nouveau(x) membre(s)');
                 }
             }
         } catch (\Throwable $e) {
