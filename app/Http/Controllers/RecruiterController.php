@@ -132,12 +132,9 @@ class RecruiterController extends Controller
     public function show($identifier)
     {
         // Récupère les données du recruiter depuis l'API
-        $recruiterData = is_numeric($identifier)
+        $recruiter = is_numeric($identifier)
             ? $this->api->get("recruiters/$identifier")
             : $this->api->get("recruiters/company/$identifier");
-
-        $json = $recruiterData->json();
-        $recruiter = $json['data'][0];
 
         if (!$recruiter) {
             $fallbackView = 'companies.' . strtolower($identifier);
