@@ -14,24 +14,24 @@
                 @if (!empty($offers) && count($offers))
                     @foreach ($offers as $offer)
                         <div class="offer-card">
-                            <h3>{{ $offer['title'] }}</h3>
-                            <p>{{ $offer['location'] }}</p>
+                            <h3>{{ $offer->title }}</h3>
+                            <p>{{ $offer->location }}</p>
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <a href="{{ route('job_offers.show', $offer['id']) }}" class="btn btn-link">Voir l'offre
+                                    <a href="{{ route('job_offers.show', $offer->id) }}" class="btn btn-link">Voir l'offre
                                         (candidat)
                                     </a>
                                 </div>
                                 <div>
-                                    <a href="{{ route('recruiter.jobs.edit', $offer['id']) }}"
+                                    <a href="{{ route('recruiter.jobs.edit', $offer->id) }}"
                                         class="btn btn-warning">Modifier
                                         l'offre</a>
-                                    <form action="{{ route('recruiter.jobs.destroy', $offer['id']) }}" method="POST"
-                                        style="display: inline;" id="delete-offer-form-{{ $offer['id'] }}">
+                                    <form action="{{ route('recruiter.jobs.destroy', $offer->id) }}" method="POST"
+                                        style="display: inline;" id="delete-offer-form-{{ $offer->id }}">
                                         @csrf
                                         @method('DELETE')
                                         <a href="#" class="btn btn-danger delete-offer-btn"
-                                            data-offer-id="{{ $offer['id'] }}">Supprimer l'offre</a>
+                                            data-offer-id="{{ $offer->id }}">Supprimer l'offre</a>
                                     </form>
                                 </div>
 

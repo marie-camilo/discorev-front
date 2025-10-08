@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Api\JobOffer;
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
-use App\Services\ApiModelService;
 use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 
 class JobOfferController extends Controller
 {
@@ -41,12 +40,12 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $response = $this->api->get('job_offers/' . $id);
+        $offer = $this->api->getOne('job_offers/' . $id);
+        $offer = JobOffer::fromApiData($offer);
 
-        if ($response->successful()) {
-            $offer = $response->json()['data'];
-            $recruiterId =  $response->json()['data']['recruiterId'];
-            $recruiter = $this->api->get('recruiters/' . $recruiterId)->json()['data'];
+        if ($offer) {
+            $recruiterId =  $offer['recruiterId'];
+            $recruiter = $this->api->get('recruiters/' . $recruiterId);
             return view('job_offers.show', compact('offer', 'recruiter'));
         }
 
@@ -55,18 +54,18 @@ class JobOfferController extends Controller
 
     public function myOffers()
     {
-        $recruiter = $this->api->get('recruiters/user/' . session('user.id'))->json()['data'];
+        $recruiter = $this->api->getOne('recruiters/user/' . session('user.id'));
 
         if (!$recruiter) {
             return redirect()->back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
         }
 
-        $response = $this->api->get('recruiters/' . $recruiter['id'] . '/job_offers', [
+        $offers = $this->api->get('recruiters/' . $recruiter['id'] . '/job_offers', [
             'activeOnly' => 'false' // ✅ récupère tout
         ]);
 
-        if ($response->successful()) {
-            $offers = $response->json()['data'];
+        if ($offers) {
+            $offers = JobOffer::fromApiCollection($offers);
             return view('account.recruiter.jobs.index', compact('offers'));
         }
 
@@ -76,7 +75,7 @@ class JobOfferController extends Controller
 
     public function create()
     {
-        return view('job_offers.create');
+        return view('account.recruiter.jobs.create');
     }
 
     /**
@@ -107,10 +106,10 @@ class JobOfferController extends Controller
             return redirect()->back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
         }
 
-        $recruiterId = $this->api->get('recruiters/user/' . session('user.id'))->json()['data']['id'];
+        $recruiter = $this->api->getOne('recruiters/user/' . session('user.id'));
 
         $data = array_merge($validated, [
-            'recruiterId' => $recruiterId,
+            'recruiterId' => $recruiter['id'],
         ]);
 
         $response = $this->api->post('job_offers', $data);
@@ -126,9 +125,8 @@ class JobOfferController extends Controller
      */
     public function edit($id)
     {
-        $response = $this->api->get('job_offers/' . $id);
-        if ($response->successful()) {
-            $offer = $response->json()['data'];
+        $offer = $this->api->getOne('job_offers/' . $id);
+        if ($offer) {
             return view('account.recruiter.jobs.edit', compact('offer'));
         }
 
@@ -160,10 +158,10 @@ class JobOfferController extends Controller
             return redirect()->back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
         }
 
-        $recruiterId = $this->api->get('recruiters/user/' . session('user.id'))->json()['data']['id'];
+        $recruiter = $this->api->get('recruiters/user/' . session('user.id'));
 
         $data = array_merge($validated, [
-            'recruiterId' => $recruiterId,
+            'recruiterId' => $recruiter['id'],
         ]);
 
         $response = $this->api->put('job_offers/' . $id, $data);
