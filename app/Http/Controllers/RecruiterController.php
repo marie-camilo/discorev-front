@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
 use App\Models\Api\Recruiter;
 use App\Models\Api\JobOffer;
+use App\Helpers\NafHelper;
 use App\Models\Api\RecruiterTeamMember;
 use Illuminate\View\View;
 

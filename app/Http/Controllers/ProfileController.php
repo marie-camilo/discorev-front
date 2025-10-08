@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helpers\NafHelper;
 use App\Services\DiscorevApiService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -28,6 +29,9 @@ class ProfileController extends Controller
         $userAuth = Session::get('user');
         $user = $this->api->get('users/' . $userAuth['id']);
         $type = $userAuth['accountType'];
+
+        $entries = NafHelper::loadNafJson();
+        $sectors = NafHelper::filterSectors($entries);
 
         // Définition des onglets par type de compte
         $tabs = match ($type) {
@@ -83,6 +87,7 @@ class ProfileController extends Controller
             'tabs' => $tabs,
             'type' => $type,
             'user' => $user,
+            'sectors' => $sectors
         ]);
     }
 

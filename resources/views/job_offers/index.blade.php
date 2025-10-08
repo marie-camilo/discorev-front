@@ -5,19 +5,17 @@
 @section('content')
     <div class="container py-4 pt-5">
         <h1 class="fw-bold mb-4 gradient-text">Offres d'emploi</h1>
-
-        <!-- Barre de recherche + filtres -->
         <!-- Barre de recherche + filtres -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form id="filter-form" class="row g-3 align-items-end">
                     <div class="col-md-4">
                         <div class="input-group">
-                    <span class="input-group-text">
-                        <span class="material-symbols-outlined">search</span>
-                    </span>
+                            <span class="input-group-text">
+                                <span class="material-symbols-outlined">search</span>
+                            </span>
                             <input type="text" name="q" id="search" class="form-control"
-                                   placeholder="Titre ou description">
+                                placeholder="Titre ou description">
                         </div>
                     </div>
                     <div class="col-md-3">

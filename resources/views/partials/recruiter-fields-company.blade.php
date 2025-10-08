@@ -38,8 +38,18 @@
 
             <div class="mb-3">
                 <label for="sector" class="form-label">Secteur d’activité</label>
-                <input type="text" class="form-control" id="sector" name="sector"
-                    value="{{ old('sector', $recruiter['sector'] ?? '') }}">
+                <select class="form-select" id="sector" name="sector">
+                    <option value="" disabled
+                        {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>
+                        Sélectionnez un secteur
+                    </option>
+                    @foreach ($sectors as $code => $label)
+                        <option value="{{ $code }}"
+                            {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="mb-3">

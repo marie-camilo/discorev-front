@@ -14,12 +14,15 @@ class JobOffer extends BaseApiModel
         'title',
         'description',
         'requirements',
-        'salaryRange',
+        'salaryMin',
+        'salaryMax',
         'employmentType',
         'location',
         'remote',
         'publicationDate',
         'expirationDate',
+        'startDate',
+        'endDate',
         'status',
     ];
 
@@ -27,6 +30,8 @@ class JobOffer extends BaseApiModel
         'remote' => 'boolean',
         'publicationDate' => 'datetime',
         'expirationDate' => 'datetime',
+        'startDate' => 'datetime',
+        'endDate' => 'datetime',
     ];
 
     public function recruiter()

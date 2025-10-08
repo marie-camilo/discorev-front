@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Api\JobOffer;
+use App\Models\Api\Recruiter;
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
+use Illuminate\Auth\Recaller;
 use Illuminate\View\View;
 
 class JobOfferController extends Controller
@@ -40,12 +42,13 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $offer = $this->api->getOne('job_offers/' . $id);
-        $offer = JobOffer::fromApiData($offer);
+        $offerResponse = $this->api->getOne('job_offers/' . $id);
+        $offer = JobOffer::fromApiData($offerResponse);
 
         if ($offer) {
             $recruiterId =  $offer['recruiterId'];
-            $recruiter = $this->api->get('recruiters/' . $recruiterId);
+            $recruiterResponse = $this->api->get('recruiters/' . $recruiterId);
+            $recruiter = Recruiter::fromApiData($recruiterResponse);
             return view('job_offers.show', compact('offer', 'recruiter'));
         }
 

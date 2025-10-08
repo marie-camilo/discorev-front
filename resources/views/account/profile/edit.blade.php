@@ -30,6 +30,7 @@
                                     @case('company')
                                         @include('partials.recruiter-fields-company', [
                                             'recruiter' => $recruiter,
+                                            'sectors' => $sectors,
                                         ])
                                     @break
 
