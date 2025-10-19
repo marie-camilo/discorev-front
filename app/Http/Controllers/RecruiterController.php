@@ -60,16 +60,18 @@ class RecruiterController extends Controller
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
             $jobs = $jobsData->map(fn($jobData) => JobOffer::fromApiData($jobData));
 
-            // Récupérer les médias
             $medias = collect($recruiter['medias'] ?? []);
             $banner = $medias->firstWhere('type', 'company_banner');
             $logo = $medias->firstWhere('type', 'company_logo');
 
-            // Attacher les offres et médias au recruteur
             $recruiter->setRelation('jobOffers', $jobs);
             $recruiter->offersCount = $jobs->count();
             $recruiter->banner = $banner['filePath'] ?? null;
             $recruiter->logo   = $logo['filePath'] ?? null;
+
+            // Normaliser les contacts
+            $recruiter->contactPerson = $recruiter->contactEmail ?? $recruiter->contactPerson ?? null;
+            $recruiter->phone = $recruiter->contactPhone ?? $recruiter->phone ?? null;
 
             // Calculer le score de complétion
             $fields = [
@@ -80,12 +82,11 @@ class RecruiterController extends Controller
                 $recruiter->website ?? null,
                 $recruiter->sector ?? null,
                 $recruiter->teamSize ?? null,
-                $recruiter->contactEmail ?? null,
-                $recruiter->contactPhone ?? null,
+                $recruiter->contactPerson,
+                $recruiter->phone,
             ];
             $recruiter->completionScore = collect($fields)->filter(fn($field) => !empty($field))->count();
 
-            // Traduire le code NAF en libellé lisible
             $recruiter->sectorName = isset($recruiter->sector)
                 ? NafHelper::getLabel($recruiter->sector)
                 : null;

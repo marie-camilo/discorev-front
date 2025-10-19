@@ -25,7 +25,7 @@
             </div>
             <div class="company-info">
                 <div class="d-flex align-items-center">
-                    <h1>{{ $recruiter->companyName }}</h1>
+                    <h1 style="color: white">{{ $recruiter->companyName }}</h1>
                 </div>
                 <p><span class="material-symbols-outlined text-white">business_center</span> Secteur :
                     {{ $recruiter->sectorName ?? $recruiter->sector }}</p>
