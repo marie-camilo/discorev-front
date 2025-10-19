@@ -5,23 +5,22 @@
 @section('content')
 
     <div class="company-banner">
-        @if ($banner)
-            <img src="{{ config('app.api') . '/' . $banner->filePath }}" alt="Bandeau entreprise" />
+        @if ($recruiter->banner)
+            <img src="{{ config('app.api') . '/' . $recruiter->banner }}" alt="Bandeau entreprise" />
             <div class="overlay"></div>
         @else
             <div></div>
-            <div class="overlay" style="background-color: #f98948;"></div>
+            <div class="overlay" style="background-color: #9f9f9f;"></div>
         @endif
 
         <div class="company-header">
             <div class="company-logo">
                 @if (!empty($recruiter->website))
                     <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ $logo ? config('app.api') . '/' . $logo->filePath : '' }}"
-                            alt="Logo de l'entreprise" />
+                        <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : '' }}" alt="Logo de l'entreprise" />
                     </a>
                 @else
-                    <img src="{{ $logo ? config('app.api') . '/' . $logo->filePath : '' }}" alt="Logo de l'entreprise" />
+                    <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : '' }}" alt="Logo de l'entreprise" />
                 @endif
             </div>
             <div class="company-info">

@@ -60,14 +60,16 @@ class RecruiterController extends Controller
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
             $jobs = $jobsData->map(fn($jobData) => JobOffer::fromApiData($jobData));
 
-            $medias = collect($recruiter->medias ?? []);
-            $bannerMedia = $medias->firstWhere('type', 'company_banner');
-            $logoMedia = $medias->firstWhere('type', 'company_logo');
+            // Récupérer les médias
+            $medias = collect($recruiter['medias'] ?? []);
+            $banner = $medias->firstWhere('type', 'company_banner');
+            $logo = $medias->firstWhere('type', 'company_logo');
 
+            // Attacher les offres et médias au recruteur
             $recruiter->setRelation('jobOffers', $jobs);
             $recruiter->offersCount = $jobs->count();
-            $recruiter->banner = $bannerMedia['filePath'] ?? null;
-            $recruiter->logo = $logoMedia['filePath'] ?? null;
+            $recruiter->banner = $banner['filePath'] ?? null;
+            $recruiter->logo   = $logo['filePath'] ?? null;
 
             // Calculer le score de complétion
             $fields = [
@@ -179,7 +181,7 @@ class RecruiterController extends Controller
         $logoMedia = $medias->firstWhere('type', 'company_logo');
 
         $recruiter->banner = $bannerMedia['filePath'] ?? null;
-        $recruiter->logo = $logoMedia['filePath'] ?? null;
+        $recruiter->logo   = $logoMedia['filePath'] ?? null;
 
         // Configuration des sections pour la vue
         $sectionsConfig = [
