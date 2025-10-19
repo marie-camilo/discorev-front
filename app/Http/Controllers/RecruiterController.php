@@ -22,23 +22,23 @@ class RecruiterController extends Controller
 
     public function index(): View
     {
-        // 1️⃣ Récupérer les données depuis l'API
+        // Récupérer les données depuis l'API
         $recruitersData = $this->api->get('recruiters') ?: [];
         $jobsData = $this->api->get('job_offers') ?: [];
 
-        // 2️⃣ Convertir les données API en modèles Recruiter
+        // Convertir les données API en modèles Recruiter
         $recruitersFromApi = collect($recruitersData)
             ->filter(fn($r) => is_array($r))
             ->map(fn($r) => Recruiter::fromApiData($r));
 
-        // 3️⃣ Créer un recruteur fictif pour tester le front
+        // Créer un recruteur fictif pour tester le front
         $dummyRecruiter = new Recruiter();
         $dummyRecruiter->id = 999;
         $dummyRecruiter->companyName = "Entreprise Test";
         $dummyRecruiter->teamSize = "11-50";
         $dummyRecruiter->sector = "Éducation";
         $dummyRecruiter->location = "Paris";
-        $dummyRecruiter->website = "https://exemple.com";
+        $dummyRecruiter->website = "https://discorev.fr";
         $dummyRecruiter->contactPerson = "contact@exemple.com";
         $dummyRecruiter->phone = "0123456789";
         $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
@@ -47,15 +47,15 @@ class RecruiterController extends Controller
         $dummyRecruiter->offersCount = 3;
         $dummyRecruiter->completionScore = 9;
 
-        // 4️⃣ Fusionner dummy + API
+        // Fusionner dummy + API
         $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
 
-        // 5️⃣ Grouper les offres par recruiter_id
+        // Grouper les offres par recruiter_id
         $jobsByRecruiter = collect($jobsData)
             ->filter(fn($j) => is_array($j))
             ->groupBy('recruiterId');
 
-        // 6️⃣ Attacher les offres et médias à chaque recruteur
+        // Attacher les offres et médias à chaque recruteur
         $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
 
@@ -88,12 +88,12 @@ class RecruiterController extends Controller
             return $recruiter;
         });
 
-        // 7️⃣ Récupérer les filtres depuis la requête
+        // Récupérer les filtres depuis la requête
         $locationFilter = request('location');
         $sectorFilter = request('sector');
         $teamSizeFilter = request('team_size');
 
-        // 8️⃣ Appliquer les filtres
+        // Appliquer les filtres
         $recruiters = $recruiters->filter(function ($recruiter) use ($locationFilter, $sectorFilter, $teamSizeFilter) {
             $matches = true;
 
@@ -110,13 +110,13 @@ class RecruiterController extends Controller
             return $matches;
         });
 
-        // 9️⃣ Trier par score de complétion descendant et éliminer les vides
+        // Trier par score de complétion descendant et éliminer les vides
         $recruiters = $recruiters
             ->filter(fn($r) => $r->completionScore > 0)
             ->sortByDesc('completionScore')
             ->values();
 
-        // 🔟 Retourner la vue
+        // Retourner la vue
         return view('companies.index', compact('recruiters'));
     }
 
