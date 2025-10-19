@@ -36,7 +36,7 @@ class RecruiterController extends Controller
         $dummyRecruiter->id = 999;
         $dummyRecruiter->companyName = "Entreprise Test";
         $dummyRecruiter->teamSize = "11-50";
-        $dummyRecruiter->sector = "Éducation";
+        $dummyRecruiter->sector = "Aide à la personne";
         $dummyRecruiter->location = "Paris";
         $dummyRecruiter->website = "https://discorev.fr";
         $dummyRecruiter->contactPerson = "contact@exemple.com";
@@ -55,10 +55,9 @@ class RecruiterController extends Controller
             ->filter(fn($j) => is_array($j))
             ->groupBy('recruiterId');
 
-        // Attacher les offres et médias à chaque recruteur
+        // Attacher les offres et médias à chaque recruteur, calculer sectorName
         $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
-
             $jobs = $jobsData->map(fn($jobData) => JobOffer::fromApiData($jobData));
 
             $medias = collect($recruiter->medias ?? []);
@@ -82,8 +81,12 @@ class RecruiterController extends Controller
                 $recruiter->contactEmail ?? null,
                 $recruiter->contactPhone ?? null,
             ];
-
             $recruiter->completionScore = collect($fields)->filter(fn($field) => !empty($field))->count();
+
+            // Traduire le code NAF en libellé lisible
+            $recruiter->sectorName = isset($recruiter->sector)
+                ? NafHelper::getLabel($recruiter->sector)
+                : null;
 
             return $recruiter;
         });
@@ -101,7 +104,7 @@ class RecruiterController extends Controller
                 $matches = $matches && stripos($recruiter->location, $locationFilter) !== false;
             }
             if ($sectorFilter) {
-                $matches = $matches && $recruiter->sector === $sectorFilter;
+                $matches = $matches && $recruiter->sectorName === $sectorFilter;
             }
             if ($teamSizeFilter) {
                 $matches = $matches && $recruiter->teamSize === $teamSizeFilter;
@@ -116,11 +119,8 @@ class RecruiterController extends Controller
             ->sortByDesc('completionScore')
             ->values();
 
-        // Retourner la vue
         return view('companies.index', compact('recruiters'));
     }
-
-
 
     /**
      * Met à jour les informations du recruiter via l'API.

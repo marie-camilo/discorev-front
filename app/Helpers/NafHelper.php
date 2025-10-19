@@ -4,6 +4,11 @@ namespace App\Helpers;
 
 class NafHelper
 {
+    public static function getLabel(string $code): ?string
+    {
+        $entries = self::loadNafJson(); // Charge le JSON complet
+        return $entries[$code]['classe'] ?? $entries[$code] ?? $code;
+    }
     /**
      * Charge le JSON complet NAF
      */

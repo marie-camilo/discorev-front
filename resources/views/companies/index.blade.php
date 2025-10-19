@@ -200,7 +200,7 @@
                             <!-- Corps de la carte -->
                             <div class="card-body text-center py-3 px-4 flex-grow-1 d-flex flex-column">
                                 <h5 class="recruiter-title">{{ $recruiter->companyName }}</h5>
-                                <p class="recruiter-sector">{{ $recruiter->sector }}</p>
+                                <p class="recruiter-sector">{{ $recruiter->sectorName ?? $recruiter->sector }}</p>
                                 <p class="recruiter-location">
                                     <span class="material-symbols-outlined">location_on</span>
                                     {{ $recruiter->location }}
