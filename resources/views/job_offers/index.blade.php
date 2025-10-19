@@ -4,42 +4,169 @@
 
 @section('content')
     <div class="container py-4 pt-5">
-        <h1 class="fw-bold mb-4 gradient-text">Offres d'emploi</h1>
+        <h1 class="fw-bold mb-4 mt-5 gradient-text">Offres d'emploi</h1>
         <!-- Barre de recherche + filtres -->
-        <div class="card shadow-sm mb-4">
+        <div class="mb-4">
             <div class="card-body">
-                <form id="filter-form" class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text">
+                {{-- Formulaire de filtres --}}
+                <form id="filter-form" method="GET" class="filter-form">
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="search" class="filter-label">
                                 <span class="material-symbols-outlined">search</span>
-                            </span>
-                            <input type="text" name="q" id="search" class="form-control"
-                                placeholder="Titre ou description">
+                                Recherche
+                            </label>
+                            <input type="text" name="q" id="search" class="filter-input"
+                                   placeholder="Titre ou description">
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" name="location" id="location">
-                            <option value="">Toutes localisations</option>
-                            <option value="Paris">Paris</option>
-                            <option value="Lyon">Lyon</option>
-                            <option value="Marseille">Marseille</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" name="sector" id="sector">
-                            <option value="">Tous secteurs</option>
-                            <option value="IT">Informatique</option>
-                            <option value="Finance">Finance</option>
-                            <option value="RH">Ressources humaines</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-secondary">
-                            <i class="fas fa-filter me-2"></i>Filtrer
+
+                        <div class="filter-group">
+                            <label for="location" class="filter-label">
+                                <span class="material-symbols-outlined">location_on</span>
+                                Localisation
+                            </label>
+                            <select name="location" id="location" class="filter-select">
+                                <option value="">Toutes localisations</option>
+                                <option value="Paris">Paris</option>
+                                <option value="Lyon">Lyon</option>
+                                <option value="Marseille">Marseille</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="sector" class="filter-label">
+                                <span class="material-symbols-outlined">business_center</span>
+                                Secteur
+                            </label>
+                            <select name="sector" id="sector" class="filter-select">
+                                <option value="">Tous secteurs</option>
+                                <option value="IT">Informatique</option>
+                                <option value="Finance">Finance</option>
+                                <option value="RH">Ressources humaines</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="filter-btn">
+                            <span class="material-symbols-outlined">tune</span>
+                            Filtrer
                         </button>
                     </div>
                 </form>
+
+                <style>
+                    .filter-form {
+                        margin-bottom: 2rem;
+                    }
+
+                    .filter-container {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 1.5rem;
+                        align-items: flex-end;
+                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                        padding: 2rem;
+                        border-radius: 16px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                    }
+
+                    .filter-group {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.75rem;
+                    }
+
+                    .filter-label {
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        color: #1a202c;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        margin: 0;
+                    }
+
+                    .filter-label .material-symbols-outlined {
+                        font-size: 20px;
+                        color: var(--indigo);
+                    }
+
+                    .filter-input,
+                    .filter-select {
+                        padding: 0.75rem 1rem;
+                        border: 2px solid #e2e8f0;
+                        border-radius: 10px;
+                        font-size: 0.95rem;
+                        color: #1a202c;
+                        background: #ffffff;
+                        transition: all 0.3s ease;
+                        font-family: inherit;
+                    }
+
+                    .filter-input::placeholder {
+                        color: #a0aec0;
+                    }
+
+                    .filter-input:focus,
+                    .filter-select:focus {
+                        outline: none;
+                        border-color: var(--indigo);
+                        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                    }
+
+                    .filter-input:hover,
+                    .filter-select:hover {
+                        border-color: var(--indigo);
+                    }
+
+                    .filter-select {
+                        cursor: pointer;
+                        appearance: none;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23083838' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: right 1rem center;
+                        padding-right: 2.5rem;
+                    }
+
+                    .filter-btn {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                        padding: 0.75rem 1.5rem;
+                        background: linear-gradient(135deg, var(--indigo), var(--aquamarine));
+                        color: var(--sand);
+                        border: none;
+                        border-radius: 10px;
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        width: 100%;
+                    }
+
+                    .filter-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 10px 15px -3px rgba(8, 56, 61, 0.3);
+                        color: var(--sand);
+                    }
+
+                    .filter-btn .material-symbols-outlined {
+                        font-size: 20px;
+                    }
+
+                    @media (max-width: 768px) {
+                        .filter-container {
+                            grid-template-columns: 1fr;
+                            padding: 1.5rem;
+                            gap: 1rem;
+                        }
+
+                        .filter-btn {
+                            width: 100%;
+                        }
+                    }
+                </style>
             </div>
         </div>
 

@@ -22,62 +22,78 @@ class RecruiterController extends Controller
 
     public function index(): View
     {
-        $recruitersData = $this->api->get('recruiters');
-        $jobsData = $this->api->get('job_offers');
+        // 1️⃣ Récupérer les données depuis l'API
+        $recruitersData = $this->api->get('recruiters') ?: [];
+        $jobsData = $this->api->get('job_offers') ?: [];
 
-        // Récupérer les filtres depuis la requête
-        $locationFilter = request('location');
-        $sectorFilter = request('sector');
-        $teamSizeFilter = request('team_size');
+        // 2️⃣ Convertir les données API en modèles Recruiter
+        $recruitersFromApi = collect($recruitersData)
+            ->filter(fn($r) => is_array($r))
+            ->map(fn($r) => Recruiter::fromApiData($r));
 
-        // Convertir en modèles Eloquent-like
-        $recruiters = collect($recruitersData)->map(function ($recruiterData) {
-            return Recruiter::fromApiData($recruiterData);
-        });
+        // 3️⃣ Créer un recruteur fictif pour tester le front
+        $dummyRecruiter = new Recruiter();
+        $dummyRecruiter->id = 999;
+        $dummyRecruiter->companyName = "Entreprise Test";
+        $dummyRecruiter->teamSize = "11-50";
+        $dummyRecruiter->sector = "Éducation";
+        $dummyRecruiter->location = "Paris";
+        $dummyRecruiter->website = "https://exemple.com";
+        $dummyRecruiter->contactPerson = "contact@exemple.com";
+        $dummyRecruiter->phone = "0123456789";
+        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
+        $dummyRecruiter->banner = null;
+        $dummyRecruiter->logo = null;
+        $dummyRecruiter->offersCount = 3;
+        $dummyRecruiter->completionScore = 9;
 
-        // Grouper les offres par recruiter_id
-        $jobsByRecruiter = collect($jobsData)->groupBy('recruiterId');
+        // 4️⃣ Fusionner dummy + API
+        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
 
+        // 5️⃣ Grouper les offres par recruiter_id
+        $jobsByRecruiter = collect($jobsData)
+            ->filter(fn($j) => is_array($j))
+            ->groupBy('recruiterId');
+
+        // 6️⃣ Attacher les offres et médias à chaque recruteur
         $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
             $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
 
-            // Convertir les jobs en modèles JobOffer
-            $jobs = $jobsData->map(function ($jobData) {
-                return JobOffer::fromApiData($jobData);
-            });
+            $jobs = $jobsData->map(fn($jobData) => JobOffer::fromApiData($jobData));
 
-            // Gestion médias
             $medias = collect($recruiter->medias ?? []);
             $bannerMedia = $medias->firstWhere('type', 'company_banner');
             $logoMedia = $medias->firstWhere('type', 'company_logo');
 
-            // Attacher infos dynamiques
             $recruiter->setRelation('jobOffers', $jobs);
             $recruiter->offersCount = $jobs->count();
             $recruiter->banner = $bannerMedia['filePath'] ?? null;
             $recruiter->logo = $logoMedia['filePath'] ?? null;
 
-            // Calculer un score de complétion
+            // Calculer le score de complétion
             $fields = [
                 $recruiter->companyName,
-                $recruiter->siret,
-                $recruiter->companyDescription,
-                $recruiter->location,
-                $recruiter->website,
-                $recruiter->sector,
-                $recruiter->teamSize,
-                $recruiter->contactEmail,
-                $recruiter->contactPhone,
+                $recruiter->siret ?? null,
+                $recruiter->companyDescription ?? null,
+                $recruiter->location ?? null,
+                $recruiter->website ?? null,
+                $recruiter->sector ?? null,
+                $recruiter->teamSize ?? null,
+                $recruiter->contactEmail ?? null,
+                $recruiter->contactPhone ?? null,
             ];
 
-            $recruiter->completionScore = collect($fields)
-                ->filter(fn($field) => !empty($field))
-                ->count();
+            $recruiter->completionScore = collect($fields)->filter(fn($field) => !empty($field))->count();
 
             return $recruiter;
         });
 
-        // 🔍 Appliquer les filtres
+        // 7️⃣ Récupérer les filtres depuis la requête
+        $locationFilter = request('location');
+        $sectorFilter = request('sector');
+        $teamSizeFilter = request('team_size');
+
+        // 8️⃣ Appliquer les filtres
         $recruiters = $recruiters->filter(function ($recruiter) use ($locationFilter, $sectorFilter, $teamSizeFilter) {
             $matches = true;
 
@@ -94,12 +110,13 @@ class RecruiterController extends Controller
             return $matches;
         });
 
-        // 🚀 Trier : d’abord par score de complétion (descendant), puis par nom
+        // 9️⃣ Trier par score de complétion descendant et éliminer les vides
         $recruiters = $recruiters
-            ->filter(fn($r) => $r->completionScore > 0) // éliminer ceux sans infos
+            ->filter(fn($r) => $r->completionScore > 0)
             ->sortByDesc('completionScore')
             ->values();
 
+        // 🔟 Retourner la vue
         return view('companies.index', compact('recruiters'));
     }
 
