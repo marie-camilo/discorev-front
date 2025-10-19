@@ -7,7 +7,7 @@
     <!-- Exemple 1: Affichage d'un recruteur -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Recruteur avec ses relations</h2>
-        
+
         @if(isset($recruiter))
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -15,8 +15,8 @@
                 <p><strong>Nom:</strong> {{ $recruiter->companyName }}</p>
                 <p><strong>Localisation:</strong> {{ $recruiter->location }}</p>
                 <p><strong>Taille équipe:</strong> {{ $recruiter->getTeamSizeLabel() }}</p>
-                <p><strong>Secteur:</strong> {{ $recruiter->sector }}</p>
-                
+                <p><strong>Secteur:</strong>{{ $recruiter->sectorName ?? $recruiter->sector }}</p>
+
                 @if($recruiter->user)
                 <div class="mt-4">
                     <h4 class="font-medium text-gray-700">Contact principal</h4>
@@ -26,7 +26,7 @@
                 </div>
                 @endif
             </div>
-            
+
             <div>
                 <h3 class="font-medium text-gray-700">Membres de l'équipe</h3>
                 @if($recruiter->teamMembers && $recruiter->teamMembers->count() > 0)
@@ -50,7 +50,7 @@
     <!-- Exemple 2: Affichage d'offres d'emploi -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Offres d'emploi</h2>
-        
+
         @if(isset($jobOffers) && $jobOffers->count() > 0)
         <div class="space-y-4">
             @foreach($jobOffers as $job)
@@ -59,7 +59,7 @@
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold">{{ $job->title }}</h3>
                         <p class="text-gray-600">{{ Str::limit($job->description, 150) }}</p>
-                        
+
                         <div class="flex flex-wrap gap-2 mt-3">
                             <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                                 {{ $job->getEmploymentTypeLabel() }}
@@ -71,7 +71,7 @@
                                 {{ $job->getRemoteLabel() }}
                             </span>
                         </div>
-                        
+
                         <div class="mt-3 text-sm text-gray-500">
                             <p><strong>Localisation:</strong> {{ $job->location }}</p>
                             @if($job->salaryRange)
@@ -80,7 +80,7 @@
                             <p><strong>Publié le:</strong> {{ $job->publicationDate->format('d/m/Y') }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="text-right">
                         @if($job->isActive())
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -97,7 +97,7 @@
                         @endif
                     </div>
                 </div>
-                
+
                 @if($job->recruiter)
                 <div class="mt-4 pt-4 border-t">
                     <p class="text-sm text-gray-600">
@@ -116,7 +116,7 @@
     <!-- Exemple 3: Affichage de candidatures -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Candidatures</h2>
-        
+
         @if(isset($applications) && $applications->count() > 0)
         <div class="space-y-4">
             @foreach($applications as $application)
@@ -129,7 +129,7 @@
                         </h3>
                         <p class="text-gray-600">{{ $application->candidate->user->email }}</p>
                         @endif
-                        
+
                         <div class="mt-2">
                             <span class="px-2 py-1 text-xs rounded font-medium
                                 @if($application->isSent()) bg-blue-100 text-blue-800
@@ -143,18 +143,18 @@
                                 {{ $application->getStatusLabel() }}
                             </span>
                         </div>
-                        
+
                         <p class="text-sm text-gray-500 mt-2">
                             <strong>Candidature envoyée le:</strong> {{ $application->dateApplied->format('d/m/Y H:i') }}
                         </p>
-                        
+
                         @if($application->notes)
                         <div class="mt-3 p-3 bg-gray-50 rounded">
                             <p class="text-sm"><strong>Notes:</strong> {{ $application->notes }}</p>
                         </div>
                         @endif
                     </div>
-                    
+
                     @if($application->jobOffer)
                     <div class="text-right text-sm text-gray-500">
                         <p><strong>Pour:</strong> {{ $application->jobOffer->title }}</p>
@@ -172,7 +172,7 @@
     <!-- Exemple 4: Affichage de médias -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Médias</h2>
-        
+
         @if(isset($medias) && $medias->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($medias as $media)
@@ -182,7 +182,7 @@
                     <p class="text-sm text-gray-600">{{ $media->getTypeLabel() }}</p>
                     <p class="text-sm text-gray-500">{{ $media->getContextLabel() }}</p>
                 </div>
-                
+
                 <div class="flex flex-wrap gap-2 mb-3">
                     <span class="px-2 py-1 text-xs rounded
                         @if($media->isPublic()) bg-green-100 text-green-800
@@ -192,11 +192,11 @@
                         {{ ucfirst($media->visibility) }}
                     </span>
                 </div>
-                
+
                 <p class="text-xs text-gray-500">
                     <strong>Uploadé le:</strong> {{ $media->uploadedAt->format('d/m/Y H:i') }}
                 </p>
-                
+
                 @if($media->uploader)
                 <p class="text-xs text-gray-500">
                     <strong>Par:</strong> {{ $media->uploader->getFullName() }}
@@ -213,7 +213,7 @@
     <!-- Exemple 5: Affichage de notifications -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold mb-4">Notifications</h2>
-        
+
         @if(isset($notifications) && $notifications->count() > 0)
         <div class="space-y-3">
             @foreach($notifications as $notification)
@@ -233,7 +233,7 @@
                         Type: {{ $notification->getRelatedTypeLabel() }}
                     </p>
                 </div>
-                
+
                 @if($notification->isUnread())
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Nouveau

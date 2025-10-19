@@ -49,6 +49,12 @@
                             {{ $label }}
                         </option>
                     @endforeach
+
+                    @if(!isset($sectors[$recruiter['sector'] ?? '']) && !empty($recruiter['sector']))
+                        <option value="{{ $recruiter['sector'] }}" selected>
+                            {{ $recruiter['sector'] }}
+                        </option>
+                    @endif
                 </select>
             </div>
 
