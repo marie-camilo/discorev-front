@@ -84,7 +84,7 @@
     <div class="col-12 col-md-6">
         <div class="mb-3">
             <x-media-uploader :label="'logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
-                target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple=false />
+                target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false" />
         </div>
 
         <div class="mb-3">
@@ -94,7 +94,7 @@
     <div class="col-12">
         <div class="mb-3">
             <x-media-uploader :label="'photos de l\'entreprise'" :medias="$recruiter['medias']" type="company_image" context="company_page"
-                target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple=true />
+                target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="true" />
 
         </div>
     </div>
