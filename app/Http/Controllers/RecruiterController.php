@@ -165,15 +165,23 @@ class RecruiterController extends Controller
         $recruiter->sectorName = isset($recruiter->sector)
             ? NafHelper::getLabel($recruiter->sector)
             : null;
+
         $recruiterId = $recruiter['id'];
 
         // Job offers
         $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId");
-        $medias = collect($recruiter['medias'] ?? []);
-        // Variables spécifiques pour la bannière et le logo
-        $banner = $medias->firstWhere('type', 'company_banner');
-        $logo = $medias->firstWhere('type', 'company_logo');
 
+        // Collecte les médias
+        $medias = collect($recruiter['medias'] ?? []);
+
+        // Récupère directement les fichiers pour bannière et logo
+        $bannerMedia = $medias->firstWhere('type', 'company_banner');
+        $logoMedia = $medias->firstWhere('type', 'company_logo');
+
+        $recruiter->banner = $bannerMedia['filePath'] ?? null;
+        $recruiter->logo = $logoMedia['filePath'] ?? null;
+
+        // Configuration des sections pour la vue
         $sectionsConfig = [
             [
                 'key' => 'companyDescription',
@@ -219,9 +227,8 @@ class RecruiterController extends Controller
             ->values()
             ->all();
 
-        // Détermination de la vue en toute sécurité
+        // Détermination de la vue
         $view = null;
-
         if (!empty($recruiter['companyName'])) {
             $slugView = 'companies.' . $this->slugify($recruiter['companyName']);
             if (view()->exists($slugView)) {
@@ -229,16 +236,15 @@ class RecruiterController extends Controller
             }
         }
 
-        // Fallback vers la vue générique si aucune vue spécifique n'existe
         if (!$view) {
             $view = view()->exists('companies.show') ? 'companies.show' : null;
         }
 
         if ($view) {
-            return view($view, compact('recruiter', 'sections', 'jobOffers', 'banner', 'logo'));
+            // Passe directement $recruiter avec logo et banner remplis
+            return view($view, compact('recruiter', 'sections', 'jobOffers'));
         }
 
-        // Aucun fallback disponible
         return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
     }
 
