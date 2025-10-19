@@ -162,6 +162,9 @@ class RecruiterController extends Controller
         }
 
         $recruiter = Recruiter::fromApiData($recruiterData);
+        $recruiter->sectorName = isset($recruiter->sector)
+            ? NafHelper::getLabel($recruiter->sector)
+            : null;
         $recruiterId = $recruiter['id'];
 
         // Job offers
