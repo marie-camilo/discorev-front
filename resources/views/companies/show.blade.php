@@ -29,7 +29,7 @@
                     <h1>{{ $recruiter->companyName }}</h1>
                 </div>
                 <p><span class="material-symbols-outlined text-white">business_center</span> Secteur :
-                    {{ $recruiter->sector }}</p>
+                    {{ $recruiter->sectorName ?? $recruiter->sector }}</p>
                 <p><span class="material-symbols-outlined text-white">location_on</span> Localisation :
                     {{ $recruiter->location }}</p>
                 <p><span class="material-symbols-outlined text-white">groups</span> Taille de l'équipe :
