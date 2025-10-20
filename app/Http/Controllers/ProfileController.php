@@ -27,8 +27,18 @@ class ProfileController extends Controller
     public function edit()
     {
         $userAuth = Session::get('user');
+
+        if (!$userAuth || !isset($userAuth['id'])) {
+            return redirect()->route('auth', ['tab' => 'login'])
+                ->with('error', 'Session expirée. Veuillez vous reconnecter.');
+        }
+
         $user = $this->api->get('users/' . $userAuth['id']);
-        $type = $userAuth['accountType'];
+        $type = $userAuth['accountType'] ?? null;
+
+        if (!$type) {
+            return back()->with('error', 'Impossible de déterminer le type de compte. Veuillez vous reconnecter.');
+        }
 
         $entries = NafHelper::loadNafJson();
         $sectors = NafHelper::filterSectors($entries);
