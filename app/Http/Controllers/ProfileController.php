@@ -129,9 +129,16 @@ class ProfileController extends Controller
 
         if ($response->successful()) {
             $userData = $response->json()['data'] ?? null;
+
             if (!$userData) {
                 return back()->with('warning', 'La mise à jour a été effectuée mais les données n’ont pas été récupérées.');
             }
+
+            // fallback pour accountType
+            if (!isset($userData['accountType']) && isset($userAuth['accountType'])) {
+                $userData['accountType'] = $userAuth['accountType'];
+            }
+
             Session::put('user', $userData);
 
             return back()->with('success', 'Informations mises à jour avec succès.');
