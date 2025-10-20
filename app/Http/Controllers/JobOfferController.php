@@ -27,7 +27,6 @@ class JobOfferController extends Controller
         return view('job_offers.index');
     }
 
-
     public function api(Request $request)
     {
         $offers = $this->api->get('job_offers', $request->query());
