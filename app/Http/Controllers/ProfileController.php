@@ -111,19 +111,25 @@ class ProfileController extends Controller
     {
         // Validation des champs
         $validated = $request->validate([
-            'firstName'    => 'nullable|string',
-            'lastName'     => 'nullable|string',
-            'email'        => 'required|email',
-            'contactPhone' => 'nullable|string|min:10|max:20',
+            'firstName'   => 'nullable|string',
+            'lastName'    => 'nullable|string',
+            'email'       => 'required|email',
+            'phoneNumber' => 'nullable|string|min:10|max:20',
         ]);
 
+        // Mapper phoneNumber vers contactPhone pour l'API
+        $apiData = $validated;
+        if(isset($apiData['phoneNumber'])){
+            $apiData['contactPhone'] = $apiData['phoneNumber'];
+            unset($apiData['phoneNumber']);
+        }
+
         // Envoyer la mise à jour à l'API
-        $response = $this->api->put('users/' . $id, $validated);
+        $response = $this->api->put('users/' . $id, $apiData);
 
         if ($response->successful()) {
             $userData = $response->json()['data'] ?? null;
             if (!$userData) {
-                // Cas où l'API ne renvoie pas la data correctement
                 return back()->with('warning', 'La mise à jour a été effectuée mais les données n’ont pas été récupérées.');
             }
             Session::put('user', $userData);
@@ -131,7 +137,6 @@ class ProfileController extends Controller
             return back()->with('success', 'Informations mises à jour avec succès.');
         }
 
-        // Gestion des erreurs
         $errorMessage = $response->json()['message'] ?? 'Une erreur est survenue. Veuillez réessayer plus tard.';
         return back()->with('error', $errorMessage);
     }
