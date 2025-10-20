@@ -355,7 +355,7 @@
     .btn-login:hover {
         box-shadow: 0 8px 16px rgba(5, 56, 61, 0.2);
         color: var(--sand) !important;
-        background: var(--indigo) !important;
+        background: var(--aquamarine) !important;
     }
 
     .btn-warning {
