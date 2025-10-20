@@ -138,7 +138,7 @@ class RecruiterController extends Controller
             'website' => 'nullable|string|max:255',
             'sector' => 'nullable|string|max:100',
             'teamSize' => 'nullable|string|max:50',
-            'contactPhone' => 'nullable|string|min:20',
+            'contactPhone' => ['nullable', 'string', 'min:10', 'max:20', 'regex:/^[0-9+\s\-().]+$/'],
             'contactEmail' => 'nullable|string',
         ]);
 
