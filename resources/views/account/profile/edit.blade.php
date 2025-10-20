@@ -119,4 +119,20 @@
             activateTab(initialTab);
         });
     </script>
+
+    <style>
+        #profileTabs .nav-link {
+            color: var(--indigo);
+        }
+
+        #profileTabs .nav-link.active {
+            color: var(--indigo);
+            font-weight: 500;
+        }
+
+        #profileTabs .nav-link:hover {
+            color: var(--indigo);
+            text-decoration: underline;
+        }
+    </style>
 @endsection
