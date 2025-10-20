@@ -111,10 +111,10 @@ class ProfileController extends Controller
     {
         // Validation des champs
         $validated = $request->validate([
-            'firstName'   => 'nullable|string',
-            'lastName'    => 'nullable|string',
-            'email'       => 'required|email',
-            'phoneNumber' => 'nullable|string|min:10|max:20',
+            'firstName'    => 'nullable|string',
+            'lastName'     => 'nullable|string',
+            'email'        => 'required|email',
+            'contactPhone' => 'nullable|string|min:10|max:20',
         ]);
 
         // Envoyer la mise à jour à l'API
