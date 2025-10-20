@@ -96,4 +96,20 @@ class RecruiterTeamMemberController extends Controller
 
         return back()->with('success', 'Équipe synchronisée avec succès.');
     }
+
+    public function delete($recruiterId, $memberId)
+    {
+        try {
+            $response = $this->api->delete("recruiters/{$recruiterId}/team/{$memberId}");
+
+            if (!$response->successful()) {
+                return response()->json(['message' => 'Erreur lors de la suppression du membre.'], 500);
+            }
+
+            return response()->json(['message' => 'Membre supprimé avec succès.']);
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Erreur serveur'], 500);
+        }
+    }
 }
