@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg bg-aquamarine shadow py-2 px-lg-5">
         <div class="container-fluid">
             <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center text-white fw-bold fs-4" href="{{ route('home') }}">
+            <a class="navbar-brand d-flex align-items-center text-white fw-bold fs-4" href="{{ route('home')}}">
                 <img src="{{ asset('img/logos/logo-white.svg') }}" alt="logo Discorev" height="30" class="me-2">
                 Discorev
             </a>

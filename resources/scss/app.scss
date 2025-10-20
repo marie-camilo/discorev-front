@@ -212,52 +212,6 @@ img { width: 100%; height: auto; }
 }
 
 /* ============================= */
-/*            FOOTER             */
-/* ============================= */
-.footer {
-    background-color: var(--indigo);
-    color: var(--white);
-    padding: 2rem 0;
-    font-family: "Poppins Medium", sans-serif;
-    font-size: 0.9rem;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-
-    .footer-col {
-        flex: 1;
-        margin-right: 3rem;
-
-        h3 { font-size: 1.2rem; color: var(--white); margin-bottom: 1rem; font-weight: bold; }
-
-        ul { list-style: none; padding: 0;
-
-            li { margin-bottom: 0.5rem;
-
-                a { color: #fff; text-decoration: none; transition: color 0.3s ease;
-                    &:hover { color: var(--larch-bolete); }
-                }
-            }
-        }
-
-        img { max-width: 10%; }
-    }
-}
-
-.social-icons { display: flex; gap: 15px; }
-.social-icon i { font-size: 15px; color: white; transition: color 0.3s ease; }
-.social-icon:hover i { color: #f39c12; }
-
-.footer-bottom, .footer-legal-links { text-align: center; color: white; padding: 1rem 0; }
-.footer-legal-links a { margin: 0 15px; font-size: 0.9rem; transition: color 0.3s ease; color: var(--white) }
-
-/* ============================= */
 /*          HERO / WELCOME       */
 /* ============================= */
 .hero { display: flex; flex-direction: column; justify-content: center; }
