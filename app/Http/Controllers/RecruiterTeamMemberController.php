@@ -100,11 +100,9 @@ class RecruiterTeamMemberController extends Controller
     public function delete($recruiterId, $memberId)
     {
         try {
-            $response = $this->api->delete("recruiters/{$recruiterId}/team/{$memberId}");
-
-            if (!$response->successful()) {
-                return response()->json(['message' => 'Erreur lors de la suppression du membre.'], 500);
-            }
+            // Suppression côté Laravel (base de données ou session)
+            $recruiter = Recruiter::findOrFail($recruiterId);
+            $recruiter->teamMembers()->where('id', $memberId)->delete();
 
             return response()->json(['message' => 'Membre supprimé avec succès.']);
         } catch (\Throwable $e) {

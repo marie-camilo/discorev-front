@@ -64,41 +64,21 @@
     });
 
     // 🗑️ Supprimer un membre (juste côté front)
-    document.addEventListener('click', async (e) => {
+    document.addEventListener('click', (e) => {
         const btn = e.target.closest('.delete-member');
         if (!btn) return;
 
-        e.preventDefault(); // ⚠️ empêche le navigateur de suivre le bouton comme un submit ou lien
-
+        e.preventDefault();
         const card = btn.closest('.member-card');
         const hiddenId = card.querySelector('input[name*="[id]"]');
 
         if (hiddenId && hiddenId.value) {
-            const memberId = hiddenId.value;
-
-            console.log('clic', memberId)
-            try {
-                const response = await fetch(`/recruiter/{{ $recruiter['id'] }}/team/${memberId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    card.remove();
-                } else {
-                    alert(result.message || 'Erreur lors de la suppression.');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Erreur lors de la suppression.');
-            }
-        } else {
-            card.remove();
+            // Ajouter l'ID du membre supprimé dans deletedIds
+            const deletedIds = deletedInput.value ? deletedInput.value.split(',') : [];
+            deletedIds.push(hiddenId.value);
+            deletedInput.value = deletedIds.join(',');
         }
+
+        card.remove();
     });
 </script>
