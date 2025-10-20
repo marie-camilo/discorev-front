@@ -64,21 +64,41 @@
     });
 
     // 🗑️ Supprimer un membre (juste côté front)
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async (e) => {
         const btn = e.target.closest('.delete-member');
         if (!btn) return;
+
+        e.preventDefault(); // ⚠️ empêche le navigateur de suivre le bouton comme un submit ou lien
 
         const card = btn.closest('.member-card');
         const hiddenId = card.querySelector('input[name*="[id]"]');
 
         if (hiddenId && hiddenId.value) {
-            // Si tu veux garder la trace pour le serveur, tu peux remplir deletedIds
-            const currentDeleted = deletedInput.value ? deletedInput.value.split(',') : [];
-            currentDeleted.push(hiddenId.value);
-            deletedInput.value = currentDeleted.join(',');
-        }
+            const memberId = hiddenId.value;
 
-        // Supprime la carte visuellement
-        card.remove();
+            console.log('clic', memberId)
+            try {
+                const response = await fetch(`/recruiter/{{ $recruiter['id'] }}/team/${memberId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    card.remove();
+                } else {
+                    alert(result.message || 'Erreur lors de la suppression.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la suppression.');
+            }
+        } else {
+            card.remove();
+        }
     });
 </script>
