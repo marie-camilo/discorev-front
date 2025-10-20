@@ -44,7 +44,7 @@
     let memberIndex = {{ count($recruiter['teamMembers'] ?? []) }};
     const deletedInput = document.getElementById('deletedIds');
 
-    // 🧱 Ajouter un nouveau membre
+    // 🧱 Ajouter un membre
     document.getElementById('add-member-btn').addEventListener('click', () => {
         const container = document.getElementById('team-members-list');
         const html = `
@@ -63,47 +63,22 @@
         memberIndex++;
     });
 
-    // 🗑️ Supprimer un membre
-    document.addEventListener('click', async (e) => {
+    // 🗑️ Supprimer un membre (juste côté front)
+    document.addEventListener('click', (e) => {
         const btn = e.target.closest('.delete-member');
         if (!btn) return;
 
-        e.preventDefault(); // empêche tout comportement par défaut
         const card = btn.closest('.member-card');
         const hiddenId = card.querySelector('input[name*="[id]"]');
 
-        // Si le membre existe déjà côté back (a un ID)
         if (hiddenId && hiddenId.value) {
-            const memberId = hiddenId.value;
-
-            try {
-                const url = "{{ route('recruiter.members.delete', ['recruiter' => $recruiter['id'], 'member' => 'REPLACE_ID']) }}".replace('REPLACE_ID', memberId);
-                const response = await fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    card.remove(); // Supprime visuellement la carte
-                } else {
-                    alert(result.message || 'Erreur lors de la suppression.');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Erreur lors de la suppression.');
-            }
-        } else {
-            // Si membre jamais sauvegardé => on supprime juste visuellement
-            card.remove();
+            // Si tu veux garder la trace pour le serveur, tu peux remplir deletedIds
+            const currentDeleted = deletedInput.value ? deletedInput.value.split(',') : [];
+            currentDeleted.push(hiddenId.value);
+            deletedInput.value = currentDeleted.join(',');
         }
-    });
 
-    // 🔹 Optionnel : empêche l'envoi du formulaire si tu veux debugger
-    document.getElementById('team-members-form').addEventListener('submit', e => e.preventDefault());
+        // Supprime la carte visuellement
+        card.remove();
+    });
 </script>
