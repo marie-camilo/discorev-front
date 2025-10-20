@@ -51,41 +51,27 @@ class RecruiterTeamMemberController extends Controller
         $toCreate = $submittedNew->values();
 
         try {
-            // ✅ Mises à jour
-            foreach ($toUpdate as $id => $member) {
-                $payload = [
-                    'action' => 'update',
-                    'type' => 'team',
-                    'id' => $id,
-                    'recruiter_id' => $recruiterId,
-                    'name' => $member['name'],
-                    'email' => $member['email'],
-                    'role' => $member['role'],
-                ];
-
-                $updateResponse = $this->api->post('index.php', $payload);
-
-                if (!$updateResponse->successful()) {
-                    return back()->withErrors('Erreur lors de la modification des membres.');
-                }
-            }
-
-            // ✅ Suppressions
+            // Suppression
             foreach ($toDeleteIds as $id) {
-                $payload = [
-                    'action' => 'delete',
-                    'type' => 'team',
-                    'id' => $id,
-                ];
-
-                $deleteResponse = $this->api->post('index.php', $payload);
-
+                $deleteResponse = $this->api->delete("recruiters/{$recruiterId}/team/{$id}");
                 if (!$deleteResponse->successful()) {
                     return back()->withErrors('Erreur lors de la suppression des membres.');
                 }
             }
 
-            // ✅ Créations
+            // Mise à jour
+            foreach ($toUpdate as $id => $member) {
+                $updateResponse = $this->api->put("recruiters/{$recruiterId}/team/{$id}", [
+                    'name' => $member['name'],
+                    'email' => $member['email'],
+                    'role' => $member['role'],
+                ]);
+                if (!$updateResponse->successful()) {
+                    return back()->withErrors('Erreur lors de la modification des membres.');
+                }
+            }
+
+            // Créations
             foreach ($toCreate as $member) {
                 $payload = [
                     'action' => 'create',
