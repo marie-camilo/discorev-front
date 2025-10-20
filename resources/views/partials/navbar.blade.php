@@ -48,9 +48,10 @@
 
                     @if ($isAuthenticated && isset($user))
                         @php
-                            $isCandidate = $user['accountType'] === 'candidate';
-                            $isRecruiter = $user['accountType'] === 'recruiter';
-                            $isAdmin = $user['accountType'] === 'admin';
+                            $accountType = $user['accountType'] ?? null;
+                            $isCandidate = $accountType === 'candidate';
+                            $isRecruiter = $accountType === 'recruiter';
+                            $isAdmin = $accountType === 'admin';
                         @endphp
 
                         @if ($isCandidate)
