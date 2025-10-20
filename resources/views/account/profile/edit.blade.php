@@ -2,7 +2,7 @@
 @section('title', 'Modifier mon profil | Discorev')
 
 @section('content')
-    <div class="container my-3">
+    <div class="container-fluid my-3">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h2>Modifier mon profil</h2>
@@ -10,7 +10,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-2">
                         <ul class="nav nav-tabs flex-md-column flex-row me-3" id="profileTabs">
                             @foreach ($tabs as $key => $tab)
                                 <li class="nav-item">
@@ -23,7 +23,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    <div class="col-12 col-md-9" id="tab-content">
+                    <div class="col-12 col-md-10" id="tab-content">
                         @foreach ($tabs as $key => $tab)
                             <div class="tab-pane {{ $loop->first ? 'd-block' : 'd-none' }}" id="{{ $key }}">
                                 @switch($key)
@@ -113,7 +113,7 @@
 
             // Vérifie que l'onglet existe dans les tabs
             if (!initialTab || ![...tabs].some(t => t.getAttribute('data-tab') === initialTab)) {
-                initialTab = tabs[0].getAttribute('data-tab'); // premier onglet par défaut
+                initialTab = tabs[0].getAttribute('data-tab');
             }
 
             activateTab(initialTab);
@@ -121,18 +121,28 @@
     </script>
 
     <style>
+        #profileTabs {
+            min-width: 150px;
+        }
+
+        #tab-content {
+            padding-left: 15px;
+        }
+
         #profileTabs .nav-link {
-            color: var(--indigo);
+            color: var(--indigo) !important;
+            white-space: nowrap;
         }
 
         #profileTabs .nav-link.active {
-            color: var(--indigo);
+            color: var(--indigo) !important;
             font-weight: 500;
         }
 
         #profileTabs .nav-link:hover {
-            color: var(--indigo);
-            text-decoration: underline;
+            color: var(--indigo) !important;
+            text-decoration: underline !important;
         }
     </style>
+
 @endsection
