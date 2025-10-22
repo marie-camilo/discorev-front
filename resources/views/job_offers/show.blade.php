@@ -11,30 +11,29 @@
 
     <div class="container py-5">
 
+        <!-- Bouton retour avant le header -->
+        <div class="mb-3">
+            <a href="{{ route('job_offers.index') }}" class="btn btn-highlight d-inline-flex align-items-center gap-1">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Retour aux offres
+            </a>
+        </div>
 
         <!-- HEADER -->
         <div class="offer-header shadow-sm rounded-4 p-4 mb-5">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
-                <!-- Bouton retour -->
-                <a href="{{ route('job_offers.index') }}" class="btn btn-highlight position-absolute">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                    Retour aux offres
-                </a>
-
                 <!-- Logo + Entreprise -->
                 <div class="d-flex align-items-center gap-3">
                     <div class="company-logo">
+                        @php
+                            $logoUrl = !empty($recruiter->logo) ? config('app.api') . '/' . ltrim($recruiter->logo, '/') : asset('img/default-company.png');
+                        @endphp
                         @if (!empty($recruiter->website))
                             <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                                <p>{{ config('app.api') . '/' . $recruiter->logo }}</p>
-                                <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : asset('img/default-company.png') }}"
-                                     alt="Logo de {{ $recruiter->companyName }}"
-                                     class="offer-logo shadow-sm">
+                                <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
                             </a>
                         @else
-                            <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : asset('img/default-company.png') }}"
-                                 alt="Logo de {{ $recruiter->companyName }}"
-                                 class="offer-logo shadow-sm">
+                            <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
                         @endif
                     </div>
                     <div>
@@ -112,14 +111,6 @@
                         ⏳ Offre valable jusqu’au {{ date('d/m/Y', strtotime($offer->expirationDate)) }}
                     </p>
                 @endif
-
-                <!-- Bouton centré -->
-                <div class="text-center mt-5">
-                    <a href="{{ route('job_offers.index') }}" class="btn btn-highlight d-inline-flex align-items-center justify-content-center gap-2 px-4 py-2">
-                        <span class="material-symbols-outlined">arrow_back</span>
-                        <span>Retour à la liste</span>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
