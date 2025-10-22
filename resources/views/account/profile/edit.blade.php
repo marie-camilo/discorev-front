@@ -2,13 +2,12 @@
 @section('title', 'Modifier mon profil | Discorev')
 
 @section('content')
-    <div class="container my-3"> <!-- container au lieu de container-fluid -->
+    <div class="container my-3">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h2>Modifier mon profil</h2>
-                <small class="disabled">{{ $type }}</small>
             </div>
-            <div class="card-body px-4"> <!-- padding horizontal ajouté -->
+            <div class="card-body px-3">
                 <div class="row">
                     <div class="col-12 col-md-2">
                         <ul class="nav nav-tabs flex-md-column flex-row me-3" id="profileTabs">
@@ -67,8 +66,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script et styles restent inchangés -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
