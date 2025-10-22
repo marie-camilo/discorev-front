@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\LegalController;
 
 Route::permanentRedirect('/home', '/');
 
@@ -63,6 +64,11 @@ Route::middleware(['token.valid'])->group(function () {
 // Accès public
 Route::get('/job_offers', [JobOfferController::class, 'index'])->name('job_offers.index');
 Route::get('/api/job_offers', [JobOfferController::class, 'api']);
+
+Route::get('/mentions-legales', [LegalController::class, 'mentionsLegales'])->name('mentions-legales');
+Route::get('/politique-confidentialite', [LegalController::class, 'politiqueConfidentialite'])->name('politique-confidentialite');
+Route::get('/cgv', [LegalController::class, 'cgv'])->name('cgv');
+Route::get('/cgu', [LegalController::class, 'cgu'])->name('cgu');
 
 // Accès aux fiches entreprises
 Route::get('/companies', [RecruiterController::class, 'index'])->name('companies.index');

@@ -49,12 +49,10 @@
     </div>
 
     <div class="footer-legal-links">
-        <a href="#">Mentions légales</a>
-        <a href="#">CGU</a>
-        <a href="#">Politique de confidentialité</a>
-        <a href="#">Charte Discorev</a>
-        <a href="#">Politique cookies</a>
-        <a href="#">Gestion des cookies</a>
+        <a href="{{ route('mentions-legales') }}">Mentions légales</a>
+        <a href="{{ route('cgu') }}">CGU</a>
+        <a href="{{ route('cgv') }}">CGV</a>
+        <a href="{{ route('politique-confidentialite') }}">Politique de confidentialité</a>
     </div>
 
     <div class="footer-bottom">
