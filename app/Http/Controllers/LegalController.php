@@ -25,7 +25,7 @@ class LegalController extends Controller
         }
 
         // Vue partielle correspondante
-        $viewName = 'legal.partials.' . $slug;
+        $viewName = 'legal.' . $slug;
 
         // Rendu de la vue principale
         return view('legal.template', [
