@@ -21,9 +21,8 @@
                          class="offer-logo rounded-circle shadow-sm">
                     <div>
                         <h2 class="mb-1 fw-bold">{{ $offer->title }}</h2>
-                        <a href="{{ route('companies.show', $recruiter->identifier) }}"
-                           class="text-decoration-none text-muted fw-semibold">
-                            {{ $recruiter->companyName ?? 'Entreprise' }}
+                        <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}" class="text-decoration-none fw-semibold text-primary">
+                            {{ $recruiter->companyName }}
                         </a>
                         <p class="text-secondary small mb-0">Publiée {{ $daysAgo }}</p>
                     </div>
