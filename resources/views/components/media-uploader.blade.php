@@ -66,28 +66,38 @@
         const fileInput = document.getElementById('{{ $uniqueId }}_file');
         const previewContainer = document.getElementById('{{ $uniqueId }}_newPreview');
         const isMultiple = {{ $isMultiple ? 'true' : 'false' }};
+        const maxFiles = 5;
+        const maxImageSize = 5 * 1024 * 1024; // 5 Mo
+        const maxVideoSize = 20 * 1024 * 1024; // 20 Mo
 
         fileInput?.addEventListener('change', function(event) {
             const files = Array.from(event.target.files);
             previewContainer.innerHTML = '';
 
-            // ✅ Limite de 5 fichiers
-            if (isMultiple && files.length > 5) {
-                alert('Vous ne pouvez pas ajouter plus de 5 fichiers à la fois.');
+            // Limite de fichiers
+            if (isMultiple && files.length > maxFiles) {
+                alert(`Vous ne pouvez pas ajouter plus de ${maxFiles} fichiers à la fois.`);
                 fileInput.value = '';
                 return;
             }
 
             for (let file of files) {
-                // ✅ Limite de 20 Mo pour les vidéos
-                if (file.type.startsWith('video/') && file.size > 20 * 1024 * 1024) {
+                // Vérification de la taille selon type
+                if (file.type.startsWith('image/') && file.size > maxImageSize) {
+                    alert(`L'image "${file.name}" dépasse la taille maximale autorisée de 5 Mo.`);
+                    fileInput.value = '';
+                    previewContainer.innerHTML = '';
+                    return;
+                }
+
+                if (file.type.startsWith('video/') && file.size > maxVideoSize) {
                     alert(`La vidéo "${file.name}" dépasse la taille maximale autorisée de 20 Mo.`);
                     fileInput.value = '';
                     previewContainer.innerHTML = '';
                     return;
                 }
 
-                // 🎞️ Aperçu uniquement si image
+                // Aperçu pour les images uniquement
                 if (file.type.startsWith('image/')) {
                     const preview = document.createElement('img');
                     preview.src = URL.createObjectURL(file);
@@ -96,27 +106,21 @@
                 }
             }
         });
+
+        // Empêche l'envoi du formulaire si un fichier est trop lourd (sécurité double)
+        const form = document.getElementById('{{ $uniqueId }}_form');
+        form.addEventListener('submit', function(e) {
+            const files = Array.from(fileInput.files);
+            for (let file of files) {
+                if ((file.type.startsWith('image/') && file.size > maxImageSize) ||
+                    (file.type.startsWith('video/') && file.size > maxVideoSize)) {
+                    e.preventDefault();
+                    alert(`Le fichier "${file.name}" dépasse la taille maximale autorisée.`);
+                    return false;
+                }
+            }
+        });
     });
-
-    function deleteMedia(mediaId, btn) {
-        if (!confirm("Supprimer ce fichier ?")) return;
-
-        fetch(`/media/delete/${mediaId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Supprimer l'image du DOM
-                    const mediaContainer = btn.closest('.position-relative');
-                    mediaContainer.remove();
-                } else {
-
-                    alert('Erreur lors de la suppression.');
-                }
-            })
-            .catch(() => alert('Erreur de réseau.'));
-    }
 </script>
+
+
