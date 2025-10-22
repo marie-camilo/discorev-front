@@ -31,14 +31,11 @@
                     @endphp
 
                     <div class="company-logo">
-                        @if(!empty($recruiter->website))
-                            <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                                <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
-                            </a>
-                        @else
+                        <a href="{{ route('companies.show', $recruiter->id ?: $recruiter->companyName) }}" class="d-inline-block">
                             <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
-                        @endif
+                        </a>
                     </div>
+
                     <div>
                         <h2 class="mb-1 fw-bold">{{ $offer->title }}</h2>
                         <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}" class="text-decoration-none company-name-link">
