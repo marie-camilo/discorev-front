@@ -1,22 +1,22 @@
-<div class="row justify-content-between">
-    <div class="col-12 col-md-6 mb-4">
+<div class="row g-4">
+    <!-- Colonne principale : informations générales -->
+    <div class="col-12 col-md-6">
+        <h5 class="fw-bold mb-3">Général</h5>
 
-        <h5 class="fw-bold">Général</h5>
-        <form action="{{ route('recruiter.update', $recruiter['id']) }}" method="POST" enctype="multipart/form-data"
-            id="recruiter-profile-form">
+        <form action="{{ route('recruiter.update', $recruiter['id']) }}" method="POST" enctype="multipart/form-data" id="recruiter-profile-form">
             @csrf
             @method('PUT')
 
             <div class="mb-3">
                 <label for="companyName" class="form-label">Nom de l’entreprise</label>
                 <input type="text" class="form-control" id="companyName" name="companyName"
-                    value="{{ old('companyName', $recruiter['companyName'] ?? '') }}" required>
+                       value="{{ old('companyName', $recruiter['companyName'] ?? '') }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="siret" class="form-label">Siret de l’entreprise</label>
                 <input type="text" class="form-control" id="siret" name="siret"
-                    value="{{ old('siret', $recruiter['siret'] ?? '') }}">
+                       value="{{ old('siret', $recruiter['siret'] ?? '') }}">
             </div>
 
             <div class="mb-3">
@@ -27,33 +27,26 @@
             <div class="mb-3">
                 <label for="location" class="form-label">Lieu de l’entreprise</label>
                 <input type="text" class="form-control" id="location" name="location"
-                    value="{{ old('location', $recruiter['location'] ?? '') }}">
+                       value="{{ old('location', $recruiter['location'] ?? '') }}">
             </div>
 
             <div class="mb-3">
                 <label for="website" class="form-label">Site web de l’entreprise</label>
                 <input type="text" class="form-control" id="website" name="website"
-                    value="{{ old('website', $recruiter['website'] ?? '') }}">
+                       value="{{ old('website', $recruiter['website'] ?? '') }}">
             </div>
 
             <div class="mb-3">
                 <label for="sector" class="form-label">Secteur d’activité</label>
                 <select class="form-select" id="sector" name="sector">
-                    <option value="" disabled
-                        {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>
-                        Sélectionnez un secteur
-                    </option>
+                    <option value="" disabled {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>Sélectionnez un secteur</option>
                     @foreach ($sectors as $code => $label)
-                        <option value="{{ $code }}"
-                            {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
+                        <option value="{{ $code }}" {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
                             {{ $label }}
                         </option>
                     @endforeach
-
                     @if(!isset($sectors[$recruiter['sector'] ?? '']) && !empty($recruiter['sector']))
-                        <option value="{{ $recruiter['sector'] }}" selected>
-                            {{ $recruiter['sector'] }}
-                        </option>
+                        <option value="{{ $recruiter['sector'] }}" selected>{{ $recruiter['sector'] }}</option>
                     @endif
                 </select>
             </div>
@@ -61,41 +54,47 @@
             <div class="mb-3">
                 <label for="teamSize" class="form-label">Taille de l’entreprise</label>
                 <input type="text" class="form-control" id="teamSize" name="teamSize"
-                    value="{{ old('teamSize', $recruiter['teamSize'] ?? '') }}">
+                       value="{{ old('teamSize', $recruiter['teamSize'] ?? '') }}">
             </div>
 
             <div class="mb-3">
                 <label for="contactPhone" class="form-label">Contact (téléphone)</label>
                 <input type="text" class="form-control" id="contactPhone" name="contactPhone"
-                    value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}" minlength="10" maxlength="20">
+                       value="{{ old('contactPhone', $recruiter['contactPhone'] ?? '') }}" minlength="10" maxlength="20">
             </div>
 
             <div class="mb-3">
                 <label for="contactEmail" class="form-label">Contact (e-mail)</label>
                 <input type="email" class="form-control" id="contactEmail" name="contactEmail"
-                    value="{{ old('contactEmail', $recruiter['contactEmail'] ?? '') }}">
+                       value="{{ old('contactEmail', $recruiter['contactEmail'] ?? '') }}">
             </div>
-
-            <button type="submit" class="btn btn-primary">
-                Mettre à jour
-            </button>
         </form>
     </div>
+
+    <!-- Colonne secondaire : logo et équipe -->
     <div class="col-12 col-md-6">
+        <h5 class="fw-bold mb-3">Logo et équipe</h5>
+
         <div class="mb-3">
-            <x-media-uploader :label="'logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
-                target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false" />
+            <x-media-uploader :label="'Logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
+                              target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false" />
         </div>
 
         <div class="mb-3">
             <x-recruiter-team-member-form :recruiter="$recruiter" />
         </div>
-    </div>
-    <div class="col-12">
-        <div class="mb-3">
-            <x-media-uploader :label="'photos de l\'entreprise'" :medias="$recruiter['medias']" type="company_image" context="company_page"
-                target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="true" />
 
+        <div class="mb-3">
+            <x-media-uploader :label="'Photos de l\'entreprise'" :medias="$recruiter['medias']" type="company_image" context="company_page"
+                              target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="true" />
+        </div>
+
+        <!-- Bouton mis à jour après la modification du logo -->
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary w-100">
+                Mettre à jour
+            </button>
         </div>
     </div>
 </div>
+
