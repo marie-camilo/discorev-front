@@ -174,7 +174,7 @@
 
                 <a class="btn btn-warning" href="{{ route('recruiters.tarifs') }}">
                     <span class="material-symbols-outlined">star</span>
-                    Premium
+                    Prenium
                 </a>
 
                 @if ($isAuthenticated && isset($user))
