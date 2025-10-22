@@ -6,41 +6,34 @@
     @php
         use Carbon\Carbon;
         $publicationDate = Carbon::parse($offer->publicationDate);
-        $daysAgo = $publicationDate->diffForHumans(); // ex: "il y a 5 jours"
+        $daysAgo = $publicationDate->diffForHumans();
     @endphp
 
     <div class="container py-5">
-        <!-- HEADER DE L'OFFRE -->
+
+        <!-- HEADER -->
         <div class="offer-header shadow-sm rounded-4 p-4 mb-5">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
 
-                <!-- Logo + Nom entreprise -->
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <div class="company-logo">
-                        @if (!empty($recruiter->website))
-                            <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                                <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : asset('img/default-company.png') }}"
-                                     alt="Logo {{ $recruiter->companyName }}"
-                                     class="offer-logo rounded-circle shadow-sm">
-                            </a>
+                <!-- Logo + Entreprise -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="company-logo rounded-circle overflow-hidden shadow-sm">
+                        @if ($recruiter->logo)
+                            <img src="{{ config('app.api') . '/' . $recruiter->logo }}" alt="Logo {{ $recruiter->companyName }}">
                         @else
-                            <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : asset('img/default-company.png') }}"
-                                 alt="Logo {{ $recruiter->companyName }}"
-                                 class="offer-logo rounded-circle shadow-sm">
+                            <img src="{{ asset('img/default-company.png') }}" alt="Logo par défaut">
                         @endif
                     </div>
-
                     <div>
-                        <h2 class="mb-1 fw-bold gradient-text">{{ $offer->title }}</h2>
-                        <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}"
-                           class="company-link fw-semibold">
+                        <h2 class="mb-1 fw-bold">{{ $offer->title }}</h2>
+                        <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}" class="text-decoration-none company-name-link">
                             {{ $recruiter->companyName }}
                         </a>
                         <p class="text-muted small mb-0">Publiée {{ $daysAgo }}</p>
                     </div>
                 </div>
 
-                <!-- Informations principales -->
+                <!-- Badges -->
                 <div class="offer-meta d-flex flex-wrap gap-2 justify-content-md-end">
                 <span class="badge-custom">
                     <span class="material-symbols-outlined">work</span>
@@ -67,7 +60,7 @@
                     @endif
 
                     @if ($offer->salaryMin && $offer->salaryMax)
-                        <span class="badge-custom salary">
+                        <span class="badge-custom">
                         <span class="material-symbols-outlined">euro</span>
                         {{ $offer->salaryMin }} - {{ $offer->salaryMax }} €/mois
                     </span>
@@ -79,16 +72,16 @@
         <!-- CONTENU PRINCIPAL -->
         <div class="card shadow-sm rounded-4 p-4">
             <div class="card-body">
-                <h4 class="section-title d-flex align-items-center mb-3">
-                    <span class="material-symbols-outlined me-2 text-primary">description</span>
+                <h4 class="section-title mb-3">
+                    <span class="material-symbols-outlined me-2">description</span>
                     Description du poste
                 </h4>
                 <p class="card-text lh-lg">{{ $offer->description }}</p>
 
                 <hr class="my-4">
 
-                <h4 class="section-title d-flex align-items-center mb-3">
-                    <span class="material-symbols-outlined me-2 text-info">rule</span>
+                <h4 class="section-title mb-3">
+                    <span class="material-symbols-outlined me-2">rule</span>
                     Exigences du poste
                 </h4>
                 <p class="card-text lh-lg">
@@ -97,9 +90,7 @@
 
                 @if ($offer->remote)
                     <div class="mt-4">
-                    <span class="badge-custom remote">
-                        🏠 Télétravail possible
-                    </span>
+                        <span class="badge-custom">🏠 Télétravail possible</span>
                     </div>
                 @endif
 
@@ -109,99 +100,105 @@
                     </p>
                 @endif
 
-                <a href="{{ route('job_offers.index') }}" class="btn btn-highlight mt-4">
-                    <span class="material-symbols-outlined me-1">arrow_back</span>
-                    Retour à la liste
-                </a>
+                <!-- Bouton centré -->
+                <div class="text-center mt-5">
+                    <a href="{{ route('job_offers.index') }}" class="btn btn-highlight d-inline-flex align-items-center justify-content-center gap-2 px-4 py-2">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <style>
+        /* HEADER */
         .offer-header {
             background: var(--sand);
             color: var(--text-primary);
-            border: 1px solid #eee;
+            box-shadow: var(--shadow-soft);
         }
 
-        .company-link {
-            color: var(--aquamarine);
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .company-link:hover {
-            opacity: 0.7;
-        }
-
-        .offer-logo {
+        .company-logo {
             width: 70px;
             height: 70px;
-            object-fit: cover;
             background: var(--white);
-            padding: 6px;
-            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 8px;
+        }
+
+        .company-name-link {
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: 0.2s ease;
+        }
+
+        .company-name-link:hover {
+            color: var(--aquamarine);
+        }
+
+        /* BADGES */
         .badge-custom {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.85rem;
-            padding: 8px 12px;
-            border-radius: 50px;
-            border: 1px solid #ddd;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border-radius: 10px;
             background: var(--white);
-            color: var(--text-primary);
-            font-weight: 500;
-            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .badge-custom:hover {
+            background: var(--wondrous-blue);
+            color: var(--indigo);
         }
 
         .badge-custom.active {
             border-color: var(--aquamarine);
-            background: rgba(56,118,124,0.08);
+            color: var(--aquamarine);
         }
 
         .badge-custom.inactive {
+            color: var(--text-secondary);
             opacity: 0.6;
         }
 
-        .badge-custom.salary {
-            border-color: var(--orangish);
-            background: rgba(249,137,72,0.08);
-        }
-
-        .badge-custom.remote {
-            border-color: var(--aquamarine);
-            background: rgba(56,118,124,0.08);
-            font-weight: 600;
-        }
-
+        /* TITRES */
         .section-title {
             font-weight: 700;
             color: var(--indigo);
+            display: flex;
+            align-items: center;
         }
 
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .offer-header {
                 text-align: center;
             }
-
-            .offer-logo {
+            .company-logo {
                 width: 60px;
                 height: 60px;
+                margin: 0 auto;
             }
-
             .offer-meta {
                 justify-content: center !important;
             }
-
             .badge-custom {
-                font-size: 0.8rem;
-                padding: 6px 10px;
-            }
-
-            .section-title {
-                font-size: 1.1rem;
+                font-size: 0.85rem;
             }
         }
     </style>
