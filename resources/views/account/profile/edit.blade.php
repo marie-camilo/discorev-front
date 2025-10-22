@@ -2,20 +2,20 @@
 @section('title', 'Modifier mon profil | Discorev')
 
 @section('content')
-    <div class="container-fluid my-3">
+    <div class="container my-3"> <!-- container au lieu de container-fluid -->
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h2>Modifier mon profil</h2>
                 <small class="disabled">{{ $type }}</small>
             </div>
-            <div class="card-body">
+            <div class="card-body px-4"> <!-- padding horizontal ajouté -->
                 <div class="row">
                     <div class="col-12 col-md-2">
                         <ul class="nav nav-tabs flex-md-column flex-row me-3" id="profileTabs">
                             @foreach ($tabs as $key => $tab)
                                 <li class="nav-item">
                                     <a class="nav-link {{ $loop->first ? 'active' : '' }}" href="#"
-                                        data-tab="{{ $key }}">
+                                       data-tab="{{ $key }}">
                                         <span class="material-symbols-outlined me-1">{{ $tab['icon'] }}</span>
                                         {{ $tab['label'] }}
                                     </a>
@@ -32,33 +32,33 @@
                                             'recruiter' => $recruiter,
                                             'sectors' => $sectors,
                                         ])
-                                    @break
+                                        @break
 
                                     @case('account-recruiter')
                                         @include('partials.account-fields', ['user' => $user])
-                                    @break
+                                        @break
 
                                     @case('page')
                                         @include('partials.recruiter-fields-page', [
                                             'recruiter' => $recruiter,
                                         ])
-                                    @break
+                                        @break
 
                                     @case('profile')
                                         @include('partials.candidate-fields-profile', ['user' => $user])
-                                    @break
+                                        @break
 
                                     @case('account-candidate')
                                         @include('partials.account.fields', ['user' => $user])
-                                    @break
+                                        @break
 
                                     @case('cv')
                                         @include('partials.candidate-fields-cv', ['user' => $user])
-                                    @break
+                                        @break
 
                                     @case('help')
                                         <div class="alert alert-info">Page d'aide à venir 🚧</div>
-                                    @break
+                                        @break
                                 @endswitch
                             </div>
                         @endforeach
@@ -68,12 +68,13 @@
         </div>
     </div>
 
+    <!-- Script et styles restent inchangés -->
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('#profileTabs .nav-link');
             const panes = document.querySelectorAll('#tab-content .tab-pane');
 
-            // Fonction pour activer un onglet donné
             function activateTab(selected) {
                 tabs.forEach(tab => {
                     tab.classList.toggle('active', tab.getAttribute('data-tab') === selected);
@@ -84,13 +85,11 @@
                 });
             }
 
-            // Récupère le paramètre tab dans l'URL
             function getTabFromURL() {
                 const params = new URLSearchParams(window.location.search);
                 return params.get('tab');
             }
 
-            // Met à jour le paramètre tab dans l'URL sans recharger la page
             function updateURL(tab) {
                 const params = new URLSearchParams(window.location.search);
                 params.set('tab', tab);
@@ -98,7 +97,6 @@
                 history.replaceState(null, '', newUrl);
             }
 
-            // Écouteur de clic sur chaque tab
             tabs.forEach(tab => {
                 tab.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -108,14 +106,10 @@
                 });
             });
 
-            // Au chargement, active l'onglet depuis l'URL ou le premier par défaut
             let initialTab = getTabFromURL();
-
-            // Vérifie que l'onglet existe dans les tabs
             if (!initialTab || ![...tabs].some(t => t.getAttribute('data-tab') === initialTab)) {
                 initialTab = tabs[0].getAttribute('data-tab');
             }
-
             activateTab(initialTab);
         });
     </script>
@@ -144,5 +138,4 @@
             text-decoration: underline !important;
         }
     </style>
-
 @endsection

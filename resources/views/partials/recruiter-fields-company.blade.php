@@ -67,7 +67,6 @@
     </div>
 
     <h3 class="fw-bold mb-3 mt-4">Logo et équipe</h3>
-
     <div class="mb-3 d-flex align-items-center">
         <x-media-uploader :label="'Logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
                           target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false" />
@@ -75,24 +74,44 @@
             <form action="{{ route('recruiter.deleteLogo', $recruiter['id']) }}" method="POST" class="ms-3">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline-danger">
-                    Supprimer le logo
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <span class="material-symbols-outlined">delete</span> Supprimer le logo
                 </button>
             </form>
         @endif
     </div>
 
+    <!-- Équipe -->
     <div class="mb-3">
         <x-recruiter-team-member-form :recruiter="$recruiter" />
     </div>
 
+    <!-- Galerie photos -->
     <div class="mb-3">
         <x-media-uploader :label="'Photos de l\'entreprise'" :medias="$recruiter['medias']" type="company_image" context="company_page"
                           target-type="recruiter" :title="'Galerie ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="true" />
+
+        @if(!empty($recruiter['medias']['company_image'] ?? []))
+            <div class="d-flex flex-wrap mt-2">
+                @foreach($recruiter['medias']['company_image'] as $image)
+                    <div class="position-relative m-2" style="width: 120px; height: 120px;">
+                        <img src="{{ $image['url'] }}" class="img-thumbnail w-100 h-100" style="object-fit: cover;">
+                        <form action="{{ route('recruiter.deleteImage', $image['id']) }}" method="POST" class="position-absolute top-0 end-0 m-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer cette image">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
+    <!-- Bouton de mise à jour -->
     <div class="mt-3">
-        <button type="submit" class="btn btn-primary-gradient w-100">Mettre à jour</button>
+        <button type="submit" class="btn-primary-gradient w-100">Mettre à jour</button>
     </div>
 </form>
 
