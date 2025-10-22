@@ -34,7 +34,7 @@
                                         @break
 
                                     @case('account-recruiter')
-                                        @include('partials.account-fields', ['user' => $user])
+                                        @include('partials.recruiter-fields.blade.php', ['user' => $user])
                                         @break
 
                                     @case('page')
@@ -48,7 +48,7 @@
                                         @break
 
                                     @case('account-candidate')
-                                        @include('partials.account.fields', ['user' => $user])
+                                        @include('partials.candidate-fields', ['user' => $user])
                                         @break
 
                                     @case('cv')
