@@ -3,46 +3,52 @@
     $inputName = $isMultiple ? 'file[]' : 'file';
 @endphp
 
-<div class="mb-3">
-    <label for="{{ $uniqueId }}_file" class="fw-bold form-label text-capitalize">
-        <h5>{{ $label ?? 'Fichier' }}</h5>
-        <small class="fw-light text-muted">Taille maximale autorisée (20Mo)</small><br>
-        @if ($isMultiple)
-            <small class="fw-light text-muted">5 fichiers max</small>
-        @endif
-    </label>
+<form action="{{ route('media.upload') }}" method="POST" enctype="multipart/form-data" id="{{ $uniqueId }}_form">
+    @csrf
 
-    {{-- Preview des fichiers existants --}}
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        @php
-            $existingMedias = $isMultiple
-                ? collect($medias)->where('type', $type)
-                : [collect($medias)->firstWhere('type', $type)];
-        @endphp
+    <div class="mb-3">
+        <label for="{{ $uniqueId }}_file" class="fw-bold form-label text-capitalize">
+            <h5>{{ $label ?? 'Fichier' }}</h5>
+            <small class="fw-light text-muted">Taille maximale autorisée (20Mo)</small><br>
 
-        @foreach ($existingMedias as $media)
-            @if ($media)
-                <div class="position-relative d-inline-block me-2 mb-2 media-container" style="width: 150px;">
-                    <img src="{{ config('app.api') . '/' . $media['filePath'] }}" alt="Media"
-                         class="img-fluid rounded media-preview w-100" />
-                    <div class="form-check position-absolute top-0 end-0 m-1">
-                        <input class="form-check-input" type="checkbox" name="delete_media[]" value="{{ $media['id'] }}" id="media{{ $media['id'] }}">
-                        <label class="form-check-label text-danger fw-bold" for="media{{ $media['id'] }}">X</label>
-                    </div>
-                </div>
+            @if ($isMultiple)
+                <small class="fw-light text-muted">5 fichiers max</small>
             @endif
-        @endforeach
+        </label>
+
+        {{-- Preview des fichiers existants --}}
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            @php
+                $existingMedias = $isMultiple
+                    ? collect($medias)->where('type', $type)
+                    : [collect($medias)->firstWhere('type', $type)];
+            @endphp
+
+            @foreach ($existingMedias as $media)
+                @if ($media)
+                    <div class="position-relative d-inline-block me-2 mb-2 media-container" style="width: 150px;">
+                        <img src="{{ config('app.api') . '/' . $media['filePath'] }}" alt="Media"
+                            class="img-fluid rounded media-preview w-100" />
+
+                        <div class="media-overlay d-flex justify-content-center align-items-center"
+                            onclick="deleteMedia({{ $media['id'] }}, this)">
+                            <span class="delete-icon">&times;</span>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+
+        {{-- Nouveau preview --}}
+        <div id="{{ $uniqueId }}_newPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
+
+        {{-- Input file --}}
+        <input type="file" class="form-control" id="{{ $uniqueId }}_file" name="{{ $inputName }}"
+            accept="{{ $isMultiple ? 'image/*,video/*' : 'image/*' }}" @if ($isMultiple) multiple @endif
+            required onchange="checkSize({{ $uniqueId }}'_file')">
     </div>
 
-    {{-- Nouveau preview --}}
-    <div id="{{ $uniqueId }}_newPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
-
-    {{-- Input file --}}
-    <input type="file" class="form-control" id="{{ $uniqueId }}_file" name="{{ $inputName }}"
-           accept="{{ $isMultiple ? 'image/*,video/*' : 'image/*' }}" @if ($isMultiple) multiple @endif>
-</div>
-
-{{-- Champs cachés --}}
+    {{-- Champs cachés --}}
     <input type="hidden" name="uploadType" value="media">
     <input type="hidden" name="type" value="{{ $type }}">
     <input type="hidden" name="context" value="{{ $context }}">
