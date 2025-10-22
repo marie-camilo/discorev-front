@@ -7,7 +7,6 @@ use App\Models\Api\JobOffer;
 use App\Models\Api\Recruiter;
 use Illuminate\Http\Request;
 use App\Services\DiscorevApiService;
-use Illuminate\Auth\Recaller;
 use Illuminate\View\View;
 
 class JobOfferController extends Controller
@@ -31,29 +30,49 @@ class JobOfferController extends Controller
     {
         $offers = $this->api->get('job_offers', $request->query());
 
-        // comme $offers est déjà un array/collection → on le retourne tel quel
         return response()->json([
             'message' => 'Active job offers',
             'data'    => $offers,
         ]);
     }
 
-
+    /**
+     * Affichage d'une offre avec les infos du recruteur et logo
+     */
     public function show($id)
     {
         $offerResponse = $this->api->getOne('job_offers/' . $id);
         $offer = JobOffer::fromApiData($offerResponse);
 
-        if ($offer) {
-            $recruiterId =  $offer['recruiterId'];
-            $recruiterResponse = $this->api->get('recruiters/' . $recruiterId);
-            $recruiter = Recruiter::fromApiData($recruiterResponse);
-            return view('job_offers.show', compact('offer', 'recruiter'));
+        if (!$offer) {
+            return redirect()->back()->withErrors(['error' => 'Erreur lors de la récupération de l\'offre.']);
         }
 
-        redirect()->back()->withErrors(['error' => 'Erreur lors de la récupération des offres.']);
+        // Par défaut, recruteur vide
+        $recruiter = (object) [
+            'companyName' => 'Entreprise inconnue',
+            'website' => null,
+            'logo' => null,
+        ];
+
+        if (!empty($offer['recruiterId'])) {
+            $recruiterResponse = $this->api->get('recruiters/' . $offer['recruiterId']);
+            if ($recruiterResponse) {
+                $recruiter = Recruiter::fromApiData($recruiterResponse);
+
+                // Récupère les médias
+                $medias = collect($recruiterResponse['medias'] ?? []);
+                $logoMedia = $medias->firstWhere('type', 'company_logo');
+                $recruiter->logo = $logoMedia['filePath'] ?? null;
+            }
+        }
+
+        return view('job_offers.show', compact('offer', 'recruiter'));
     }
 
+    /**
+     * Offres du recruteur connecté
+     */
     public function myOffers()
     {
         $recruiter = $this->api->getOne('recruiters/user/' . session('user.id'));
@@ -63,7 +82,7 @@ class JobOfferController extends Controller
         }
 
         $offers = $this->api->get('recruiters/' . $recruiter['id'] . '/job_offers', [
-            'activeOnly' => 'false' // ✅ récupère tout
+            'activeOnly' => 'false'
         ]);
 
         if ($offers) {
@@ -74,35 +93,14 @@ class JobOfferController extends Controller
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la récupération des offres.']);
     }
 
-
     public function create()
     {
         return view('account.recruiter.jobs.create');
     }
 
-    /**
-     * Enregistrer une nouvelle offre d'emploi
-     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'requirements' => 'nullable|string',
-            'salaryRange' => 'nullable|string|max:50',
-            'employmentType' => 'required|in:cdi,cdd,freelance,alternance,stage',
-            'location' => 'required|string|max:255',
-            'salaryMin' => 'nullable|numeric',
-            'salaryMax' => 'nullable|numeric',
-            'requirements' => 'nullable|string',
-            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
-            'remote' => 'nullable|boolean',
-            'startDate' => 'nullable|date',
-            'endDate' => 'nullable|date',
-            'expirationDate' => 'nullable|date',
-            'status' => 'required|string|in:active,inactive,draft',
-        ]);
-
+        $validated = $this->validateJobOffer($request);
 
         if (session('user.accountType') !== 'recruiter') {
             return redirect()->back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
@@ -110,21 +108,16 @@ class JobOfferController extends Controller
 
         $recruiter = $this->api->getOne('recruiters/user/' . session('user.id'));
 
-        $data = array_merge($validated, [
-            'recruiterId' => $recruiter['id'],
-        ]);
-
+        $data = array_merge($validated, ['recruiterId' => $recruiter['id']]);
         $response = $this->api->post('job_offers', $data);
 
         if ($response->successful()) {
             return redirect()->route('recruiter.jobs.index')->with('success', 'Offre créée avec succès.');
         }
+
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la création de l\'offre.']);
     }
 
-    /**
-     * Modifier une offre d'emploi
-     */
     public function edit($id)
     {
         $offer = $this->api->getOne('job_offers/' . $id);
@@ -132,39 +125,19 @@ class JobOfferController extends Controller
             return view('account.recruiter.jobs.edit', compact('offer'));
         }
 
-        redirect()->back()->withErrors(['error' => 'Erreur lors de la récupération de l\'offre.']);
+        return redirect()->back()->withErrors(['error' => 'Erreur lors de la récupération de l\'offre.']);
     }
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'requirements' => 'nullable|string',
-            'salaryRange' => 'nullable|string|max:50',
-            'employmentType' => 'required|in:cdi,cdd,freelance,alternance,stage',
-            'location' => 'required|string|max:255',
-            'salaryMin' => 'nullable|numeric',
-            'salaryMax' => 'nullable|numeric',
-            'requirements' => 'nullable|string',
-            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
-            'remote' => 'nullable|boolean',
-            'startDate' => 'nullable|date',
-            'endDate' => 'nullable|date',
-            'expirationDate' => 'nullable|date',
-            'status' => 'required|string|in:active,inactive,draft',
-        ]);
-
+        $validated = $this->validateJobOffer($request);
 
         if (session('user.accountType') !== 'recruiter') {
             return redirect()->back()->withErrors(['error' => 'L\'utilisateur n\'est pas un recruteur']);
         }
 
         $recruiter = $this->api->get('recruiters/user/' . session('user.id'));
-
-        $data = array_merge($validated, [
-            'recruiterId' => $recruiter['id'],
-        ]);
+        $data = array_merge($validated, ['recruiterId' => $recruiter['id']]);
 
         $response = $this->api->put('job_offers/' . $id, $data);
 
@@ -175,9 +148,6 @@ class JobOfferController extends Controller
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la modification de l\'offre.']);
     }
 
-    /**
-     * Supprimer une offre d'emploi
-     */
     public function destroy($id)
     {
         $response = $this->api->delete('job_offers/' . $id);
@@ -186,5 +156,27 @@ class JobOfferController extends Controller
         }
 
         return redirect()->back()->withErrors(['error' => 'Erreur lors de la suppression de l\'offre.']);
+    }
+
+    /**
+     * Validation réutilisable pour JobOffer
+     */
+    private function validateJobOffer(Request $request): array
+    {
+        return $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'requirements' => 'nullable|string',
+            'salaryRange' => 'nullable|string|max:50',
+            'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
+            'location' => 'required|string|max:255',
+            'salaryMin' => 'nullable|numeric',
+            'salaryMax' => 'nullable|numeric',
+            'remote' => 'nullable|boolean',
+            'startDate' => 'nullable|date',
+            'endDate' => 'nullable|date',
+            'expirationDate' => 'nullable|date',
+            'status' => 'required|string|in:active,inactive,draft',
+        ]);
     }
 }

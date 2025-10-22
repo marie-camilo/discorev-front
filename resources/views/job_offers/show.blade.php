@@ -24,11 +24,14 @@
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
                 <!-- Logo + Entreprise -->
                 <div class="d-flex align-items-center gap-3">
+                    @php
+                        $logoUrl = !empty($recruiter->logo)
+                            ? config('app.api') . '/' . ltrim($recruiter->logo, '/')
+                            : asset('img/default-company.png');
+                    @endphp
+
                     <div class="company-logo">
-                        @php
-                            $logoUrl = !empty($recruiter->logo) ? config('app.api') . '/' . ltrim($recruiter->logo, '/') : asset('img/default-company.png');
-                        @endphp
-                        @if (!empty($recruiter->website))
+                        @if(!empty($recruiter->website))
                             <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
                                 <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
                             </a>
