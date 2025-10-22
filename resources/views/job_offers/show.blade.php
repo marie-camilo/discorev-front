@@ -1,86 +1,153 @@
 @extends('layouts.app')
 
-@section('title', 'Offre d\'emploi | Discorev')
+@section('title', $offer->title . ' | Discorev')
 
 @section('content')
-    <div class="container min-vh-100 py-5">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="mb-4">
-                <h1>{{ $offer->title }}</h1>
-                <span>publiée le
-                    {{ date('d/m/Y', strtotime($offer->publicationDate)) }}</span>
+    @php
+        use Carbon\Carbon;
+        $publicationDate = Carbon::parse($offer->publicationDate);
+        $daysAgo = $publicationDate->diffForHumans(); // ex: "il y a 5 jours"
+    @endphp
+
+    <div class="container py-5">
+        <!-- HEADER DE L'OFFRE -->
+        <div class="offer-header shadow-sm rounded-4 p-4 mb-5">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+
+                <!-- Logo + Nom entreprise -->
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{ $recruiter->logo ? asset('storage/' . $recruiter->logo) : asset('img/default-company.png') }}"
+                         alt="Logo {{ $recruiter->companyName }}"
+                         class="offer-logo rounded-circle shadow-sm">
+                    <div>
+                        <h2 class="mb-1 fw-bold">{{ $offer->title }}</h2>
+                        <a href="{{ route('companies.show', $recruiter->identifier) }}"
+                           class="text-decoration-none text-muted fw-semibold">
+                            {{ $recruiter->companyName ?? 'Entreprise' }}
+                        </a>
+                        <p class="text-secondary small mb-0">Publiée {{ $daysAgo }}</p>
+                    </div>
+                </div>
+
+                <!-- Informations principales -->
+                <div class="offer-meta d-flex flex-wrap gap-3 justify-content-md-end">
+                <span class="badge bg-primary text-white d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined">work</span>
+                    {{ strtoupper($offer->employmentType) }}
+                </span>
+                    <span class="badge bg-info text-white d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined">location_on</span>
+                    {{ $offer->location }}
+                </span>
+                    @if($offer->startDate && $offer->endDate)
+                        <span class="badge bg-success text-white d-flex align-items-center gap-1">
+                        <span class="material-symbols-outlined">calendar_month</span>
+                        {{ \Carbon\Carbon::parse($offer->startDate)->format('d/m/Y') }} → {{ \Carbon\Carbon::parse($offer->endDate)->format('d/m/Y') }}
+                    </span>
+                    @endif
+                    @if ($offer->status)
+                        <span class="badge bg-{{ $offer->status === 'active' ? 'success' : 'secondary' }} text-white d-flex align-items-center gap-1">
+                        <span class="material-symbols-outlined">fiber_manual_record</span>
+                        {{ ucfirst($offer->status) }}
+                    </span>
+                    @endif
+                    @if ($offer->salaryMin && $offer->salaryMax)
+                        <span class="badge bg-warning text-dark d-flex align-items-center gap-1">
+                        <span class="material-symbols-outlined">euro</span>
+                        {{ $offer->salaryMin }} - {{ $offer->salaryMax }} €/mois
+                    </span>
+                    @endif
+                </div>
             </div>
-            <span>
-                créee par
-                <h5 class="card-title">{{ $recruiter->companyName ? $recruiter->companyName : 'Recruteur' }}</h5>
-            </span>
         </div>
 
+        <!-- CONTENU PRINCIPAL -->
         <div class="card shadow rounded-4 p-4">
             <div class="card-body">
-                <h5 class="card-title d-flex align-items-center"><span class="material-symbols-outlined me-2 text-primary">
-                        article
-                    </span> Description</h5>
-                <p class="card-text">{{ $offer->description }}</p>
+                <h4 class="section-title d-flex align-items-center mb-3">
+                    <span class="material-symbols-outlined me-2 text-primary">description</span>
+                    Description du poste
+                </h4>
+                <p class="card-text lh-lg">{{ $offer->description }}</p>
 
-                <h5 class="card-title d-flex align-items-center"><span class="material-symbols-outlined me-2 text-info">
-                        article_person
-                    </span> Exigences</h5>
-                @if ($offer->requirements)
-                    <p class="card-text">{{ $offer->requirements }}</p>
-                @else
-                    <p class="card-text">Pas d'exigences particulières</p>
-                @endif
+                <hr class="my-4">
 
-                <h5 class="card-title d-flex align-items-center"><span class="material-symbols-outlined me-2 text-success">
-                        price_change
-                    </span> Fourchette salariale</h5>
-                @if ($offer->salaryMin && $offer->salaryMax)
-                    <p class="card-text">Entre {{ $offer->salaryMin }} et {{ $offer->salaryMax }} €/mois</p>
-                @else
-                    <p class="card-text">Non défini</p>
-                @endif
-
-                <h5 class="card-title d-flex align-items-center"><span class="material-symbols-outlined me-2 text-tertiary">
-                        edit_document
-                    </span> Type de contrat</h5>
-                <p class="card-text text-uppercase">{{ $offer->employmentType }}</p>
-
-                <h5 class="card-title d-flex align-items-center"><span
-                        class="material-symbols-outlined me-2 text-secondary">
-                        distance
-                    </span> Localisation</h5>
-                <p class="card-text">{{ $offer->location }}</p>
-
-                <h5 class="card-title d-flex align-items-center"><span class="material-symbols-outlined me-2 text-warning">
-                        home_work
-                    </span> Télétravail</h5>
-                <p class="card-text">
-                    @if ($offer->remote)
-                        ✅ Oui
-                    @else
-                        ❌ Non
-                    @endif
+                <h4 class="section-title d-flex align-items-center mb-3">
+                    <span class="material-symbols-outlined me-2 text-info">rule</span>
+                    Exigences du poste
+                </h4>
+                <p class="card-text lh-lg">
+                    {{ $offer->requirements ?? 'Aucune exigence particulière pour ce poste.' }}
                 </p>
 
-                @if ($offer->startDate && $offer->endDate)
-                    <h5 class="card-title d-flex align-items-center"><span
-                            class="material-symbols-outlined me-2 text-warning-emphasis">date_range
-                        </span> Période de travail</h5>
-                    <p class="card-text">Du {{ $offer->startDate }} au {{ $offer->endDate }}</p>
+                @if ($offer->remote)
+                    <div class="mt-4">
+                    <span class="badge bg-success-subtle text-success-emphasis">
+                        🏠 Télétravail possible
+                    </span>
+                    </div>
                 @endif
 
                 @if ($offer->expirationDate)
-                    <h5 class="card-title d-flex align-items-center"><span
-                            class="material-symbols-outlined me-2 text-danger">
-                            timer
-                        </span> Expire le</h5>
-                    <p class="card-text">
-                        {{ $offer->expirationDate ? date('d/m/Y', strtotime($offer->expirationDate)) : 'Non définie' }}
+                    <p class="text-muted mt-3 small">
+                        ⏳ Offre valable jusqu’au {{ date('d/m/Y', strtotime($offer->expirationDate)) }}
                     </p>
                 @endif
-                <a href="{{ route('job_offers.index') }}" class="btn btn-primary mt-3">Retour à la liste</a>
+
+                <a href="{{ route('job_offers.index') }}" class="btn btn-outline-primary mt-4">
+                    <span class="material-symbols-outlined me-1">arrow_back</span>
+                    Retour à la liste
+                </a>
             </div>
         </div>
     </div>
+
+    <style>
+        .offer-header {
+            background: linear-gradient(135deg, var(--aquamarine, #64ffda) 0%, var(--indigo, #0d4a52) 100%);
+            color: white;
+        }
+
+        .offer-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            background: white;
+            padding: 6px;
+        }
+
+        .offer-meta .badge {
+            font-size: 0.9rem;
+            padding: 10px 14px;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--indigo, #0d4a52);
+        }
+
+        @media (max-width: 768px) {
+            .offer-header {
+                text-align: center;
+            }
+
+            .offer-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .offer-meta {
+                justify-content: center !important;
+            }
+
+            .offer-meta .badge {
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 @endsection
