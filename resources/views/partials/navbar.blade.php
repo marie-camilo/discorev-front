@@ -1,6 +1,7 @@
 <header class="sticky-top">
     <nav class="navbar navbar-expand-lg bg-indigo shadow py-3 px-lg-5">
         <div class="container-fluid">
+
             <!-- Logo -->
             <a class="navbar-brand text-white" href="{{ route('home')}}">
                 <img src="{{ asset('img/logos/logo-white.svg') }}" alt="logo Discorev" class="me-3">
@@ -13,89 +14,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Offcanvas menu mobile -->
-            <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasNavbar">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title text-white fw-bold">Discorev</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav w-100 mb-3">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('job_offers.index') }}">
-                                Offres
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('companies.index') }}">
-                                Entreprises
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ route('recruiters.tarifs') }}">
-                                Prenium
-                            </a>
-                        </li>
-                    </ul>
+            <!-- Navbar desktop -->
+            <div class="collapse navbar-collapse d-none d-lg-flex justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center gap-2">
 
-                    @if ($isAuthenticated && isset($user))
-                        @php
-                            $accountType = $user['accountType'] ?? null;
-                            $isCandidate = $accountType === 'candidate';
-                            $isRecruiter = $accountType === 'recruiter';
-                        @endphp
-
-                        @if ($isCandidate)
-                            <a class="nav-link text-white" href="{{ route('applications.candidate') }}">
-                                <span class="material-symbols-outlined">bookmark</span>
-                                Mes candidatures
-                            </a>
-                        @endif
-
-                        @if ($isRecruiter)
-                            <a class="nav-link text-white" href="{{ route('recruiter.jobs.create') }}">
-                                <span class="material-symbols-outlined">add</span>
-                                Publier une offre
-                            </a>
-                            <a class="nav-link text-white" href="{{ route('recruiter.jobs.index') }}">
-                                <span class="material-symbols-outlined">list</span>
-                                Mes offres
-                            </a>
-                        @endif
-
-                        <hr class="my-3 border-white border-opacity-25">
-                        <a class="btn btn-login w-100 mb-2" href="{{ route('profile') }}">
-                            <span class="material-symbols-outlined">person</span>
-                            Mon compte
-                        </a>
-                        <form action="{{ route('logout') }}" method="POST" class="w-100">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-light w-100">
-                                <span class="material-symbols-outlined">logout</span>
-                                Déconnexion
-                            </button>
-                        </form>
-                    @else
-                        <a class="btn btn-login w-100" href="{{ route('auth', ['tab' => 'login']) }}">
-                            <span class="material-symbols-outlined">login</span>
-                            Connexion
-                        </a>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Liens desktop -->
-            <div class="d-none d-lg-flex align-items-center ms-auto gap-2">
-                <ul class="navbar-nav d-flex flex-row mb-0 align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('job_offers.index') }}">
-                            Offres
-                        </a>
+                        <a class="nav-link text-white" href="{{ route('job_offers.index') }}">Offres</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('companies.index') }}">
-                            Entreprises
-                        </a>
+                        <a class="nav-link text-white" href="{{ route('companies.index') }}">Entreprises</a>
                     </li>
 
                     @if ($isAuthenticated && isset($user))
@@ -116,7 +43,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('applications.candidate') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">bookmark</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">bookmark</span>
                                             Mes candidatures
                                         </a>
                                     </li>
@@ -134,19 +61,19 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">add</span>
                                             Publier une offre
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">list</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">list</span>
                                             Mes offres
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('cvtheque.index') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">folder</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">folder</span>
                                             Cvthèque
                                         </a>
                                     </li>
@@ -164,19 +91,19 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">people</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">people</span>
                                             Utilisateurs
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">work</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">work</span>
                                             Offres
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('cvtheque.index') }}">
-                                            <span class="material-symbols-outlined" style="font-size: 16px;">folder</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">folder</span>
                                             Cvthèque
                                         </a>
                                     </li>
@@ -184,62 +111,126 @@
                             </li>
                         @endif
                     @endif
-                </ul>
 
-                <a class="btn btn-warning" href="{{ route('recruiters.tarifs') }}">
-                    <span class="material-symbols-outlined">star</span>
-                    Prenium
-                </a>
-
-                @if ($isAuthenticated && isset($user))
-                    @php
-                        $profilePicture = collect(session('user.medias') ?? [])->firstWhere('type', 'profile_picture');
-                        $profilePictureUrl = $profilePicture
-                            ? config('app.api') . '/' . $profilePicture['filePath']
-                            : asset('img/default-avatar.png');
-                    @endphp
-                    <div class="dropdown">
-                        <a class="profile-dropdown" href="#" data-bs-toggle="dropdown">
-                            <img src="{{ $profilePictureUrl }}" alt="Profil" class="profile-avatar">
-                            <span>Mon compte</span>
+                    <!-- Bouton Prenium -->
+                    <li class="nav-item">
+                        <a class="btn btn-warning" href="{{ route('recruiters.tarifs') }}">
+                            <span class="material-symbols-outlined">star</span>
+                            Prenium
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile') }}">
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
-                                    Profil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('settings') }}">
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
-                                    Paramètres
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
+                    </li>
+
+                    <!-- Connexion / Mon compte -->
+                    @if ($isAuthenticated && isset($user))
+                        @php
+                            $profilePicture = collect(session('user.medias') ?? [])->firstWhere('type', 'profile_picture');
+                            $profilePictureUrl = $profilePicture
+                                ? config('app.api') . '/' . $profilePicture['filePath']
+                                : asset('img/default-avatar.png');
+                        @endphp
+                        <li class="nav-item dropdown">
+                            <a class="profile-dropdown nav-link" href="#" data-bs-toggle="dropdown">
+                                <img src="{{ $profilePictureUrl }}" alt="Profil" class="profile-avatar">
+                                <span>Mon compte</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                        <span class="material-symbols-outlined" style="font-size:16px;">person</span>
+                                        Profil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('settings') }}">
+                                        <span class="material-symbols-outlined" style="font-size:16px;">settings</span>
+                                        Paramètres
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <span class="material-symbols-outlined" style="font-size:16px;">logout</span>
+                                            Déconnexion
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a href="{{ route('auth', ['tab' => 'login']) }}" class="btn btn-login w-100 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined">login</span>
+                                Connexion
+                            </a>
+                        </li>
+                    @endif
+
+                </ul>
+            </div>
+
+            <!-- Offcanvas mobile -->
+            <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title text-white fw-bold">Discorev</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav w-100 mb-3">
+                        <li class="nav-item"><a class="nav-link text-white" href="{{ route('job_offers.index') }}">Offres</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="{{ route('companies.index') }}">Entreprises</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiters.tarifs') }}">Prenium</a></li>
+                        @if (!$isAuthenticated)
+                            <li class="nav-item"><a class="btn-login" href="{{ route('auth', ['tab' => 'login']) }}">  <span class="material-symbols-outlined">login</span>Connexion</a></li>
+                        @endif
+                        @if ($isAuthenticated)
+                            @if ($isCandidate)
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('applications.candidate') }}">Mes candidatures</a></li>
+                            @endif
+                            @if ($isRecruiter)
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiter.jobs.create') }}">Publier une offre</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiter.jobs.index') }}">Mes offres</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
+                            @endif
+                            @if ($isAdmin)
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiter.jobs.create') }}">Utilisateurs</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiter.jobs.index') }}">Offres</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
+                            @endif
+                            <li class="nav-item"><a class="btn btn-warning w-100" href="{{ route('recruiters.tarifs') }}">Prenium</a></li>
+                            <li class="nav-item">
+                                <form action="{{ route('logout') }}" method="POST" class="mt-2">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
-                                        Déconnexion
-                                    </button>
+                                    <button type="submit" class="btn btn-login w-100">Déconnexion</button>
                                 </form>
                             </li>
-                        </ul>
-                    </div>
-                @else
-                    <a href="{{ route('auth', ['tab' => 'login']) }}" class="btn btn-login">
-                        <span class="material-symbols-outlined">login</span>
-                        Connexion
-                    </a>
-                @endif
+                        @endif
+                    </ul>
+                </div>
             </div>
+
         </div>
     </nav>
 </header>
 
 <style>
+    .navbar-toggler-icon {
+        filter: invert(1);
+    }
+
+    .btn-close-white {
+        filter: invert(1) !important;
+    }
+
+    .btn-close-white:hover {
+        filter: brightness(1);
+    }
+
+    .offcanvas-body .navbar-nav {
+        padding-left: 16px;
+    }
+
     .navbar-brand img {
         width: auto;
         height: 30px;
@@ -247,12 +238,12 @@
     }
 
     .bg-indigo {
-        background-color: var(--aquamarine) !important;
+        background-color: var(--indigo);
     }
 
     .navbar {
         box-shadow: 0 4px 12px rgba(5, 56, 61, 0.15);
-        transition: all 0.3s ease;
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
     }
 
     .navbar-brand {
@@ -326,7 +317,7 @@
     }
 
     .navbar-nav .dropdown-toggle::after {
-        margin-left: 4px;
+        display: none !important;
     }
 
     .dropdown-menu {
@@ -370,7 +361,7 @@
     }
 
     .btn-login {
-        background: var(--sand) !important;
+        background: var(--sand);
         color: var(--indigo);
         border: none;
         border-radius: 8px;
@@ -378,13 +369,23 @@
         font-size: 0.9rem;
         padding: 8px 20px;
         transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
         text-decoration: none;
     }
 
     .btn-login:hover {
-        box-shadow: 0 8px 16px rgba(5, 56, 61, 0.2);
+        box-shadow: 0 8px 16px rgba(5,56,61,0.2);
         color: var(--sand) !important;
         background: var(--aquamarine) !important;
+    }
+
+    .btn-login .material-symbols-outlined {
+        font-size: 20px;
+        vertical-align: middle;
+        line-height: 1;
     }
 
     .btn-warning {
@@ -492,7 +493,7 @@
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        transition: all 0.3s ease;
+        transition: border-color 0.3s ease;
     }
 
     .profile-dropdown:hover .profile-avatar {
@@ -505,6 +506,10 @@
     }
 
     @media (max-width: 991px) {
+        .navbar-nav .dropdown-toggle .material-symbols-outlined.ms-1 {
+            display: none;
+        }
+
         .navbar-nav {
             gap: 0;
         }
