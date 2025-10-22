@@ -49,10 +49,10 @@
     </div>
 
     <div class="footer-legal-links">
-        <a href="{{ route('mentions-legales') }}">Mentions légales</a>
-        <a href="{{ route('cgu') }}">CGU</a>
-        <a href="{{ route('cgv') }}">CGV</a>
-        <a href="{{ route('politique-confidentialite') }}">Politique de confidentialité</a>
+        <a href="{{ route('legal.show', 'mentions-legales') }}">Mentions légales</a>
+        <a href="{{ route('legal.show', 'cgu') }}">CGU</a>
+        <a href="{{ route('legal.show', 'cgv') }}">CGV</a>
+        <a href="{{ route('legal.show', 'politique-confidentialite') }}">Politique de confidentialité</a>
     </div>
 
     <div class="footer-bottom">

@@ -6,23 +6,31 @@ use Illuminate\Http\Request;
 
 class LegalController extends Controller
 {
-    public function mentionsLegales()
+    /**
+     * Affiche dynamiquement une page légale.
+     */
+    public function show($slug)
     {
-        return view('legal.mentions-legales');
-    }
+        // Tableau des pages disponibles avec leurs titres
+        $pages = [
+            'mentions-legales' => 'Mentions légales',
+            'cgu' => 'Conditions générales d’utilisation',
+            'cgv' => 'Conditions générales de vente',
+            'politique-confidentialite' => 'Politique de confidentialité',
+        ];
 
-    public function politiqueConfidentialite()
-    {
-        return view('legal.politique-confidentialite');
-    }
+        // Si la page demandée n'existe pas, erreur 404
+        if (!array_key_exists($slug, $pages)) {
+            abort(404);
+        }
 
-    public function cgv()
-    {
-        return view('legal.cgv');
-    }
+        // Vue partielle correspondante
+        $viewName = 'legal.partials.' . $slug;
 
-    public function cgu()
-    {
-        return view('legal.cgu');
+        // Rendu de la vue principale
+        return view('legal.template', [
+            'title' => $pages[$slug],
+            'viewName' => $viewName,
+        ]);
     }
 }
