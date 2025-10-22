@@ -2,7 +2,7 @@
     @csrf
     @method('PUT')
 
-    <h5 class="fw-bold mb-3">Général</h5>
+    <h3 class="fw-bold mb-3">Général</h3>
 
     <div class="mb-3">
         <label for="companyName" class="form-label">Nom de l’entreprise</label>
@@ -18,7 +18,7 @@
 
     <div class="mb-3">
         <label for="companyDescription" class="form-label">Description de l’entreprise</label>
-        <textarea class="form-control" id="companyDescription" name="companyDescription" rows="3">{{ old('companyDescription', $recruiter['companyDescription'] ?? '') }}</textarea>
+        <textarea class="form-control auto-resize" id="companyDescription" name="companyDescription" rows="1">{{ old('companyDescription', $recruiter['companyDescription'] ?? '') }}</textarea>
     </div>
 
     <div class="mb-3">
@@ -66,11 +66,20 @@
                value="{{ old('contactEmail', $recruiter['contactEmail'] ?? '') }}">
     </div>
 
-    <h5 class="fw-bold mb-3 mt-4">Logo et équipe</h5>
+    <h3 class="fw-bold mb-3 mt-4">Logo et équipe</h3>
 
-    <div class="mb-3">
+    <div class="mb-3 d-flex align-items-center">
         <x-media-uploader :label="'Logo de l\'entreprise'" :medias="$recruiter['medias']" type="company_logo" context="company_page"
                           target-type="recruiter" :title="'Logo ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false" />
+        @if(!empty($recruiter['medias']['company_logo'] ?? null))
+            <form action="{{ route('recruiter.deleteLogo', $recruiter['id']) }}" method="POST" class="ms-3">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-outline-danger">
+                    Supprimer le logo
+                </button>
+            </form>
+        @endif
     </div>
 
     <div class="mb-3">
@@ -83,6 +92,21 @@
     </div>
 
     <div class="mt-3">
-        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+        <button type="submit" class="btn btn-primary-gradient w-100">Mettre à jour</button>
     </div>
 </form>
+
+<!-- Script pour auto-resize du textarea -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textareas = document.querySelectorAll('.auto-resize');
+        textareas.forEach(textarea => {
+            const resize = () => {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            };
+            textarea.addEventListener('input', resize);
+            resize(); // initial resize
+        });
+    });
+</script>
