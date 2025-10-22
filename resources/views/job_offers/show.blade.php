@@ -123,6 +123,7 @@
             box-shadow: var(--shadow-soft);
         }
 
+        /* Logo entreprise */
         .company-logo {
             width: 70px;
             height: 70px;
@@ -130,17 +131,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            border-radius: 8px;
+            overflow: hidden;
             flex-shrink: 0;
         }
 
         .company-logo img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            padding: 8px;
+            object-fit: cover;
         }
 
+        /* Nom entreprise */
         .company-name-link {
             font-weight: 600;
             color: var(--text-primary);
