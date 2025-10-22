@@ -86,7 +86,7 @@
 
             <!-- Liens desktop -->
             <div class="d-none d-lg-flex align-items-center ms-auto gap-2">
-                <ul class="navbar-nav d-flex flex-row mb-0">
+                <ul class="navbar-nav d-flex flex-row mb-0 align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('job_offers.index') }}">
                             Offres
@@ -108,64 +108,78 @@
 
                         @if ($isCandidate)
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="material-symbols-outlined">bookmark</span>
                                     Candidat
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('applications.candidate') }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('applications.candidate') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">bookmark</span>
                                             Mes candidatures
-                                        </a></li>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif
 
                         @if ($isRecruiter)
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="material-symbols-outlined">badge</span>
                                     Recruteur
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
                                             Publier une offre
-                                        </a></li>
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">list</span>
                                             Mes offres
-                                        </a></li>
-                                    <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('cvtheque.index') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">folder</span>
                                             Cvthèque
-                                        </a></li>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif
 
                         @if ($isAdmin)
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="material-symbols-outlined">admin_panel_settings</span>
                                     Admin
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('recruiter.jobs.create') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">people</span>
                                             Utilisateurs
-                                        </a></li>
-                                    <li><a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('recruiter.jobs.index') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">work</span>
                                             Offres
-                                        </a></li>
-                                    <li><a class="dropdown-item" href="{{ route('cvtheque.index') }}">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('cvtheque.index') }}">
                                             <span class="material-symbols-outlined" style="font-size: 16px;">folder</span>
                                             Cvthèque
-                                        </a></li>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif
@@ -190,14 +204,18 @@
                             <span>Mon compte</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile') }}">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile') }}">
                                     <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
                                     Profil
-                                </a></li>
-                            <li><a class="dropdown-item" href="{{ route('settings') }}">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('settings') }}">
                                     <span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
                                     Paramètres
-                                </a></li>
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
@@ -298,6 +316,17 @@
 
     .nav-link.show::after {
         width: 80%;
+    }
+
+    .navbar-nav .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px !important;
+    }
+
+    .navbar-nav .dropdown-toggle::after {
+        margin-left: 4px;
     }
 
     .dropdown-menu {
