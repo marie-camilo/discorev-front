@@ -51,8 +51,9 @@
     <div class="footer-legal-links">
         <a href="{{ route('legal.show', 'mentions-legales') }}">Mentions légales</a>
         <a href="{{ route('legal.show', 'cgu') }}">CGU</a>
-        <a href="{{ route('legal.show', 'cgv') }}">CGV</a>
+{{--        <a href="{{ route('legal.show', 'cgv') }}">CGV</a>--}}
         <a href="{{ route('legal.show', 'politique-confidentialite') }}">Politique de confidentialité</a>
+        <a href="{{ route('legal.show', 'cookies') }}">Politique de gestion des cookies</a>
     </div>
 
     <div class="footer-bottom">

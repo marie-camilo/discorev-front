@@ -17,6 +17,8 @@ class LegalController extends Controller
             'cgu' => 'Conditions générales d’utilisation',
             'cgv' => 'Conditions générales de vente',
             'politique-confidentialite' => 'Politique de confidentialité',
+            'cookies' => 'Politique de gestion des cookies',
+
         ];
 
         // Si la page demandée n'existe pas, erreur 404
