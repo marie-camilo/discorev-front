@@ -22,9 +22,9 @@
             <div class="company-info">
                 <h1 style="color: white">{{ $recruiter->companyName }}</h1>
                 <div class="details">
-                    <p><span class="material-symbols-outlined text-white">business_center</span> Secteur : {{ $recruiter->sectorName ?? $recruiter->sector }}</p>
-                    <p><span class="material-symbols-outlined text-white">location_on</span> Localisation : {{ $recruiter->location ?? '' }}</p>
-                    <p><span class="material-symbols-outlined text-white">groups</span> Taille de l'équipe : {{ $recruiter->teamSize ?? '' }}</p>
+                    <p><span class="material-symbols-outlined text-white">business_center</span>{{ $recruiter->sectorName ?? $recruiter->sector }}</p>
+                    <p><span class="material-symbols-outlined text-white">location_on</span>{{ $recruiter->location ?? '' }}</p>
+                    <p><span class="material-symbols-outlined text-white">groups</span>{{ $recruiter->teamSize ?? '' }}</p>
                 </div>
             </div>
         </div>
