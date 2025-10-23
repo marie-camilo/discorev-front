@@ -15,12 +15,8 @@
 
         <div class="company-header">
             <div class="company-logo">
-                @if (!empty($recruiter->website))
-                    <a href="{{ $recruiter->website }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ $recruiter->logo ? asset($recruiter->logo) : '' }}" alt="Logo de l'entreprise" />
-                    </a>
-                @else
-                    <img src="{{ $recruiter->logo ? asset($recruiter->logo) : '' }}" alt="Logo de l'entreprise" />
+                @if ($recruiter->logo)
+                    <img src="{{ asset($recruiter->logo) }}" alt="Logo de l'entreprise" />
                 @endif
             </div>
             <div class="company-info">
@@ -63,7 +59,7 @@
                         <div class="row">
                             @foreach ($section['data'] as $member)
                                 <article class="col-12 col-md-4 team-member" role="listitem">
-                                    <img src="{{ asset('img/default-avatar.png') }}" alt="{{ $member['name'] ?? '' }}" />
+                                    <img src="{{ asset($member['avatar'] ?? 'img/default-avatar.png') }}" alt="{{ $member['name'] ?? '' }}" />
                                     <h3>{{ $member['name'] ?? '' }}</h3>
                                     <p><strong>{{ $member['role'] ?? '' }}</strong></p>
                                     <p>{{ $member['email'] ?? '' }}</p>
@@ -125,6 +121,10 @@
                 <h3 id="sidebar-offers-title" class="sidebar-title">Dernières offres</h3>
                 <ul class="job-list">
                     @foreach ($jobOffers ?? [] as $job)
+                        @php
+                            // Forcer l'objet en tableau si besoin
+                            if(is_object($job)) $job = (array) $job;
+                        @endphp
                         <li class="job-card">
                             <h4>{{ $job['title'] ?? '' }}</h4>
                             <p><i class="material-symbols-outlined me-2">location_on</i>{{ $job['location'] ?? '' }}</p>
