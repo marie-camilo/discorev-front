@@ -70,16 +70,16 @@
                     @elseif ($section['type'] === 'media')
                         <div class="row">
                             @foreach ($section['data'] as $media)
-                                <div class="col">
-                                    <img src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" alt="{{ $media->title ?? '' }}">
+                                <div class="col-6 col-md-4 col-lg-3"> <!-- exemple responsive -->
+                                    <img src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" alt="{{ $media->title ?? '' }}" class="img-fluid">
                                 </div>
                             @endforeach
                         </div>
 
                     @elseif ($section['type'] === 'video')
                         @foreach ($section['data'] as $media)
-                            <div class="company-video my-3">
-                                <iframe width="560" height="315" src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" frameborder="0" allowfullscreen></iframe>
+                            <div class="company-video my-3 ratio ratio-16x9">
+                                <iframe src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" frameborder="0" allowfullscreen></iframe>
                             </div>
                         @endforeach
                     @endif
@@ -853,10 +853,18 @@
     /* ===== IMAGE GRIDS ===== */
     .image-grid {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-auto-rows: 10px;
         gap: 1rem;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
+    }
+
+    .image-grid img {
+        width: 100%;
+        display: block;
+        border-radius: 12px;
+        object-fit: cover;
+        aspect-ratio: 4/3;
+        grid-row-end: span 10;
     }
 
     @media (min-width: 640px) {
