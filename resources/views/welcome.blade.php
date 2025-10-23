@@ -378,68 +378,6 @@
         outline: none;
     }
 
-    .btn-modern {
-        padding: 0.85rem 1.75rem;
-        border-radius: 0.85rem;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
-        color: white;
-    }
-
-    .btn-primary-modern {
-        background: var(--gradient-secondary);
-    }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
-        background: linear-gradient(135deg, #FF8C50, #E17333);
-    }
-
-    .btn-outline-modern {
-        background: white;
-        color: var(--text-primary);
-        border: 2px solid #E5E7EB;
-    }
-
-    .btn-outline-modern:hover {
-        border-color: var(--aquamarine);
-        color: var(--aquamarine);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-outline-modern-secondary {
-        background: white;
-        color: var(--text-primary);
-        border: 2px solid #E5E7EB;
-    }
-
-    .btn-outline-modern-secondary:hover {
-        border-color: var(--orangish);
-        color: var(--orangish);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern {
-        background: var(--gradient-secondary);
-    }
-
-    .btn-secondary-modern:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-hover);
-        background: linear-gradient(135deg, #FF8C50, #E17333);
-    }
-
     .section-badge {
         display: inline-flex;
         align-items: center;
@@ -642,15 +580,6 @@
         position: relative;
         width: 100%;
         z-index: 2;
-    }
-
-    .btn-app svg {
-        font-size: 1.5rem;
-        transition: transform 0.3s ease;
-    }
-
-    .btn-app:hover svg {
-        transform: scale(1.1);
     }
 
     @media (max-width: 768px) {
