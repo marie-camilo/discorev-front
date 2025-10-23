@@ -31,24 +31,26 @@ class RecruiterController extends Controller
             ->filter(fn($r) => is_array($r))
             ->map(fn($r) => Recruiter::fromApiData($r));
 
-        // Créer un recruteur fictif pour tester le front
-        $dummyRecruiter = new Recruiter();
-        $dummyRecruiter->id = 999;
-        $dummyRecruiter->companyName = "Entreprise Test";
-        $dummyRecruiter->teamSize = "11-50";
-        $dummyRecruiter->sector = "Aide à la personne";
-        $dummyRecruiter->location = "Paris";
-        $dummyRecruiter->website = "https://discorev.fr";
-        $dummyRecruiter->contactPerson = "contact@exemple.com";
-        $dummyRecruiter->phone = "0123456789";
-        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
-        $dummyRecruiter->banner = null;
-        $dummyRecruiter->logo = null;
-        $dummyRecruiter->offersCount = 3;
-        $dummyRecruiter->completionScore = 9;
+//        // Créer un recruteur fictif pour tester le front
+//        $dummyRecruiter = new Recruiter();
+//        $dummyRecruiter->id = 999;
+//        $dummyRecruiter->companyName = "Entreprise Test";
+//        $dummyRecruiter->teamSize = "11-50";
+//        $dummyRecruiter->sector = "Aide à la personne";
+//        $dummyRecruiter->location = "Paris";
+//        $dummyRecruiter->website = "https://discorev.fr";
+//        $dummyRecruiter->contactPerson = "contact@exemple.com";
+//        $dummyRecruiter->phone = "0123456789";
+//        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
+//        $dummyRecruiter->banner = null;
+//        $dummyRecruiter->logo = null;
+//        $dummyRecruiter->offersCount = 3;
+//        $dummyRecruiter->completionScore = 9;
+//
+//        // Fusionner dummy + API
+//        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
 
-        // Fusionner dummy + API
-        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
+        $recruiters = $recruitersFromApi;
 
         // Grouper les offres par recruiter_id
         $jobsByRecruiter = collect($jobsData)
