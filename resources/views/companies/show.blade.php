@@ -71,7 +71,7 @@
                         <div class="row">
                             @foreach ($section['data'] as $media)
                                 <div class="col">
-                                    <img class="rounded" src="{{ asset($media['filePath'] ?? '') }}" alt="{{ $media['title'] ?? '' }}">
+                                    <img class="rounded" src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? '' }}">
                                 </div>
                             @endforeach
                         </div>
@@ -79,7 +79,7 @@
                     @elseif ($section['type'] === 'video')
                         @foreach ($section['data'] as $media)
                             <div class="company-video my-3">
-                                <iframe width="560" height="315" src="{{ $media['filePath'] ?? '' }}" title="{{ $media['title'] ?? '' }}" frameborder="0" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="{{ $media->filePath ?? '' }}" title="{{ $media->title ?? '' }}" frameborder="0" allowfullscreen></iframe>
                             </div>
                         @endforeach
                     @endif
