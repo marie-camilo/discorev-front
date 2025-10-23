@@ -6,7 +6,7 @@
 
     <div class="company-banner">
         @if ($recruiter->banner)
-            <img src="{{ asset($recruiter->banner) }}" alt="Bandeau entreprise" />
+            <img src="{{ $recruiter->banner ? config('app.api') . '/' . $recruiter->banner : '' }}" alt="Bandeau entreprise" />
             <div class="overlay"></div>
         @else
             <div></div>
@@ -16,7 +16,7 @@
         <div class="company-header">
             <div class="company-logo">
                 @if ($recruiter->logo)
-                    <img src="{{ asset($recruiter->logo) }}" alt="Logo de l'entreprise" />
+                    <img src="{{ $recruiter->logo ? config('app.api') . '/' . $recruiter->logo : asset('img/default-avatar.png') }}" alt="Logo entreprise" />
                 @endif
             </div>
             <div class="company-info">
@@ -71,7 +71,7 @@
                         <div class="row">
                             @foreach ($section['data'] as $media)
                                 <div class="col">
-                                    <img class="rounded" src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? '' }}">
+                                    <img src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" alt="{{ $media->title ?? '' }}">
                                 </div>
                             @endforeach
                         </div>
@@ -79,7 +79,7 @@
                     @elseif ($section['type'] === 'video')
                         @foreach ($section['data'] as $media)
                             <div class="company-video my-3">
-                                <iframe width="560" height="315" src="{{ $media->filePath ?? '' }}" title="{{ $media->title ?? '' }}" frameborder="0" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="{{ config('app.api') . '/' . ($media->filePath ?? '') }}" frameborder="0" allowfullscreen></iframe>
                             </div>
                         @endforeach
                     @endif
