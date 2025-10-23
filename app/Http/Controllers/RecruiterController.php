@@ -151,106 +151,6 @@ class RecruiterController extends Controller
         return redirect()->back()->with('error', "Erreur lors de la mise à jour de l'entreprise.");
     }
 
-//    public function show($identifier)
-//    {
-//        // Récupère les données du recruiter depuis l'API
-//        $recruiterData = is_numeric($identifier)
-//            ? $this->api->get("recruiters/$identifier")
-//            : $this->api->get("recruiters/company/$identifier");
-//
-//        if (!$recruiterData) {
-//            $fallbackView = 'companies.' . strtolower($identifier);
-//            if (view()->exists($fallbackView)) return view($fallbackView);
-//            return redirect()->back()->with('error', "Entreprise introuvable.");
-//        }
-//
-//        $recruiter = Recruiter::fromApiData($recruiterData);
-//        $recruiter->sectorName = isset($recruiter->sector)
-//            ? NafHelper::getLabel($recruiter->sector)
-//            : null;
-//
-//        $recruiterId = $recruiter['id'];
-//
-//        // Job offers
-//        $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId");
-//
-//        // Collecte les médias
-//        $medias = collect($recruiter['medias'] ?? []);
-//
-//        // Récupère directement les fichiers pour bannière et logo
-//        $bannerMedia = $medias->firstWhere('type', 'company_banner');
-//        $logoMedia = $medias->firstWhere('type', 'company_logo');
-//
-//        $recruiter->banner = $bannerMedia['filePath'] ?? null;
-//        $recruiter->logo   = $logoMedia['filePath'] ?? null;
-//
-//        // Configuration des sections pour la vue
-//        $sectionsConfig = [
-//            [
-//                'key' => 'companyDescription',
-//                'label' => "L'entreprise",
-//                'anchor' => 'company',
-//                'type' => 'text',
-//                'data' => $recruiter['companyDescription'] ?? null
-//            ],
-//            [
-//                'key' => 'teamMembers',
-//                'label' => "L'équipe",
-//                'anchor' => 'equipe',
-//                'type' => 'array',
-//                'data' => $recruiter['teamMembers'] ?? []
-//            ],
-//            [
-//                'key' => 'video',
-//                'label' => 'Vidéo',
-//                'anchor' => 'video',
-//                'type' => 'video',
-//                'data' => $medias->where('type', 'company_video')->where('context', 'company_page')
-//            ],
-//            [
-//                'key' => 'medias',
-//                'label' => 'Médias',
-//                'anchor' => 'medias',
-//                'type' => 'media',
-//                'data' => $medias->where('type', 'company_image')->where('context', 'company_page')
-//            ]
-//        ];
-//
-//        $sections = collect($sectionsConfig)
-//            ->filter(function ($section) {
-//                $data = $section['data'];
-//                if ($data instanceof \Illuminate\Support\Collection) {
-//                    return $data->isNotEmpty();
-//                }
-//                if (is_array($data)) {
-//                    return !empty($data);
-//                }
-//                return !empty($data);
-//            })
-//            ->values()
-//            ->all();
-//
-//        // Détermination de la vue
-//        $view = null;
-//        if (!empty($recruiter['companyName'])) {
-//            $slugView = 'companies.' . $this->slugify($recruiter['companyName']);
-//            if (view()->exists($slugView)) {
-//                $view = $slugView;
-//            }
-//        }
-//
-//        if (!$view) {
-//            $view = view()->exists('companies.show') ? 'companies.show' : null;
-//        }
-//
-//        if ($view) {
-//            // Passe directement $recruiter avec logo et banner remplis
-//            return view($view, compact('recruiter', 'sections', 'jobOffers'));
-//        }
-//
-//        return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
-//    }
-
     public function show($identifier)
     {
         // Récupère les données du recruiter depuis l'API
@@ -264,44 +164,41 @@ class RecruiterController extends Controller
             return redirect()->back()->with('error', "Entreprise introuvable.");
         }
 
-        // Convertit en objet Recruiter
         $recruiter = Recruiter::fromApiData($recruiterData);
-
-        // Calcul du nom du secteur
         $recruiter->sectorName = isset($recruiter->sector)
             ? NafHelper::getLabel($recruiter->sector)
             : null;
 
-        $recruiterId = $recruiter->id;
+        $recruiterId = $recruiter['id'];
 
         // Job offers
-        $jobOffersData = $this->api->get("job_offers/recruiter/$recruiterId") ?: [];
-        $recruiter->jobOffers = collect($jobOffersData)->map(fn($jobData) => JobOffer::fromApiData($jobData));
+        $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId");
 
-        // Médias
-        $medias = collect($recruiterData['medias'] ?? []);
-        $recruiter->banner = $medias->firstWhere('type', 'company_banner')['filePath'] ?? null;
-        $recruiter->logo   = $medias->firstWhere('type', 'company_logo')['filePath'] ?? null;
+        // Collecte les médias
+        $medias = collect($recruiter['medias'] ?? []);
 
-        // Normalisation des contacts
-        $recruiter->contactEmail = $recruiter->contactEmail ?? $recruiter->contactPerson ?? null;
-        $recruiter->contactPhone = $recruiter->contactPhone ?? $recruiter->phone ?? null;
+        // Récupère directement les fichiers pour bannière et logo
+        $bannerMedia = $medias->firstWhere('type', 'company_banner');
+        $logoMedia = $medias->firstWhere('type', 'company_logo');
 
-        // Sections pour la vue
+        $recruiter->banner = $bannerMedia['filePath'] ?? null;
+        $recruiter->logo   = $logoMedia['filePath'] ?? null;
+
+        // Configuration des sections pour la vue
         $sectionsConfig = [
             [
                 'key' => 'companyDescription',
                 'label' => "L'entreprise",
                 'anchor' => 'company',
                 'type' => 'text',
-                'data' => $recruiter->companyDescription ?? null
+                'data' => $recruiter['companyDescription'] ?? null
             ],
             [
                 'key' => 'teamMembers',
                 'label' => "L'équipe",
                 'anchor' => 'equipe',
                 'type' => 'array',
-                'data' => $recruiter->teamMembers ?? []
+                'data' => $recruiter['teamMembers'] ?? []
             ],
             [
                 'key' => 'video',
@@ -322,19 +219,37 @@ class RecruiterController extends Controller
         $sections = collect($sectionsConfig)
             ->filter(function ($section) {
                 $data = $section['data'];
-                if ($data instanceof \Illuminate\Support\Collection) return $data->isNotEmpty();
-                if (is_array($data)) return !empty($data);
+                if ($data instanceof \Illuminate\Support\Collection) {
+                    return $data->isNotEmpty();
+                }
+                if (is_array($data)) {
+                    return !empty($data);
+                }
                 return !empty($data);
             })
             ->values()
             ->all();
 
-        return view('companies.show', [
-            'recruiter' => $recruiter,
-            'sections' => $sections
-        ]);
-    }
+        // Détermination de la vue
+        $view = null;
+        if (!empty($recruiter['companyName'])) {
+            $slugView = 'companies.' . $this->slugify($recruiter['companyName']);
+            if (view()->exists($slugView)) {
+                $view = $slugView;
+            }
+        }
 
+        if (!$view) {
+            $view = view()->exists('companies.show') ? 'companies.show' : null;
+        }
+
+        if ($view) {
+            // Passe directement $recruiter avec logo et banner remplis
+            return view($view, compact('recruiter', 'sections', 'jobOffers'));
+        }
+
+        return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
+    }
 
     function slugify(string $text): string
     {

@@ -27,10 +27,9 @@
                 <h1 style="color: white">{{ $recruiter->companyName }}</h1>
                 <div class="details">
                     <p><span class="material-symbols-outlined text-white">business_center</span> Secteur : {{ $recruiter->sectorName ?? $recruiter->sector }}</p>
-                    <p><span class="material-symbols-outlined text-white">location_on</span> Localisation : {{ $recruiter->location }}</p>
-                    <p><span class="material-symbols-outlined text-white">groups</span> Taille de l'équipe : {{ $recruiter->teamSize }}</p>
+                    <p><span class="material-symbols-outlined text-white">location_on</span> Localisation : {{ $recruiter->location ?? '' }}</p>
+                    <p><span class="material-symbols-outlined text-white">groups</span> Taille de l'équipe : {{ $recruiter->teamSize ?? '' }}</p>
                 </div>
-
             </div>
         </div>
     </div>
@@ -39,7 +38,7 @@
         <div class="main-content">
 
             {{-- Navigation locale dynamique --}}
-            @if (count($sections) > 0)
+            @if (!empty($sections))
                 <nav class="company-nav" aria-label="Navigation section entreprise">
                     <ul>
                         @foreach ($sections as $section)
@@ -57,39 +56,35 @@
                     <h2>{{ $section['label'] }}</h2>
 
                     @if ($section['type'] === 'text')
-                        <p>{{ $recruiter->{$section['key']} }}</p>
+                        <p>{{ $section['data'] ?? '' }}</p>
 
                     @elseif ($section['type'] === 'array' && $section['key'] === 'teamMembers')
                         <p>Découvrez <strong>l'équipe</strong> de la société <strong>{{ $recruiter->companyName }}</strong>.</p>
                         <div class="row">
-                            @foreach ($recruiter->teamMembers as $member)
+                            @foreach ($section['data'] as $member)
                                 <article class="col-12 col-md-4 team-member" role="listitem">
-                                    <img src="{{ asset('img/default-avatar.png') }}" alt="{{ $member->name }}" />
-                                    <h3>{{ $member->name }}</h3>
-                                    <p><strong>{{ $member->role }}</strong></p>
-                                    <p>{{ $member->email }}</p>
+                                    <img src="{{ asset('img/default-avatar.png') }}" alt="{{ $member['name'] ?? '' }}" />
+                                    <h3>{{ $member['name'] ?? '' }}</h3>
+                                    <p><strong>{{ $member['role'] ?? '' }}</strong></p>
+                                    <p>{{ $member['email'] ?? '' }}</p>
                                 </article>
                             @endforeach
                         </div>
 
                     @elseif ($section['type'] === 'media')
                         <div class="row">
-                            @foreach ($recruiter->medias as $media)
-                                @if ($media->type === 'company_image' && $media->context === 'company_page')
-                                    <div class="col">
-                                        <img class="rounded" src="{{ asset($media->filePath) }}" alt="{{ $media->title }}">
-                                    </div>
-                                @endif
+                            @foreach ($section['data'] as $media)
+                                <div class="col">
+                                    <img class="rounded" src="{{ asset($media['filePath'] ?? '') }}" alt="{{ $media['title'] ?? '' }}">
+                                </div>
                             @endforeach
                         </div>
 
                     @elseif ($section['type'] === 'video')
-                        @foreach ($recruiter->medias as $media)
-                            @if ($media->type === 'company_video' && $media->context === 'company_page')
-                                <div class="company-video my-3">
-                                    <iframe width="560" height="315" src="{{ $media->filePath }}" title="{{ $media->title }}" frameborder="0" allowfullscreen></iframe>
-                                </div>
-                            @endif
+                        @foreach ($section['data'] as $media)
+                            <div class="company-video my-3">
+                                <iframe width="560" height="315" src="{{ $media['filePath'] ?? '' }}" title="{{ $media['title'] ?? '' }}" frameborder="0" allowfullscreen></iframe>
+                            </div>
                         @endforeach
                     @endif
                 </section>
@@ -129,13 +124,13 @@
             <section class="sidebar-offers" aria-labelledby="sidebar-offers-title">
                 <h3 id="sidebar-offers-title" class="sidebar-title">Dernières offres</h3>
                 <ul class="job-list">
-                    @foreach ($recruiter->jobOffers as $job)
+                    @foreach ($jobOffers ?? [] as $job)
                         <li class="job-card">
-                            <h4>{{ $job->title }}</h4>
-                            <p><i class="material-symbols-outlined me-2">location_on</i>{{ $job->location }}</p>
-                            <p class="text-uppercase"><i class="material-symbols-outlined me-2">contract</i>{{ $job->employmentType }}</p>
-                            <p><i class="material-symbols-outlined me-2">calendar_today</i>Publiée le {{ $job->formattedPublicationDate }}</p>
-                            <a href="{{ route('job_offers.show', $job->id) }}" class="btn btn-highlight">Postuler</a>
+                            <h4>{{ $job['title'] ?? '' }}</h4>
+                            <p><i class="material-symbols-outlined me-2">location_on</i>{{ $job['location'] ?? '' }}</p>
+                            <p class="text-uppercase"><i class="material-symbols-outlined me-2">contract</i>{{ $job['employmentType'] ?? '' }}</p>
+                            <p><i class="material-symbols-outlined me-2">calendar_today</i>Publiée le {{ $job['formattedPublicationDate'] ?? '' }}</p>
+                            <a href="{{ route('job_offers.show', $job['id'] ?? 0) }}" class="btn btn-highlight">Postuler</a>
                         </li>
                     @endforeach
                 </ul>
