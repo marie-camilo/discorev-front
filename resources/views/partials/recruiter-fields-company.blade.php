@@ -2,13 +2,10 @@
     @csrf
     @method('PUT')
 
-    <!-- === Général === -->
     <h3 class="fw-bold mb-3">Général</h3>
 
     <div class="mb-3">
-        <label for="
-
-companyName" class="form-label fw-bold">Nom de l'entreprise</label>
+        <label for="companyName" class="form-label fw-bold">Nom de l'entreprise</label>
         <input type="text" class="form-control" id="companyName" name="companyName"
                value="{{ old('companyName', $recruiter['companyName'] ?? '') }}" required>
     </div>
@@ -21,9 +18,7 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
 
     <div class="mb-3">
         <label for="companyDescription" class="form-label fw-bold">Description de l'entreprise</label>
-        <textarea class="form-control auto-resize" id="companyDescription" name="companyDescription" rows="1">
-            {{ old('companyDescription', $recruiter['companyDescription'] ?? '') }}
-        </textarea>
+        <textarea class="form-control auto-resize" id="companyDescription" name="companyDescription" rows="1">{{ old('companyDescription', $recruiter['companyDescription'] ?? '') }}</textarea>
     </div>
 
     <div class="mb-3">
@@ -41,9 +36,7 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
     <div class="mb-3">
         <label for="sector" class="form-label fw-bold">Secteur d'activité</label>
         <select class="form-select" id="sector" name="sector">
-            <option value="" disabled {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>
-                Sélectionnez un secteur
-            </option>
+            <option value="" disabled {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>Sélectionnez un secteur</option>
             @foreach ($sectors as $code => $label)
                 <option value="{{ $code }}" {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
                     {{ $label }}
@@ -73,10 +66,9 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
                value="{{ old('contactEmail', $recruiter['contactEmail'] ?? '') }}">
     </div>
 
-    <!-- === Logo et médias === -->
     <h3 class="fw-bold mb-3 mt-4">Logo et médias</h3>
 
-    <!-- Logo -->
+    <!-- Logo de l'entreprise -->
     <div class="mb-4">
         <label class="form-label fw-bold">Logo de l'entreprise</label>
 
@@ -87,29 +79,24 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
         @if($logo)
             <div class="mb-3">
                 <div class="d-flex align-items-center gap-3">
-                    <img src="{{ config('app.api') . '/' . $logo['filePath'] }}"
-                         alt="Logo actuel"
-                         class="img-thumbnail"
-                         style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                    <img src="{{ config('app.api') . '/' . $logo['filePath'] }}" alt="company logo">
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="delete_logo" id="deleteLogo" value="1">
+                        <input class="form-check-input" type="checkbox" name="delete_logo" id="deleteLogo" value="1"
+                            {{ old('new_logo') ? 'disabled' : '' }}>
                         <label class="form-check-label text-danger fw-bold" for="deleteLogo">
                             Supprimer le logo
                         </label>
                     </div>
                 </div>
-                <small class="text-muted d-block">
-                    Cocher pour supprimer. <br>
-                    <em class="text-warning">Désactivé si vous uploadez un nouveau logo.</em>
-                </small>
+                <small class="text-muted">Cocher pour supprimer (désactivé si vous uploadez un nouveau logo)</small>
             </div>
         @endif
 
         <div>
             <label for="new_logo" class="form-label">
                 {{ $logo ? 'Remplacer le logo' : 'Ajouter un logo' }}
-                <small class="text-muted">(Max 5 Mo, formats: jpg, png, svg)</small>
+                <small class="text-muted">(Max 5Mo, formats: jpg, png, svg)</small>
             </label>
             <input type="file" class="form-control" id="new_logo" name="new_logo"
                    accept="image/jpeg,image/png,image/svg+xml">
@@ -117,15 +104,17 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
         </div>
     </div>
 
-    <!-- Membres équipe -->
     <h3 class="fw-bold mb-3 mt-4">Membres de l’équipe</h3>
+
     <div id="team-members-section">
-        <input type="hidden" name="deleted_member_ids" id="deleted_member_ids">
+        {{-- Champ pour IDs supprimés --}}
+        <input type="hidden" name="deletedIds" id="deletedIds">
 
         <div id="team-members-list" class="row">
+            {{-- Membres existants --}}
             @foreach ($recruiter['teamMembers'] ?? [] as $index => $member)
                 <div class="card col-12 col-md-6 rounded p-3 mb-2 d-flex justify-content-between align-items-center bg-light member-card">
-                    <div class="flex-grow-1">
+                    <div>
                         <input type="hidden" name="teamMembers[{{ $index }}][id]" value="{{ $member['id'] }}">
                         <input type="text" name="teamMembers[{{ $index }}][name]" class="form-control mb-1"
                                value="{{ $member['name'] }}" placeholder="Nom" required>
@@ -141,14 +130,57 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
             @endforeach
         </div>
 
-        <div class="d-flex justify-content-center mt-3">
+        {{-- Bouton d’ajout --}}
+        <div class="d-flex justify-content-center mt-2">
             <button type="button" id="add-member-btn"
-                    class="btn btn-outline-secondary rounded-circle p-0 d-flex align-items-center justify-content-center"
-                    style="width: 40px; height: 40px;">
+                    class="btn rounded-circle p-0 d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px; background-color: #ced4da;">
                 <i class="material-symbols-outlined">add</i>
             </button>
         </div>
     </div>
+
+    <script>
+        let memberIndex = {{ count($recruiter['teamMembers'] ?? []) }};
+        const deletedInput = document.getElementById('deletedIds');
+
+        // Ajouter un membre
+        document.getElementById('add-member-btn').addEventListener('click', () => {
+            const container = document.getElementById('team-members-list');
+            const html = `
+            <div class="card col-12 col-md-6 rounded p-3 mb-2 bg-light member-card">
+                <div>
+                    <input type="text" name="teamMembers[${memberIndex}][name]" class="form-control mb-1" placeholder="Nom" required>
+                    <input type="email" name="teamMembers[${memberIndex}][email]" class="form-control mb-1" placeholder="Email">
+                    <input type="text" name="teamMembers[${memberIndex}][role]" class="form-control" placeholder="Rôle">
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger delete-member ms-3">
+                    <i class="material-symbols-outlined">delete</i>
+                </button>
+            </div>
+        `;
+            container.insertAdjacentHTML('beforeend', html);
+            memberIndex++;
+        });
+
+        // Supprimer un membre
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.delete-member');
+            if (!btn) return;
+
+            e.preventDefault();
+            const card = btn.closest('.member-card');
+            const hiddenId = card.querySelector('input[name*="[id]"]');
+
+            if (hiddenId && hiddenId.value) {
+                const deletedIds = deletedInput.value ? deletedInput.value.split(',') : [];
+                deletedIds.push(hiddenId.value);
+                deletedInput.value = deletedIds.join(',');
+            }
+
+            card.remove();
+        });
+    </script>
 
     <!-- Galerie photos -->
     <div class="mb-4">
@@ -160,19 +192,22 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
 
         @if($images->isNotEmpty())
             <div class="mb-3">
-                <p class="text-muted small mb-2">Cochez les images à supprimer :</p>
+                <p class="text-muted small">Cochez les images à supprimer :</p>
                 <div class="d-flex flex-wrap gap-2">
                     @foreach($images as $image)
-                        <div class="position-relative image-item" style="width: 150px;" data-id="{{ $image['id'] }}">
+                        <div class="position-relative" style="width: 150px;">
                             <img src="{{ config('app.api') . '/' . $image['filePath'] }}"
                                  class="img-thumbnail w-100"
                                  style="height: 150px; object-fit: cover;">
                             <div class="position-absolute top-0 end-0 m-1">
-                                <div class="form-check bg-white rounded p-1 shadow-sm">
-                                    <input class="form-check-input delete-image-checkbox" type="checkbox"
-                                           name="delete_images[]" value="{{ $image['id'] }}" id="img{{ $image['id'] }}">
-                                    <label class="form-check-label text-danger fw-bold" for="img{{ $image['id'] }}">
-                                        X
+                                <div class="form-check bg-white rounded p-1">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="delete_images[]"
+                                           value="{{ $image['id'] }}"
+                                           id="img{{ $image['id'] }}">
+                                    <label class="form-check-label text-danger fw-bold"
+                                           for="img{{ $image['id'] }}">
+                                        ✕
                                     </label>
                                 </div>
                             </div>
@@ -185,7 +220,7 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
         <div>
             <label for="new_images" class="form-label">
                 Ajouter de nouvelles photos
-                <small class="text-muted">(Max 5 fichiers, 5 Mo chacun)</small>
+                <small class="text-muted">(Max 5 fichiers, 5Mo chacun)</small>
             </label>
             <input type="file" class="form-control" id="new_images" name="new_images[]"
                    accept="image/jpeg,image/png,image/jpg" multiple>
@@ -193,7 +228,6 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
         </div>
     </div>
 
-    <!-- Submit -->
     <div class="mt-4">
         <button type="submit" class="btn btn-primary w-100 py-2">
             <i class="bi bi-check-circle me-2"></i>Mettre à jour le profil
@@ -201,43 +235,51 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
     </div>
 </form>
 
+<!-- Scripts -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const logoInput = document.getElementById('new_logo');
-        const deleteLogoCheckbox = document.getElementById('deleteLogo');
-        const logoPreview = document.getElementById('logo_preview');
-        const imagesInput = document.getElementById('new_images');
-        const imagesPreview = document.getElementById('images_preview');
-        const maxSize = 5 * 1024 * 1024; // 5 Mo
-        const maxFiles = 5;
-
-        // === Désactiver suppression logo si nouveau upload ===
-        logoInput?.addEventListener('change', function () {
-            if (this.files.length > 0 && deleteLogoCheckbox) {
-                deleteLogoCheckbox.checked = false;
-                deleteLogoCheckbox.disabled = true;
-            } else if (deleteLogoCheckbox) {
-                deleteLogoCheckbox.disabled = false;
-            }
+        // Auto-resize des textareas
+        const textareas = document.querySelectorAll('.auto-resize');
+        textareas.forEach(textarea => {
+            const resize = () => {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            };
+            textarea.addEventListener('input', resize);
+            resize();
         });
 
-        // === Preview logo ===
-        logoInput?.addEventListener('change', function (e) {
+        // Preview du logo
+        const logoInput = document.getElementById('new_logo');
+        const logoPreview = document.getElementById('logo_preview');
+        const maxLogoSize = 5 * 1024 * 1024; // 5 Mo
+
+        logoInput?.addEventListener('change', function(e) {
             logoPreview.innerHTML = '';
             const file = e.target.files[0];
+
             if (!file) return;
 
-            if (file.size > maxSize) {
+            // Vérification de la taille
+            if (file.size > maxLogoSize) {
                 alert('Le logo ne doit pas dépasser 5 Mo.');
-                this.value = '';
+                logoInput.value = '';
                 return;
             }
 
+            // Vérification du type
+            if (!file.type.match('image.*')) {
+                alert('Veuillez sélectionner une image valide.');
+                logoInput.value = '';
+                return;
+            }
+
+            // Afficher la preview
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = function(e) {
                 const img = document.createElement('img');
                 img.src = e.target.result;
-                img.className = 'img-thumbnail';
+                img.className = 'img-thumbnail mt-2';
                 img.style.maxWidth = '200px';
                 img.style.maxHeight = '200px';
                 img.style.objectFit = 'contain';
@@ -246,27 +288,42 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
             reader.readAsDataURL(file);
         });
 
-        // === Preview images + validation ===
-        imagesInput?.addEventListener('change', function (e) {
+        // Preview des images
+        const imagesInput = document.getElementById('new_images');
+        const imagesPreview = document.getElementById('images_preview');
+        const maxImageSize = 5 * 1024 * 1024; // 5 Mo
+        const maxFiles = 5;
+
+        imagesInput?.addEventListener('change', function(e) {
             imagesPreview.innerHTML = '';
             const files = Array.from(e.target.files);
 
             if (files.length > maxFiles) {
-                alert(`Maximum ${maxFiles} images autorisées.`);
-                this.value = '';
+                alert(`Vous ne pouvez pas ajouter plus de ${maxFiles} images à la fois.`);
+                imagesInput.value = '';
                 return;
             }
 
+            let validFiles = true;
+
             files.forEach(file => {
-                if (file.size > maxSize) {
-                    alert(`"${file.name}" dépasse 5 Mo.`);
-                    imagesInput.value = '';
-                    imagesPreview.innerHTML = '';
+                // Vérification de la taille
+                if (file.size > maxImageSize) {
+                    alert(`L'image "${file.name}" dépasse la taille maximale de 5 Mo.`);
+                    validFiles = false;
                     return;
                 }
 
+                // Vérification du type
+                if (!file.type.match('image.*')) {
+                    alert(`Le fichier "${file.name}" n'est pas une image valide.`);
+                    validFiles = false;
+                    return;
+                }
+
+                // Afficher la preview
                 const reader = new FileReader();
-                reader.onload = e => {
+                reader.onload = function(e) {
                     const div = document.createElement('div');
                     div.className = 'position-relative';
                     div.style.width = '150px';
@@ -282,65 +339,60 @@ companyName" class="form-label fw-bold">Nom de l'entreprise</label>
                 };
                 reader.readAsDataURL(file);
             });
-        });
 
-        // === Feedback visuel suppression image ===
-        document.querySelectorAll('.delete-image-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                const item = this.closest('.image-item');
-                if (this.checked) {
-                    item.style.opacity = '0.4';
-                    item.style.pointerEvents = 'none';
-                } else {
-                    item.style.opacity = '1';
-                    item.style.pointerEvents = 'auto';
-                }
-            });
-        });
-
-        // === Membres équipe ===
-        let memberIndex = {{ count($recruiter['teamMembers'] ?? []) }};
-        const deletedIdsInput = document.getElementById('deleted_member_ids');
-
-        document.getElementById('add-member-btn').addEventListener('click', () => {
-            const container = document.getElementById('team-members-list');
-            const html = `
-            <div class="card col-12 col-md-6 rounded p-3 mb-2 bg-light member-card">
-                <div class="flex-grow-1">
-                    <input type="text" name="teamMembers[${memberIndex}][name]" class="form-control mb-1" placeholder="Nom" required>
-                    <input type="email" name="teamMembers[${memberIndex}][email]" class="form-control mb-1" placeholder="Email">
-                    <input type="text" name="teamMembers[${memberIndex}][role]" class="form-control" placeholder="Rôle">
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-danger delete-member ms-3">
-                    <i class="material-symbols-outlined">delete</i>
-                </button>
-            </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-            memberIndex++;
-        });
-
-        document.addEventListener('click', e => {
-            const btn = e.target.closest('.delete-member');
-            if (!btn) return;
-
-            const card = btn.closest('.member-card');
-            const idInput = card.querySelector('input[name*="[id]"]');
-            if (idInput?.value) {
-                const ids = deletedIdsInput.value ? deletedIdsInput.value.split(',') : [];
-                ids.push(idInput.value);
-                deletedIdsInput.value = ids.filter(Boolean).join(',');
+            if (!validFiles) {
+                imagesInput.value = '';
+                imagesPreview.innerHTML = '';
             }
-            card.remove();
         });
 
-        // === Auto-resize textarea ===
-        document.querySelectorAll('.auto-resize').forEach(textarea => {
-            const resize = () => {
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
-            };
-            textarea.addEventListener('input', resize);
-            resize();
+        // Validation avant soumission
+        const form = document.getElementById('recruiter-profile-form');
+        form?.addEventListener('submit', function(e) {
+            // Vérifier le logo
+            if (logoInput.files.length > 0) {
+                const file = logoInput.files[0];
+                if (file.size > maxLogoSize) {
+                    e.preventDefault();
+                    alert('Le logo ne doit pas dépasser 5 Mo.');
+                    return false;
+                }
+            }
+
+            // Vérifier les images
+            if (imagesInput.files.length > 0) {
+                const files = Array.from(imagesInput.files);
+
+                if (files.length > maxFiles) {
+                    e.preventDefault();
+                    alert(`Vous ne pouvez pas ajouter plus de ${maxFiles} images.`);
+                    return false;
+                }
+
+                for (let file of files) {
+                    if (file.size > maxImageSize) {
+                        e.preventDefault();
+                        alert(`L'image "${file.name}" dépasse la taille maximale de 5 Mo.`);
+                        return false;
+                    }
+                }
+            }
         });
     });
 </script>
+
+<style>
+    .img-thumbnail {
+        border: 2px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .img-thumbnail:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+    }
+
+    .form-check-input:checked ~ .form-check-label {
+        font-weight: bold;
+    }
+</style>

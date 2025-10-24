@@ -141,25 +141,19 @@ class RecruiterController extends Controller
             'website' => 'nullable|string|max:255',
             'sector' => 'nullable|string|max:100',
             'teamSize' => 'nullable|string|max:50',
-            'contactPhone' => 'nullable|string|min:10|max:20|regex:/^[0-9+\s\-\(\)]+$/',
+            'contactPhone' => ['nullable', 'string', 'min:10', 'max:20', 'regex:/^[0-9+\s\-().]+$/'],
             'contactEmail' => 'nullable|email',
-            'delete_logo' => 'nullable|in:1',
+            'delete_logo' => 'nullable|boolean',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer',
             'new_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:5120',
             'new_images' => 'nullable|array',
-            'new_images.*' => 'image|mimes:jpeg,png,jpg|max:5120',
-            'deleted_member_ids' => 'nullable|string',
+            'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
-        // Limite 5 images
-        if ($request->hasFile('new_images') && count($request->file('new_images')) > 5) {
-            return back()->withErrors(['new_images' => 'Maximum 5 images.'])->withInput();
-        }
-
         try {
-            // 1. Mise à jour texte
-            $this->api->put("recruiters/$id", [
+            // 1. Mettre à jour les informations textuelles
+            $response = $this->api->put('recruiters/' . $id, [
                 'companyName' => $validated['companyName'],
                 'siret' => $validated['siret'] ?? null,
                 'companyDescription' => $validated['companyDescription'] ?? null,
@@ -171,49 +165,67 @@ class RecruiterController extends Controller
                 'contactEmail' => $validated['contactEmail'] ?? null,
             ]);
 
-            // 2. Logo : supprimer seulement si pas de nouveau
-            if ($request->has('delete_logo') && !$request->hasFile('new_logo')) {
-                $this->api->delete("media/recruiter/$id/company_logo");
+            if (!$response->successful()) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Erreur lors de la mise à jour de l'entreprise.");
             }
 
-            // 3. Upload nouveau logo
+            // 2. Gérer la suppression du logo
+            if ($request->filled('delete_logo')) {
+                $deleteResponse = $this->api->delete("media/recruiter/$id/company_logo");
+            }
+
+            // 3. Gérer l'ajout d'un nouveau logo
             if ($request->hasFile('new_logo')) {
-                $this->uploadMedia($request->file('new_logo'), 'company_logo', "Logo {$validated['companyName']}", $id);
+                $logoFile = $request->file('new_logo');
+
+                // Créer un formulaire multipart
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($logoFile->getRealPath()),
+                    $logoFile->getClientOriginalName()
+                )->post(config('app.api') . '/media/upload', [
+                    'type' => 'company_logo',
+                    'context' => 'company_page',
+                    'targetType' => 'recruiter',
+                    'targetId' => $id,
+                    'title' => 'Logo ' . $validated['companyName'],
+                ]);
             }
 
-            // 4. Suppression images
+            // 4. Gérer la suppression des images
             if ($request->filled('delete_images')) {
                 foreach ($request->delete_images as $imageId) {
                     $this->api->delete("media/$imageId");
                 }
             }
 
-            // 5. Upload nouvelles images
+            // 5. Gérer l'ajout de nouvelles images
             if ($request->hasFile('new_images')) {
-                foreach ($request->file('new_images') as $file) {
-                    $this->uploadMedia($file, 'company_image', 'Photo entreprise', $id);
+                foreach ($request->file('new_images') as $imageFile) {
+                    Http::attach(
+                        'file',
+                        file_get_contents($imageFile->getRealPath()),
+                        $imageFile->getClientOriginalName()
+                    )->post(config('app.api') . '/media/upload', [
+                        'type' => 'company_image',
+                        'context' => 'company_page',
+                        'targetType' => 'recruiter',
+                        'targetId' => $id,
+                        'title' => 'Galerie ' . $validated['companyName'],
+                    ]);
                 }
             }
 
-            return back()->with('success', 'Profil mis à jour avec succès.');
+            return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
 
         } catch (\Exception $e) {
-            \Log::error("Échec mise à jour recruteur $id : " . $e->getMessage());
-            return back()->withInput()->with('error', 'Erreur lors de la mise à jour.');
+            \Log::error('Erreur mise à jour recruteur: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour.');
         }
-    }
-
-// Méthode réutilisable
-    private function uploadMedia($file, $type, $title, $targetId)
-    {
-        return Http::attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
-            ->post(config('app.api') . '/media/upload', [
-                'type' => $type,
-                'context' => 'company_page',
-                'targetType' => 'recruiter',
-                'targetId' => $targetId,
-                'title' => $title,
-            ]);
     }
 
     public function show($identifier)
