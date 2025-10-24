@@ -100,7 +100,7 @@
             </label>
             <input type="file" class="form-control" id="new_logo" name="new_logo"
                    accept="image/jpeg,image/png,image/svg+xml">
-            <div id="logo_preview" class="mt-2"></div>
+            <div id="logo_preview" class="mt-2 w-24 h-24"></div>
         </div>
     </div>
 
@@ -279,10 +279,7 @@
             reader.onload = function(e) {
                 const img = document.createElement('img');
                 img.src = e.target.result;
-                img.className = 'img-thumbnail mt-2';
-                img.style.maxWidth = '200px';
-                img.style.maxHeight = '200px';
-                img.style.objectFit = 'contain';
+                img.className = 'w-full h-full object-contain rounded';
                 logoPreview.appendChild(img);
             };
             reader.readAsDataURL(file);
