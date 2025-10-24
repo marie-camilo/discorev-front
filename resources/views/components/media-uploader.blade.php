@@ -11,18 +11,17 @@
 
 @php
     $uniqueId = 'mediaUploader_' . $type;
-    $inputName = $isMultiple ? 'file[]' : 'file';
+    $inputName = $isMultiple ? 'new_images[]' : 'new_logo';
     $existingMedias = $isMultiple
         ? collect($medias)->where('type', $type)
         : [collect($medias)->firstWhere('type', $type)];
 @endphp
 
 <div class="mb-3" id="{{ $uniqueId }}_container">
-    <label for="{{ $uniqueId }}_file" class="fw-bold form-label text-capitalize">
+    <label class="fw-bold form-label text-capitalize">
         <h5>{{ $label ?? 'Fichier' }}</h5>
         <small class="fw-light text-muted">
-            Taille maximale autorisée :
-            {{ $type === 'company_logo' || $type === 'company_image' ? '5Mo' : '20Mo' }}
+            Taille maximale : {{ $type === 'company_logo' || $type === 'company_image' ? '5Mo' : '20Mo' }}
         </small><br>
         @if($isMultiple)
             <small class="fw-light text-muted">5 fichiers max</small>
@@ -38,17 +37,28 @@
                          class="img-fluid rounded media-preview w-100" />
 
                     <div class="media-overlay d-flex justify-content-center align-items-center"
-                         onclick="this.closest('.media-container').remove();">
+                         onclick="
+                             this.closest('.media-container').remove();
+                             const input = document.createElement('input');
+                             input.type = 'hidden';
+                             input.name = '{{ $isMultiple ? 'delete_images[]' : 'delete_logo' }}';
+                             input.value = '{{ $media['id'] }}';
+                             document.getElementById('{{ $uniqueId }}_container').appendChild(input);
+                         ">
                         <span class="delete-icon">&times;</span>
                     </div>
 
-                    <input type="hidden" name="existing_{{ $type }}[]" value="{{ $media['id'] }}">
+                    @if($isMultiple)
+                        <input type="hidden" name="existing_{{ $type }}[]" value="{{ $media['id'] }}">
+                    @else
+                        <input type="hidden" name="existing_{{ $type }}" value="{{ $media['id'] }}">
+                    @endif
                 </div>
             @endif
         @endforeach
     </div>
 
-    {{-- Nouveau preview --}}
+    {{-- Preview nouveaux fichiers --}}
     <div id="{{ $uniqueId }}_newPreview" class="d-flex flex-wrap gap-2 mb-3"></div>
 
     {{-- Input file --}}
@@ -74,13 +84,16 @@
 
         fileInput?.addEventListener('change', function(event) {
             const files = Array.from(event.target.files);
-            previewContainer.innerHTML = '';
 
+            // Limite nombre fichiers pour les galeries
             if (isMultiple && files.length > maxFiles) {
                 alert(`Vous ne pouvez pas ajouter plus de ${maxFiles} fichiers à la fois.`);
                 fileInput.value = '';
+                previewContainer.innerHTML = '';
                 return;
             }
+
+            previewContainer.innerHTML = '';
 
             for (let file of files) {
                 if (file.type.startsWith('image/') && file.size > maxImageSize) {
@@ -96,11 +109,12 @@
                     return;
                 }
 
+                // Preview
                 if (file.type.startsWith('image/')) {
-                    const preview = document.createElement('img');
-                    preview.src = URL.createObjectURL(file);
-                    preview.className = 'mt-2 w-25 rounded me-2';
-                    previewContainer.appendChild(preview);
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'mt-2 w-25 rounded me-2';
+                    previewContainer.appendChild(img);
                 } else {
                     const div = document.createElement('div');
                     div.textContent = file.name;
