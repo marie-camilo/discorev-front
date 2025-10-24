@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class LegalController extends Controller
 {
     /**
-     * Affiche dynamiquement une page légale.
+     * Affiche dynamiquement une page légale
      */
     public function show($slug)
     {

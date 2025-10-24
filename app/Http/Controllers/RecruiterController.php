@@ -10,6 +10,7 @@ use App\Models\Api\JobOffer;
 use App\Helpers\NafHelper;
 use App\Models\Api\RecruiterTeamMember;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Http;
 
 class RecruiterController extends Controller
 {
@@ -141,16 +142,90 @@ class RecruiterController extends Controller
             'sector' => 'nullable|string|max:100',
             'teamSize' => 'nullable|string|max:50',
             'contactPhone' => ['nullable', 'string', 'min:10', 'max:20', 'regex:/^[0-9+\s\-().]+$/'],
-            'contactEmail' => 'nullable|string',
+            'contactEmail' => 'nullable|email',
+            'delete_logo' => 'nullable|boolean',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer',
+            'new_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:5120',
+            'new_images' => 'nullable|array',
+            'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
-        // Envoi de la requête PUT à l'API
-        $response = $this->api->put('recruiters/' . $id, $validated);
-        if ($response->successful()) {
-            return redirect()->back()->with('success', 'Entreprise mise à jour avec succès.');
-        }
+        try {
+            // 1. Mettre à jour les informations textuelles
+            $response = $this->api->put('recruiters/' . $id, [
+                'companyName' => $validated['companyName'],
+                'siret' => $validated['siret'] ?? null,
+                'companyDescription' => $validated['companyDescription'] ?? null,
+                'location' => $validated['location'] ?? null,
+                'website' => $validated['website'] ?? null,
+                'sector' => $validated['sector'] ?? null,
+                'teamSize' => $validated['teamSize'] ?? null,
+                'contactPhone' => $validated['contactPhone'] ?? null,
+                'contactEmail' => $validated['contactEmail'] ?? null,
+            ]);
 
-        return redirect()->back()->with('error', "Erreur lors de la mise à jour de l'entreprise.");
+            if (!$response->successful()) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Erreur lors de la mise à jour de l'entreprise.");
+            }
+
+            // 2. Gérer la suppression du logo
+            if ($request->filled('delete_logo')) {
+                $deleteResponse = $this->api->delete("media/recruiter/$id/company_logo");
+            }
+
+            // 3. Gérer l'ajout d'un nouveau logo
+            if ($request->hasFile('new_logo')) {
+                $logoFile = $request->file('new_logo');
+
+                // Créer un formulaire multipart
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($logoFile->getRealPath()),
+                    $logoFile->getClientOriginalName()
+                )->post(config('app.api') . '/media/upload', [
+                    'type' => 'company_logo',
+                    'context' => 'company_page',
+                    'targetType' => 'recruiter',
+                    'targetId' => $id,
+                    'title' => 'Logo ' . $validated['companyName'],
+                ]);
+            }
+
+            // 4. Gérer la suppression des images
+            if ($request->filled('delete_images')) {
+                foreach ($request->delete_images as $imageId) {
+                    $this->api->delete("media/$imageId");
+                }
+            }
+
+            // 5. Gérer l'ajout de nouvelles images
+            if ($request->hasFile('new_images')) {
+                foreach ($request->file('new_images') as $imageFile) {
+                    Http::attach(
+                        'file',
+                        file_get_contents($imageFile->getRealPath()),
+                        $imageFile->getClientOriginalName()
+                    )->post(config('app.api') . '/media/upload', [
+                        'type' => 'company_image',
+                        'context' => 'company_page',
+                        'targetType' => 'recruiter',
+                        'targetId' => $id,
+                        'title' => 'Galerie ' . $validated['companyName'],
+                    ]);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur mise à jour recruteur: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour.');
+        }
     }
 
     public function show($identifier)
