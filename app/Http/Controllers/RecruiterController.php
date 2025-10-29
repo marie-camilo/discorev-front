@@ -10,6 +10,7 @@ use App\Models\Api\JobOffer;
 use App\Helpers\NafHelper;
 use App\Models\Api\RecruiterTeamMember;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Http;
 
 class RecruiterController extends Controller
 {
@@ -22,62 +23,86 @@ class RecruiterController extends Controller
 
     public function index(): View
     {
-        $recruitersData = $this->api->get('recruiters');
-        $jobsData = $this->api->get('job_offers');
+        // Récupérer les données depuis l'API
+        $recruitersData = $this->api->get('recruiters') ?: [];
+        $jobsData = $this->api->get('job_offers') ?: [];
+
+        // Convertir les données API en modèles Recruiter
+        $recruitersFromApi = collect($recruitersData)
+            ->filter(fn($r) => is_array($r))
+            ->map(fn($r) => Recruiter::fromApiData($r));
+
+//        // Créer un recruteur fictif pour tester le front
+//        $dummyRecruiter = new Recruiter();
+//        $dummyRecruiter->id = 999;
+//        $dummyRecruiter->companyName = "Entreprise Test";
+//        $dummyRecruiter->teamSize = "11-50";
+//        $dummyRecruiter->sector = "Aide à la personne";
+//        $dummyRecruiter->location = "Paris";
+//        $dummyRecruiter->website = "https://discorev.fr";
+//        $dummyRecruiter->contactPerson = "contact@exemple.com";
+//        $dummyRecruiter->phone = "0123456789";
+//        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
+//        $dummyRecruiter->banner = null;
+//        $dummyRecruiter->logo = null;
+//        $dummyRecruiter->offersCount = 3;
+//        $dummyRecruiter->completionScore = 9;
+//
+//        // Fusionner dummy + API
+//        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
+
+        $recruiters = $recruitersFromApi;
+
+        // Grouper les offres par recruiter_id
+        $jobsByRecruiter = collect($jobsData)
+            ->filter(fn($j) => is_array($j))
+            ->groupBy('recruiterId');
+
+        // Attacher les offres et médias à chaque recruteur, calculer sectorName
+        $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
+            $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
+            $jobs = $jobsData->map(fn($jobData) => JobOffer::fromApiData($jobData));
+
+            $medias = collect($recruiter['medias'] ?? []);
+            $banner = $medias->firstWhere('type', 'company_banner');
+            $logo = $medias->firstWhere('type', 'company_logo');
+
+            $recruiter->setRelation('jobOffers', $jobs);
+            $recruiter->offersCount = $jobs->count();
+            $recruiter->banner = $banner['filePath'] ?? null;
+            $recruiter->logo   = $logo['filePath'] ?? null;
+
+            // Normaliser les contacts
+            $recruiter->contactPerson = $recruiter->contactEmail ?? $recruiter->contactPerson ?? null;
+            $recruiter->phone = $recruiter->contactPhone ?? $recruiter->phone ?? null;
+
+            // Calculer le score de complétion
+            $fields = [
+                $recruiter->companyName,
+                $recruiter->siret ?? null,
+                $recruiter->companyDescription ?? null,
+                $recruiter->location ?? null,
+                $recruiter->website ?? null,
+                $recruiter->sector ?? null,
+                $recruiter->teamSize ?? null,
+                $recruiter->contactPerson,
+                $recruiter->phone,
+            ];
+            $recruiter->completionScore = collect($fields)->filter(fn($field) => !empty($field))->count();
+
+            $recruiter->sectorName = isset($recruiter->sector)
+                ? NafHelper::getLabel($recruiter->sector)
+                : null;
+
+            return $recruiter;
+        });
 
         // Récupérer les filtres depuis la requête
         $locationFilter = request('location');
         $sectorFilter = request('sector');
         $teamSizeFilter = request('team_size');
 
-        // Convertir en modèles Eloquent-like
-        $recruiters = collect($recruitersData)->map(function ($recruiterData) {
-            return Recruiter::fromApiData($recruiterData);
-        });
-
-        // Grouper les offres par recruiter_id
-        $jobsByRecruiter = collect($jobsData)->groupBy('recruiterId');
-
-        $recruiters = $recruiters->map(function ($recruiter) use ($jobsByRecruiter) {
-            $jobsData = $jobsByRecruiter->get($recruiter->id, collect());
-
-            // Convertir les jobs en modèles JobOffer
-            $jobs = $jobsData->map(function ($jobData) {
-                return JobOffer::fromApiData($jobData);
-            });
-
-            // Gestion médias
-            $medias = collect($recruiter->medias ?? []);
-            $bannerMedia = $medias->firstWhere('type', 'company_banner');
-            $logoMedia = $medias->firstWhere('type', 'company_logo');
-
-            // Attacher infos dynamiques
-            $recruiter->setRelation('jobOffers', $jobs);
-            $recruiter->offersCount = $jobs->count();
-            $recruiter->banner = $bannerMedia['filePath'] ?? null;
-            $recruiter->logo = $logoMedia['filePath'] ?? null;
-
-            // Calculer un score de complétion
-            $fields = [
-                $recruiter->companyName,
-                $recruiter->siret,
-                $recruiter->companyDescription,
-                $recruiter->location,
-                $recruiter->website,
-                $recruiter->sector,
-                $recruiter->teamSize,
-                $recruiter->contactEmail,
-                $recruiter->contactPhone,
-            ];
-
-            $recruiter->completionScore = collect($fields)
-                ->filter(fn($field) => !empty($field))
-                ->count();
-
-            return $recruiter;
-        });
-
-        // 🔍 Appliquer les filtres
+        // Appliquer les filtres
         $recruiters = $recruiters->filter(function ($recruiter) use ($locationFilter, $sectorFilter, $teamSizeFilter) {
             $matches = true;
 
@@ -85,7 +110,7 @@ class RecruiterController extends Controller
                 $matches = $matches && stripos($recruiter->location, $locationFilter) !== false;
             }
             if ($sectorFilter) {
-                $matches = $matches && $recruiter->sector === $sectorFilter;
+                $matches = $matches && $recruiter->sectorName === $sectorFilter;
             }
             if ($teamSizeFilter) {
                 $matches = $matches && $recruiter->teamSize === $teamSizeFilter;
@@ -94,16 +119,14 @@ class RecruiterController extends Controller
             return $matches;
         });
 
-        // 🚀 Trier : d’abord par score de complétion (descendant), puis par nom
+        // Trier par score de complétion descendant et éliminer les vides
         $recruiters = $recruiters
-            ->filter(fn($r) => $r->completionScore > 0) // éliminer ceux sans infos
+            ->filter(fn($r) => $r->completionScore > 0)
             ->sortByDesc('completionScore')
             ->values();
 
         return view('companies.index', compact('recruiters'));
     }
-
-
 
     /**
      * Met à jour les informations du recruiter via l'API.
@@ -118,17 +141,91 @@ class RecruiterController extends Controller
             'website' => 'nullable|string|max:255',
             'sector' => 'nullable|string|max:100',
             'teamSize' => 'nullable|string|max:50',
-            'contactPhone' => 'nullable|string|min:20',
-            'contactEmail' => 'nullable|string',
+            'contactPhone' => ['nullable', 'string', 'min:10', 'max:20', 'regex:/^[0-9+\s\-().]+$/'],
+            'contactEmail' => 'nullable|email',
+            'delete_logo' => 'nullable|boolean',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer',
+            'new_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:5120',
+            'new_images' => 'nullable|array',
+            'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
-        // Envoi de la requête PUT à l'API
-        $response = $this->api->put('recruiters/' . $id, $validated);
-        if ($response->successful()) {
-            return redirect()->back()->with('success', 'Entreprise mise à jour avec succès.');
-        }
+        try {
+            // 1. Mettre à jour les informations textuelles
+            $response = $this->api->put('recruiters/' . $id, [
+                'companyName' => $validated['companyName'],
+                'siret' => $validated['siret'] ?? null,
+                'companyDescription' => $validated['companyDescription'] ?? null,
+                'location' => $validated['location'] ?? null,
+                'website' => $validated['website'] ?? null,
+                'sector' => $validated['sector'] ?? null,
+                'teamSize' => $validated['teamSize'] ?? null,
+                'contactPhone' => $validated['contactPhone'] ?? null,
+                'contactEmail' => $validated['contactEmail'] ?? null,
+            ]);
 
-        return redirect()->back()->with('error', "Erreur lors de la mise à jour de l'entreprise.");
+            if (!$response->successful()) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Erreur lors de la mise à jour de l'entreprise.");
+            }
+
+            // 2. Gérer la suppression du logo
+            if ($request->filled('delete_logo')) {
+                $deleteResponse = $this->api->delete("media/recruiter/$id/company_logo");
+            }
+
+            // 3. Gérer l'ajout d'un nouveau logo
+            if ($request->hasFile('new_logo')) {
+                $logoFile = $request->file('new_logo');
+
+                // Créer un formulaire multipart
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($logoFile->getRealPath()),
+                    $logoFile->getClientOriginalName()
+                )->post(config('app.api') . '/media/upload', [
+                    'type' => 'company_logo',
+                    'context' => 'company_page',
+                    'targetType' => 'recruiter',
+                    'targetId' => $id,
+                    'title' => 'Logo ' . $validated['companyName'],
+                ]);
+            }
+
+            // 4. Gérer la suppression des images
+            if ($request->filled('delete_images')) {
+                foreach ($request->delete_images as $imageId) {
+                    $this->api->delete("media/$imageId");
+                }
+            }
+
+            // 5. Gérer l'ajout de nouvelles images
+            if ($request->hasFile('new_images')) {
+                foreach ($request->file('new_images') as $imageFile) {
+                    Http::attach(
+                        'file',
+                        file_get_contents($imageFile->getRealPath()),
+                        $imageFile->getClientOriginalName()
+                    )->post(config('app.api') . '/media/upload', [
+                        'type' => 'company_image',
+                        'context' => 'company_page',
+                        'targetType' => 'recruiter',
+                        'targetId' => $id,
+                        'title' => 'Galerie ' . $validated['companyName'],
+                    ]);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur mise à jour recruteur: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour.');
+        }
     }
 
     public function show($identifier)
@@ -145,15 +242,26 @@ class RecruiterController extends Controller
         }
 
         $recruiter = Recruiter::fromApiData($recruiterData);
+        $recruiter->sectorName = isset($recruiter->sector)
+            ? NafHelper::getLabel($recruiter->sector)
+            : null;
+
         $recruiterId = $recruiter['id'];
 
         // Job offers
         $jobOffers = $this->api->get("job_offers/recruiter/$recruiterId");
-        $medias = collect($recruiter['medias'] ?? []);
-        // Variables spécifiques pour la bannière et le logo
-        $banner = $medias->firstWhere('type', 'company_banner');
-        $logo = $medias->firstWhere('type', 'company_logo');
 
+        // Collecte les médias
+        $medias = collect($recruiter['medias'] ?? []);
+
+        // Récupère directement les fichiers pour bannière et logo
+        $bannerMedia = $medias->firstWhere('type', 'company_banner');
+        $logoMedia = $medias->firstWhere('type', 'company_logo');
+
+        $recruiter->banner = $bannerMedia['filePath'] ?? null;
+        $recruiter->logo   = $logoMedia['filePath'] ?? null;
+
+        // Configuration des sections pour la vue
         $sectionsConfig = [
             [
                 'key' => 'companyDescription',
@@ -199,9 +307,8 @@ class RecruiterController extends Controller
             ->values()
             ->all();
 
-        // Détermination de la vue en toute sécurité
+        // Détermination de la vue
         $view = null;
-
         if (!empty($recruiter['companyName'])) {
             $slugView = 'companies.' . $this->slugify($recruiter['companyName']);
             if (view()->exists($slugView)) {
@@ -209,16 +316,15 @@ class RecruiterController extends Controller
             }
         }
 
-        // Fallback vers la vue générique si aucune vue spécifique n'existe
         if (!$view) {
             $view = view()->exists('companies.show') ? 'companies.show' : null;
         }
 
         if ($view) {
-            return view($view, compact('recruiter', 'sections', 'jobOffers', 'banner', 'logo'));
+            // Passe directement $recruiter avec logo et banner remplis
+            return view($view, compact('recruiter', 'sections', 'jobOffers'));
         }
 
-        // Aucun fallback disponible
         return redirect()->back()->with('error', "Aucune vue disponible pour afficher cette entreprise.");
     }
 

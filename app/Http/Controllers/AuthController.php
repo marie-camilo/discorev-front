@@ -97,13 +97,24 @@ class AuthController extends Controller
 
         if ($response->successful()) {
             $data = $response->json()['data'];
+            $user = $data['user'];
 
-            // Stocker tokens en session
+            // ✅ S’assurer que accountType existe
+            if (!isset($user['accountType'])) {
+                if (isset($user['is_admin']) && $user['is_admin']) {
+                    $user['accountType'] = 'admin';
+                } elseif (isset($user['is_recruiter']) && $user['is_recruiter']) {
+                    $user['accountType'] = 'recruiter';
+                } else {
+                    $user['accountType'] = 'candidate';
+                }
+            }
+
+            // ✅ Stockage complet
             Session::put('accessToken', $data['token']);
-            Session::put('user', $data['user']);
-            Session::put('token_exp', time() + 3600); // token 1h
+            Session::put('user', $user);
+            Session::put('token_exp', time() + 3600);
 
-            // ✅ refreshToken : inutile si cookie httpOnly est déjà envoyé
             if (!empty($data['refreshToken'])) {
                 Session::put('refreshToken', $data['refreshToken']);
             }
@@ -113,7 +124,6 @@ class AuthController extends Controller
 
         return back()->withErrors(['email' => 'Identifiants incorrects.']);
     }
-
 
     public function logout(Request $request)
     {

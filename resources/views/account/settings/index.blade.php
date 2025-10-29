@@ -45,10 +45,15 @@
                 <div class="alert alert-success">{{ session('success_notifications') }}</div>
             @endif
 
+            @php
+                $user = session('user');
+                $emailNotifications = $user['email_notifications'] ?? false;
+            @endphp
+
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="email_notifications"
-                    {{ auth()->user()->email_notifications ? 'checked' : '' }}>
-                <label class="form-check-label">Recevoir des notifications par e-mail</label>
+                       id="emailNotifications" {{ $emailNotifications ? 'checked' : '' }}>
+                <label class="form-check-label" for="emailNotifications">Recevoir des notifications par e-mail</label>
             </div>
 
             <button type="submit" class="btn btn-primary mt-2">Sauvegarder</button>

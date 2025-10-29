@@ -39,8 +39,6 @@
         });
     </script>
     @stack('scripts')
-
-    @vite(['resources/js/app.js', 'resources/scss/app.scss'])
 </body>
 
 </html>

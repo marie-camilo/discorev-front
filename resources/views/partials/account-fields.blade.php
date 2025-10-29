@@ -22,8 +22,8 @@
             </div>
             <div class="mb-3">
                 <label>N° de téléphone</label>
-                <input type="text" name="phoneNumber" class="form-control"
-                    value="{{ old('phoneNumber', session('user.phoneNumber')) }}">
+                <input type="text" name="contactPhone" class="form-control"
+                       value="{{ old('contactPhone', session('user.phoneNumber')) }}">
             </div>
             <button type="submit" class="btn btn-primary">Mettre à jour</button>
         </form>

@@ -115,7 +115,7 @@
     </div>
 
     {{-- Bouton d'inscription --}}
-    <button type="submit" class="btn btn-success w-100">S'inscrire</button>
+    <button type="submit" class="btn btn-highlight w-100">S'inscrire</button>
 </form>
 
 {{-- Modal CGU --}}
@@ -128,7 +128,6 @@
             </div>
             <div class="modal-body">
                 <p>Voici les conditions générales d'utilisation...</p>
-                <!-- Tu peux coller ici le vrai contenu -->
             </div>
         </div>
     </div>
@@ -149,3 +148,17 @@
         </div>
     </div>
 </div>
+
+<style>
+    .btn-highlight {
+        background: linear-gradient(135deg, var(--orangish),
+        var(--larch-bolete));
+        color: var(--sand) !important;
+        border: none;
+    }
+
+    .btn-highlight:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(249, 137, 72, 0.3);
+        color: var(--sand); }
+</style>

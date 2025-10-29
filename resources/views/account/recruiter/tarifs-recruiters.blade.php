@@ -34,6 +34,10 @@
             border-radius: 16px;
             padding: 2rem;
         }
+
+        .contact-card a:hover{
+            color: var(--sand);
+        }
     </style>
 
     <section class="pricing-hero">
@@ -55,6 +59,7 @@
                     Des formules adaptées à tous les besoins, de la découverte à la marque employeur.
                     <br class="d-none d-md-block">
                     <span class="fs-6" style="color: var(--aquamarine);">
+                        Choisissez l'offre qui correspond parfaitement à vos ambitions.
                         Choisissez l'offre qui correspond parfaitement à vos ambitions.
                     </span>
                 </p>
@@ -152,18 +157,12 @@
                             Notre équipe est là pour vous accompagner dans le choix de la formule la plus adaptée à vos besoins.
                         </p>
                         <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                            <a href="mailto:contact@discorev.com" class="btn btn-primary d-inline-flex align-items-center">
+                            <a href="mailto:badiss.belhadj.discorev@gmail.com" class="btn btn-primary-gradient d-inline-flex align-items-center">
                                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="me-2">
                                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                                 </svg>
-                                Nous contacter
-                            </a>
-                            <a href="tel:+33123456789" class="btn btn-outline-secondary d-inline-flex align-items-center">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="me-2">
-                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-                                </svg>
-                                01 23 45 67 89
+                                badiss.belhadj.discorev@gmail.com
                             </a>
                         </div>
                     </div>

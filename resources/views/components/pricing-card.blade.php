@@ -13,10 +13,17 @@
     .modern-card {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        filter: blur(5px);
+        opacity: 0.6;
+        pointer-events: none;
+        user-select: none;
     }
 
     .modern-card:hover {
@@ -31,7 +38,6 @@
     }
 
     .modern-card.premium {
-        background: white;
         border: 2px solid var(--aquamarine);
     }
 
@@ -47,6 +53,10 @@
         font-size: 0.875rem;
         font-weight: 600;
         z-index: 10;
+        opacity: 0.6;
+        filter: blur(3px);
+        pointer-events: none;
+        user-select: none;
     }
 
     .price-gradient {
@@ -54,7 +64,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 800;
     }
 
@@ -82,16 +92,16 @@
         width: 100%;
     }
 
+    .btn-outline-modern {
+        background: transparent;
+        border: 2px solid var(--aquamarine);
+        color: var(--aquamarine);
+    }
+
     .btn-primary-gradient {
         background: linear-gradient(135deg, var(--indigo), var(--aquamarine));
         color: var(--sand);
         border: none;
-    }
-
-    .btn-primary-gradient:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(8, 56, 61, 0.3);
-        color: var(--sand);
     }
 
     .btn-highlight {
@@ -100,26 +110,14 @@
         border: none;
     }
 
-    .btn-highlight:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(249, 137, 72, 0.3);
-        color: var(--sand);
-    }
+    @media (max-width: 768px) {
+        .price-gradient {
+            font-size: 2rem;
+        }
 
-    .btn-outline-modern {
-        background: transparent;
-        border: 2px solid var(--aquamarine);
-        color: var(--aquamarine);
-    }
-
-    .btn-outline-modern:hover {
-        background: var(--aquamarine);
-        color: var(--sand);
-        transform: translateY(-2px);
-    }
-
-    .modern-card:hover .decorative-element {
-        transform: scale(1.5);
+        .modern-card {
+            padding: 1.5rem;
+        }
     }
 </style>
 
@@ -128,12 +126,12 @@
         <div class="popular-badge">Populaire</div>
     @endif
 
-    <div class="modern-card h-100 p-4 d-flex flex-column
-                @if($isPremium) premium @elseif($isHighlighted) highlighted @endif">
+    <div class="modern-card p-4 d-flex flex-column
+                @if($isPremium) premium
+                @elseif($isHighlighted) highlighted
+                @endif">
 
-        <div class="decorative-element"></div>
-
-        <div class="text-center mb-4 position-relative" style="z-index: 2;">
+        <div class="text-center mb-4">
             <h3 class="fw-bold mb-3" style="color: var(--indigo); font-size: 1.5rem;">
                 {{ $title }}
             </h3>
@@ -167,20 +165,10 @@
             @if($isPremium)
                 <a href="{{ $buttonUrl }}" class="btn-modern btn-primary-gradient">
                     {{ $buttonText }}
-                    <svg class="ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                              clip-rule="evenodd"></path>
-                    </svg>
                 </a>
             @elseif($isHighlighted)
                 <a href="{{ $buttonUrl }}" class="btn-modern btn-highlight">
                     {{ $buttonText }}
-                    <svg class="ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                              clip-rule="evenodd"></path>
-                    </svg>
                 </a>
             @else
                 <a href="{{ $buttonUrl }}" class="btn-modern btn-outline-modern">

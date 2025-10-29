@@ -27,8 +27,18 @@ class ProfileController extends Controller
     public function edit()
     {
         $userAuth = Session::get('user');
+
+        if (!$userAuth || !isset($userAuth['id'])) {
+            return redirect()->route('auth', ['tab' => 'login'])
+                ->with('error', 'Session expirée. Veuillez vous reconnecter.');
+        }
+
         $user = $this->api->get('users/' . $userAuth['id']);
-        $type = $userAuth['accountType'];
+        $type = $userAuth['accountType'] ?? null;
+
+        if (!$type) {
+            return back()->with('error', 'Impossible de déterminer le type de compte. Veuillez vous reconnecter.');
+        }
 
         $entries = NafHelper::loadNafJson();
         $sectors = NafHelper::filterSectors($entries);
@@ -107,21 +117,33 @@ class ProfileController extends Controller
             'phoneNumber' => 'nullable|string|min:10|max:20',
         ]);
 
+        // Mapper phoneNumber vers contactPhone pour l'API
+        $apiData = $validated;
+        if(isset($apiData['phoneNumber'])){
+            $apiData['contactPhone'] = $apiData['phoneNumber'];
+            unset($apiData['phoneNumber']);
+        }
+
         // Envoyer la mise à jour à l'API
-        $response = $this->api->put('users/' . $id, $validated);
+        $response = $this->api->put('users/' . $id, $apiData);
 
         if ($response->successful()) {
             $userData = $response->json()['data'] ?? null;
+
             if (!$userData) {
-                // Cas où l'API ne renvoie pas la data correctement
                 return back()->with('warning', 'La mise à jour a été effectuée mais les données n’ont pas été récupérées.');
             }
+
+            // fallback pour accountType
+            if (!isset($userData['accountType']) && isset($userAuth['accountType'])) {
+                $userData['accountType'] = $userAuth['accountType'];
+            }
+
             Session::put('user', $userData);
 
             return back()->with('success', 'Informations mises à jour avec succès.');
         }
 
-        // Gestion des erreurs
         $errorMessage = $response->json()['message'] ?? 'Une erreur est survenue. Veuillez réessayer plus tard.';
         return back()->with('error', $errorMessage);
     }

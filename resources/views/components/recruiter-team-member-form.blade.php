@@ -1,4 +1,4 @@
-<form action="{{ route('recruiter.members.sync', $recruiter['id']) }}" method="POST">
+<form action="{{ route('recruiter.members.sync', $recruiter['id']) }}" method="POST" id="team-members-form">
     @csrf
 
     <h5 class="fw-bold mt-4">Membres de l’équipe</h5>
@@ -9,16 +9,15 @@
 
         {{-- Membres existants --}}
         @foreach ($recruiter['teamMembers'] ?? [] as $index => $member)
-            <div
-                class="card col-12 col-md-6 rounded p-3 mb-2 d-flex justify-content-between align-items-center bg-light member-card">
+            <div class="card col-12 col-md-6 rounded p-3 mb-2 d-flex justify-content-between align-items-center bg-light member-card">
                 <div>
                     <input type="hidden" name="teamMembers[{{ $index }}][id]" value="{{ $member['id'] }}">
                     <input type="text" name="teamMembers[{{ $index }}][name]" class="form-control mb-1"
-                        value="{{ $member['name'] }}" placeholder="Nom" required>
+                           value="{{ $member['name'] }}" placeholder="Nom" required>
                     <input type="email" name="teamMembers[{{ $index }}][email]" class="form-control mb-1"
-                        value="{{ $member['email'] }}" placeholder="Email">
+                           value="{{ $member['email'] }}" placeholder="Email">
                     <input type="text" name="teamMembers[{{ $index }}][role]" class="form-control"
-                        value="{{ $member['role'] }}" placeholder="Rôle">
+                           value="{{ $member['role'] }}" placeholder="Rôle">
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-danger delete-member ms-3">
                     <i class="material-symbols-outlined">delete</i>
@@ -28,32 +27,26 @@
     </div>
 
     {{-- Bouton d’ajout --}}
-    <div class="d-flex justify-content-center">
-
+    <div class="d-flex justify-content-center mt-2">
         <button type="button" id="add-member-btn"
-            class="btn rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 40px; height: 40px; background-color: #ced4da;"
-            onmouseover="this.querySelector('i').style.color = '#ffffff99'"
-            onmouseout="this.querySelector('i').style.color = ''">
+                class="btn rounded-circle p-0 d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px; background-color: #ced4da;">
             <i class="material-symbols-outlined">add</i>
         </button>
     </div>
 
-    <div class=text-end>
-        <button type="submit" class="btn btn-success mt-3">Sauvegarder les membres</button>
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-success">Sauvegarder les membres</button>
     </div>
-
 </form>
 
-{{-- Script --}}
 <script>
     let memberIndex = {{ count($recruiter['teamMembers'] ?? []) }};
     const deletedInput = document.getElementById('deletedIds');
 
-    // 🧱 Ajout d’un membre
+    // 🧱 Ajouter un membre
     document.getElementById('add-member-btn').addEventListener('click', () => {
         const container = document.getElementById('team-members-list');
-
         const html = `
             <div class="card col-12 col-md-6 rounded p-3 mb-2 bg-light member-card">
                 <div>
@@ -70,22 +63,22 @@
         memberIndex++;
     });
 
-    // 🗑️ Suppression d’un membre
+    // 🗑️ Supprimer un membre (juste côté front)
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('.delete-member');
         if (!btn) return;
 
+        e.preventDefault();
         const card = btn.closest('.member-card');
         const hiddenId = card.querySelector('input[name*="[id]"]');
 
-        // Si le membre a un ID existant => on l’ajoute à deletedIds
         if (hiddenId && hiddenId.value) {
-            const currentDeleted = deletedInput.value ? deletedInput.value.split(',') : [];
-            currentDeleted.push(hiddenId.value);
-            deletedInput.value = currentDeleted.join(',');
+            // Ajouter l'ID du membre supprimé dans deletedIds
+            const deletedIds = deletedInput.value ? deletedInput.value.split(',') : [];
+            deletedIds.push(hiddenId.value);
+            deletedInput.value = deletedIds.join(',');
         }
 
-        // Supprime visuellement
         card.remove();
     });
 </script>

@@ -9,7 +9,6 @@
 <div class="row">
     <div class="col-12 mb-3">
         <x-media-uploader :label="'bannière de l\'entreprise'" :medias="$recruiter['medias']" type="company_banner" context="company_page"
-            target-type="recruiter" :title="'Bannière ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple=false />
-
+            target-type="recruiter" :title="'Bannière ' . $recruiter['companyName']" :target-id="$recruiter['id']" :isMultiple="false"/>
     </div>
 </div>

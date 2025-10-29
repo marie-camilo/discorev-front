@@ -27,7 +27,6 @@ class DiscorevApiService
 
             $data = $response->json();
 
-            // ✅ Ici : forcer à avoir un array
             if (is_string($data)) {
                 $data = json_decode($data, true);
             }

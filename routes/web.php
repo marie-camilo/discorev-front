@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\LegalController;
 
 Route::permanentRedirect('/home', '/');
 
@@ -63,6 +64,7 @@ Route::middleware(['token.valid'])->group(function () {
 // Accès public
 Route::get('/job_offers', [JobOfferController::class, 'index'])->name('job_offers.index');
 Route::get('/api/job_offers', [JobOfferController::class, 'api']);
+Route::get('/legal/{slug}', [LegalController::class, 'show'])->name('legal.show');
 
 // Accès aux fiches entreprises
 Route::get('/companies', [RecruiterController::class, 'index'])->name('companies.index');
@@ -76,6 +78,7 @@ Route::middleware(['token.valid', 'recruiter'])->group(function () {
     Route::get('/job_offers/{id}/edit', [JobOfferController::class, 'edit'])->name('recruiter.jobs.edit');
     Route::put('/job_offers/{id}', [JobOfferController::class, 'update'])->name('recruiter.jobs.update');
     Route::delete('/job_offers/{id}', [JobOfferController::class, 'destroy'])->name('recruiter.jobs.destroy');
+    Route::delete('/recruiter/{recruiter}/team/{member}', [RecruiterTeamMemberController::class, 'delete'])->name('recruiter.members.delete');
     Route::put('/recruiter/{id}', [RecruiterController::class, 'update'])->name('recruiter.update');
     Route::post('/recruiter/{id}/team/sync', [RecruiterTeamMemberController::class, 'syncTeamMembers'])->name('recruiter.members.sync');
     Route::get('/cvtheque', [CandidateController::class, 'index'])->name('cvtheque.index');
