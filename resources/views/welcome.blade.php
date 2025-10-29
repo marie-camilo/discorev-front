@@ -161,17 +161,33 @@
             </div>
         </div>
     </section>
+    {{--    <section class="app-section"> --}}
+    {{--        <div class="container"> --}}
+    {{--            <div class="row align-items-center"> --}}
+
+    {{--                <!-- Mockup --> --}}
+    {{--                <div class="col-12 col-lg-6 mb-5 mb-lg-0"> --}}
+    {{--                    <div class="app-mockup-container text-center"> --}}
+    {{--                        <img src="{{ asset('img/mockup-app.png') }}" alt="Aperçu de l'app Discorev" class="app-mockup img-fluid rounded"> --}}
+    {{--                    </div> --}} {{--                </div> --}} {{--                <div class="col-12 col-lg-6 text-center text-lg-start"> --}}
+    {{--                    <div class="section-badge badge-teal mb-3"> --}}
+    {{--                        <span class="material-symbols-outlined" style="font-size: 16px;">smartphone</span> --}}
+    {{--                        Application mobile - En cours de développement ! --}} {{--                    </div> --}}
+    {{--                    <h2 class="display-4 fw-bold mb-4">Votre carrière, toujours à portée de main</h2> --}}
+    {{--                    <p class="fs-5 mb-5" style="line-height: 1.6; color: var(--text-secondary);"> --}}
+    {{--                        Accédez aux meilleures offres d'emploi où que vous soyez --}}
+    {{--                        et postulez en un clic. --}} {{--                    </p> --}}
+    {{--                </div> --}} {{--            </div> --}} {{--        </div> --}}
+    {{--    </section> --}}
     <style>
         .hero-dynamic {
             background: linear-gradient(135deg, #ffffff 0%, #fafaf7 50%, #cadae5 100%);
             padding: 6rem 0;
             position: relative;
             overflow: hidden;
+        }
 
-            {{--    <section class="app-section"> --}} {{--        <div class="container"> --}} {{--            <div class="row align-items-center"> --}} {{--                <!-- Mockup --> --}} {{--                <div class="col-12 col-lg-6 mb-5 mb-lg-0"> --}} {{--                    <div class="app-mockup-container text-center"> --}} {{--                        <img src="{{ asset('img/mockup-app.png') }}" alt="Aperçu de l'app Discorev" class="app-mockup img-fluid rounded"> --}} {{--                    </div> --}} {{--                </div> --}} {{--                <div class="col-12 col-lg-6 text-center text-lg-start"> --}} {{--                    <div class="section-badge badge-teal mb-3"> --}} {{--                        <span class="material-symbols-outlined" style="font-size: 16px;">smartphone</span> --}} {{--                        Application mobile - En cours de développement ! --}} {{--                    </div> --}} {{--                    <h2 class="display-4 fw-bold mb-4">Votre carrière, toujours à portée de main</h2> --}} {{--                    <p class="fs-5 mb-5" style="line-height: 1.6; color: var(--text-secondary);"> --}} {{--                        Accédez aux meilleures offres d'emploi où que vous soyez --}} {{--                        et postulez en un clic. --}} {{--                    </p> --}} {{--                </div> --}} {{--            </div> --}} {{--        </div> --}} {{--    </section> --}}
-        @endsection
-
-        <style>.hero-modern {
+        .hero-modern {
             background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 50%, #EFF6FF 100%);
             position: relative;
             overflow: hidden;
