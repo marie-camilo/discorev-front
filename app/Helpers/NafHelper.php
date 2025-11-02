@@ -66,7 +66,11 @@ class NafHelper
             'sages-femmes',
             'rééducation',
             'appareillage',
-            'assistance sociale'
+            'assistance sociale',
+            'garde',
+            'garde d\'enfants',
+            'enfant',
+            'numérique'
         ];
 
         $filtered = array_filter($entries, function ($entry) use ($keywords) {
