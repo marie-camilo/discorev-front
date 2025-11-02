@@ -33,67 +33,55 @@ class NafHelper
         return $entries; // tableau de [ ['code_classe'=>..., 'classe'=>...], … ]
     }
 
-    /**
-     * Filtre les secteurs sociaux, médico-sociaux et sanitaires
-     * et trie par ordre alphabétique
-     */
-    public static function filterSectors(array $entries): array
+    public static function groupBySection(array $entries): array
     {
-        // Mots-clés pour couvrir tous les secteurs pertinents
-        $keywords = [
-            'santé',
-            'social',
-            'médico',
-            'hospital',
-            'aide à la personne',
-            'aide à domicile',
-            'services à la personne',
-            'soins',
-            'infirmier',
-            'médecin',
-            'médical',
-            'rééducation',
-            'handicap',
-            'personnes âgées',
-            'enfants',
-            'adultes',
-            'toxicomanes',
-            'accueil',
-            'accompagnement',
-            'ambulances',
-            'laboratoire',
-            'dentaire',
-            'sages-femmes',
-            'rééducation',
-            'appareillage',
-            'assistance sociale',
-            'garde',
-            'garde d\'enfants',
-            'enfant',
-            'numérique'
-        ];
+        $grouped = [];
 
-        $filtered = array_filter($entries, function ($entry) use ($keywords) {
-            $lib = mb_strtolower($entry['classe']);
+        foreach ($entries as $entry) {
+            // Exemple : "Q — Santé humaine et action sociale"
+            $sectionKey = $entry['code_section'] . ' — ' . ($entry['section'] ?? 'Inconnue');
 
-            foreach ($keywords as $word) {
-                if (str_contains($lib, mb_strtolower($word))) {
-                    return true;
-                }
-            }
-
-            return false;
-        });
-
-        // Réindexe par code_classe
-        $result = [];
-        foreach ($filtered as $e) {
-            $result[$e['code_classe']] = $e['classe'];
+            // On ajoute la classe dans la bonne section
+            $grouped[$sectionKey][$entry['code_classe']] = $entry['classe'] ?? 'Non précisé';
         }
 
-        // Tri alphabétique par libellé
-        asort($result, SORT_NATURAL | SORT_FLAG_CASE);
+        // Tri alphabétique dans chaque section
+        foreach ($grouped as &$list) {
+            asort($list, SORT_NATURAL | SORT_FLAG_CASE);
+        }
 
-        return $result;
+        // Tri des sections par clé
+        ksort($grouped, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $grouped;
+    }
+
+    public static function groupBySectionSortedByName(array $entries): array
+    {
+        $grouped = [];
+
+        foreach ($entries as $entry) {
+            $sectionName = $entry['section'] ?? 'Inconnue';
+            $sectionCode = $entry['code_section'] ?? '?';
+
+            // Ex: "Q — Santé humaine et action sociale"
+            $sectionLabel = "{$sectionCode} — {$sectionName}";
+            $grouped[$sectionLabel][$entry['code_classe']] = $entry['classe'] ?? 'Non précisé';
+        }
+
+        // Tri des sous-secteurs dans chaque groupe
+        foreach ($grouped as &$list) {
+            asort($list, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+
+        // Tri des sections par nom complet (pas par code)
+        uksort($grouped, function ($a, $b) {
+            return strcasecmp(
+                explode(' — ', $a, 2)[1] ?? $a,
+                explode(' — ', $b, 2)[1] ?? $b
+            );
+        });
+
+        return $grouped;
     }
 }

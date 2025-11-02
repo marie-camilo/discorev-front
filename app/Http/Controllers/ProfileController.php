@@ -41,7 +41,7 @@ class ProfileController extends Controller
         }
 
         $entries = NafHelper::loadNafJson();
-        $sectors = NafHelper::filterSectors($entries);
+        $sectors = NafHelper::groupBySectionSortedByName($entries);
 
         // Définition des onglets par type de compte
         $tabs = match ($type) {
@@ -119,7 +119,7 @@ class ProfileController extends Controller
 
         // Mapper phoneNumber vers contactPhone pour l'API
         $apiData = $validated;
-        if(isset($apiData['phoneNumber'])){
+        if (isset($apiData['phoneNumber'])) {
             $apiData['contactPhone'] = $apiData['phoneNumber'];
             unset($apiData['phoneNumber']);
         }
