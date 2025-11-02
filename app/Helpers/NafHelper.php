@@ -125,7 +125,7 @@ class NafHelper
             $sectionCode = $entry['code_section'] ?? '?';
 
             // Ex: "Q — Santé humaine et action sociale"
-            $sectionLabel = "{$sectionCode} — {$sectionName}";
+            $sectionLabel = "{$sectionName} — {$sectionCode}";
             $grouped[$sectionLabel][$entry['code_classe']] = $entry['classe'] ?? 'Non précisé';
         }
 
@@ -150,17 +150,29 @@ class NafHelper
         $grouped = [];
 
         foreach ($entries as $entry) {
-            $letter = $entry['code_section'] ?? '?';
-            $grouped[$letter][$entry['code_classe']] = $entry['classe'] ?? 'Non précisé';
+            // Sécurise la lettre
+            $letter = $entry['code_section'] ?? '';
+            $letter = trim($letter) !== '' ? strtoupper($letter) : 'Autres';
+
+            // Sécurise le code et le label
+            $code = $entry['code_classe'] ?? uniqid('naf_');
+            $label = $entry['classe'] ?? 'Non précisé';
+
+            // Ajoute dans le bon groupe
+            $grouped[$letter][$code] = $label;
         }
 
-        // Tri des sous-secteurs dans chaque groupe
+        // Trie les sous-secteurs dans chaque groupe
         foreach ($grouped as &$list) {
             asort($list, SORT_NATURAL | SORT_FLAG_CASE);
         }
 
-        // Tri alphabétique des lettres
-        ksort($grouped, SORT_NATURAL | SORT_FLAG_CASE);
+        // Trie les lettres, mais place "Autres" à la fin
+        uksort($grouped, function ($a, $b) {
+            if ($a === 'Autres') return 1;
+            if ($b === 'Autres') return -1;
+            return strcasecmp($a, $b);
+        });
 
         return $grouped;
     }

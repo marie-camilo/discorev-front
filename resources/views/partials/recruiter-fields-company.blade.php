@@ -35,33 +35,18 @@
     </div>
 
     <div class="mb-3 position-relative">
-        <label for="sector" class="form-label fw-bold">Secteur d'activité</label>
+        <label for="sectorInput" class="form-label fw-bold">Secteur d'activité</label>
 
-        {{-- Barre de recherche --}}
-        <input type="text" id="sectorSearch" class="form-control mb-2" placeholder="Rechercher un secteur...">
+        {{-- Champ de recherche --}}
+        <input type="text" class="form-control" id="sectorInput" name="sector"
+            placeholder="Rechercher ou saisir un secteur..." value="{{ old('sector', $recruiter['sector'] ?? '') }}"
+            autocomplete="off">
 
-        {{-- Select des secteurs --}}
-        <select class="form-select" id="sector" name="sector" size="8">
-            <option value="" disabled {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>
-                Sélectionnez un secteur
-            </option>
-
-            @foreach ($sectors as $letter => $subsectors)
-                <optgroup label="{{ $letter }}">
-                    @foreach ($subsectors as $code => $label)
-                        <option value="{{ $code }}"
-                            {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
-                            {{ $label }}
-                        </option>
-                    @endforeach
-                </optgroup>
-            @endforeach
-
-            {{-- Cas spécial : secteur non présent --}}
-            @if (!isset($sectors[$recruiter['sector'] ?? '']) && !empty($recruiter['sector']))
-                <option value="{{ $recruiter['sector'] }}" selected>{{ $recruiter['sector'] }}</option>
-            @endif
-        </select>
+        {{-- Liste déroulante Bootstrap --}}
+        <div id="sectorList" class="list-group position-absolute w-100 shadow-sm"
+            style="max-height: 250px; overflow-y: auto; z-index: 1050; display: none;">
+            {{-- JS insérera dynamiquement les résultats ici --}}
+        </div>
     </div>
 
     <div class="mb-3">
@@ -95,7 +80,9 @@
         @if ($logo)
             <div class="mb-3">
                 <div class="d-flex align-items-center gap-3">
-                    <img src="{{ config('app.api') . '/' . $logo['filePath'] }}" alt="company logo">
+                    <div class="w-50">
+                        <img src="{{ config('app.api') . '/' . $logo['filePath'] }}" alt="company logo">
+                    </div>
 
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="delete_logo" id="deleteLogo"
@@ -395,26 +382,95 @@
 {{-- Script de recherche dynamique --}}
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const searchInput = document.getElementById("sectorSearch");
-        const select = document.getElementById("sector");
-        const optgroups = select.querySelectorAll("optgroup");
+        const input = document.getElementById("sectorInput");
+        const list = document.getElementById("sectorList");
 
-        searchInput.addEventListener("input", () => {
-            const filter = searchInput.value.toLowerCase();
+        // Données PHP → JS
+        const sectors = @json($sectors);
 
-            optgroups.forEach(group => {
-                let hasVisible = false;
-                group.querySelectorAll("option").forEach(option => {
-                    const match = option.textContent.toLowerCase().includes(filter);
-                    option.style.display = match ? "" : "none";
-                    if (match) hasVisible = true;
+        // Aplatit les données en liste [{code, label, group}]
+        const flat = [];
+        Object.entries(sectors).forEach(([letter, subs]) => {
+            Object.entries(subs).forEach(([code, label]) => {
+                flat.push({
+                    code,
+                    label,
+                    group: letter
                 });
-                // On masque le groupe si aucun sous-secteur visible
-                group.style.display = hasVisible ? "" : "none";
             });
+        });
+
+        // Fonction pour retirer les accents et mettre en minuscule
+        const normalizeStr = str =>
+            str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+        // Afficher la liste
+        const showList = (items) => {
+            list.innerHTML = "";
+            if (items.length === 0) {
+                list.style.display = "none";
+                return;
+            }
+
+            // Regroupe par lettre
+            const grouped = {};
+            items.forEach(item => {
+                if (!grouped[item.group]) grouped[item.group] = [];
+                grouped[item.group].push(item);
+            });
+
+            Object.keys(grouped).sort().forEach(letter => {
+                const header = document.createElement("div");
+                header.className = "list-group-item bg-light fw-bold small text-uppercase";
+                header.textContent = "Section " + letter;
+                list.appendChild(header);
+
+                grouped[letter].forEach(item => {
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "list-group-item list-group-item-action";
+                    option.textContent = item.label;
+                    option.dataset.code = item.code;
+                    option.addEventListener("click", () => {
+                        input.value = item.label;
+                        list.style.display = "none";
+                    });
+                    list.appendChild(option);
+                });
+            });
+
+            list.style.display = "block";
+        };
+
+        // Filtrer les résultats
+        input.addEventListener("input", () => {
+            const val = normalizeStr(input.value.trim());
+            if (!val) {
+                list.style.display = "none";
+                return;
+            }
+
+            const filtered = flat.filter(item =>
+                normalizeStr(item.label).includes(val)
+            );
+
+            showList(filtered.slice(0, 100));
+        });
+
+        // Afficher tout dès que l'input est focus
+        input.addEventListener("focus", () => {
+            showList(flat.slice(0, 100));
+        });
+
+        // Fermer la liste si clic à l'extérieur
+        document.addEventListener("click", (e) => {
+            if (!list.contains(e.target) && e.target !== input) {
+                list.style.display = "none";
+            }
         });
     });
 </script>
+
 
 <style>
     .img-thumbnail {

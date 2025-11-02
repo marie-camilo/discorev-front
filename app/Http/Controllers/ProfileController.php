@@ -41,7 +41,7 @@ class ProfileController extends Controller
         }
 
         $entries = NafHelper::loadNafJson();
-        $sectors = NafHelper::groupByLetter($entries);
+        $sectors = NafHelper::groupBySectionSortedByName($entries);
 
         // Définition des onglets par type de compte
         $tabs = match ($type) {
