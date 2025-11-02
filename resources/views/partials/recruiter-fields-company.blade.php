@@ -34,15 +34,20 @@
             value="{{ old('website', $recruiter['website'] ?? '') }}">
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 position-relative">
         <label for="sector" class="form-label fw-bold">Secteur d'activité</label>
-        <select class="form-select" id="sector" name="sector">
+
+        {{-- Barre de recherche --}}
+        <input type="text" id="sectorSearch" class="form-control mb-2" placeholder="Rechercher un secteur...">
+
+        {{-- Select des secteurs --}}
+        <select class="form-select" id="sector" name="sector" size="8">
             <option value="" disabled {{ old('sector', $recruiter['sector'] ?? '') == '' ? 'selected' : '' }}>
                 Sélectionnez un secteur
             </option>
 
-            @foreach ($sectors as $section => $subsectors)
-                <optgroup label="{{ $section }}">
+            @foreach ($sectors as $letter => $subsectors)
+                <optgroup label="{{ $letter }}">
                     @foreach ($subsectors as $code => $label)
                         <option value="{{ $code }}"
                             {{ old('sector', $recruiter['sector'] ?? '') == $code ? 'selected' : '' }}>
@@ -52,7 +57,7 @@
                 </optgroup>
             @endforeach
 
-            {{-- Cas où le secteur actuel n'existe plus dans la liste --}}
+            {{-- Cas spécial : secteur non présent --}}
             @if (!isset($sectors[$recruiter['sector'] ?? '']) && !empty($recruiter['sector']))
                 <option value="{{ $recruiter['sector'] }}" selected>{{ $recruiter['sector'] }}</option>
             @endif
@@ -383,6 +388,30 @@
                     }
                 }
             }
+        });
+    });
+</script>
+
+{{-- Script de recherche dynamique --}}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("sectorSearch");
+        const select = document.getElementById("sector");
+        const optgroups = select.querySelectorAll("optgroup");
+
+        searchInput.addEventListener("input", () => {
+            const filter = searchInput.value.toLowerCase();
+
+            optgroups.forEach(group => {
+                let hasVisible = false;
+                group.querySelectorAll("option").forEach(option => {
+                    const match = option.textContent.toLowerCase().includes(filter);
+                    option.style.display = match ? "" : "none";
+                    if (match) hasVisible = true;
+                });
+                // On masque le groupe si aucun sous-secteur visible
+                group.style.display = hasVisible ? "" : "none";
+            });
         });
     });
 </script>
