@@ -74,61 +74,35 @@
                 </p>
             </div>
 
-            <div class="row g-4 mb-5">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="company-card-modern">
+            <div class="row justify-content-center g-2 mb-5">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                    <a href="https://lepetitjean-grenoble.com/" target="_blank" class="company-card-modern" style="width: 300px; text-decoration: none;">
                         <img src="{{ asset('img/petit-jean.jpg') }}" alt="Le Petit Jean" class="company-card-image">
                         <div class="company-card-body">
                             <h3 class="company-card-title">Le Petit Jean</h3>
                             <p class="company-card-desc">Une équipe engagée pour un impact social fort.</p>
-                            <p class="company-card-offers">+54 offres</p>
                         </div>
-                        <div class="company-card-arrow">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
-                <div class="col-sm-6 col-lg-3">
-                    <div class="company-card-modern">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                    <a href="https://altidom.com/" target="_blank" class="company-card-modern" style="width: 300px; text-decoration: none;">
                         <img src="{{ asset('img/altidom/altidom.webp') }}" alt="Altidom" class="company-card-image">
                         <div class="company-card-body">
                             <h3 class="company-card-title">Altidom</h3>
                             <p class="company-card-desc">Des services à domicile avec l'exigence du monde professionnel.</p>
-                            <p class="company-card-offers">+10 offres</p>
                         </div>
-                        <div class="company-card-arrow">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
-                <div class="col-sm-6 col-lg-3">
-                    <div class="company-card-modern">
-                        <img src="{{ asset('img/azae.jpg') }}" alt="Azaé" class="company-card-image">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                    <a href="https://www.kiddobee.com/fr" target="_blank" class="company-card-modern" style="width: 300px; text-decoration: none;">
+                        <img src="{{ asset('img/kiddobee/kiddobee.jpg') }}" alt="Kiddobee" class="company-card-image">
                         <div class="company-card-body">
-                            <h3 class="company-card-title">Azaé</h3>
+                            <h3 class="company-card-title">Kiddobee</h3>
                             <p class="company-card-desc">Découvrez leurs opportunités et valeurs.</p>
-                            <p class="company-card-offers">+54 offres</p>
                         </div>
-                        <div class="company-card-arrow">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-3">
-                    <div class="company-card-modern">
-                        <img src="{{ asset('img/peit-fils.jpg') }}" alt="Petit Fils" class="company-card-image">
-                        <div class="company-card-body">
-                            <h3 class="company-card-title">Petit Fils</h3>
-                            <p class="company-card-desc">Rejoignez une entreprise qui partage vos valeurs.</p>
-                            <p class="company-card-offers">+54 offres</p>
-                        </div>
-                        <div class="company-card-arrow">
-                            <span class="material-symbols-outlined text-white">arrow_forward</span>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
