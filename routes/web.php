@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\RecruiterTeamMemberController;
@@ -13,12 +12,9 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\HomeController;
 
-Route::permanentRedirect('/home', '/');
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Auth
 Route::get('/auth/{tab?}', [AuthController::class, 'show'])->name('auth');

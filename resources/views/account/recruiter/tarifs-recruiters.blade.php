@@ -3,42 +3,17 @@
 @section('title', 'Tarifs recruteurs – Discorev')
 
 @section('content')
-    <style>
-        .pricing-hero {
-            padding-top: 3rem;
-            padding-bottom: 4rem;
-        }
-
-        @media (min-width: 992px) {
-            .pricing-hero {
-                padding-top: 4rem;
-            }
-        }
-
-        .feature-badge {
-            background: rgba(249, 137, 72, 0.15);
-            color: var(--orangish);
-            border: 1px solid rgba(249, 137, 72, 0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-        }
-
-        .contact-card {
-            background: var(--white);
-            border: 1px solid var(--wondrous-blue);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
-        .contact-card a:hover{
-            color: var(--sand);
-        }
-    </style>
+    <section>
+        <x-hero
+            badge="Séduire, inspirer, recruter, fidéliser"
+            title="<span class='gradient-text'>Un outil conçu pour faire briller<br>votre entreprise auprès du grand public</span>"
+            description="Renforcez votre attractivité auprès de votre public cible et faites de votre culture un atout concurrentiel durable."
+            :showImage="true"
+            :showButtons="true"
+            buttonText="Réserver une démo"
+            variant="image-button"
+        />
+    </section>
 
     <section class="pricing-hero">
         <div class="container">
@@ -51,17 +26,13 @@
                 </div>
 
                 <h1 class="display-3 fw-bold mb-4">
-                    <span class="gradient-text">Nos offres</span><br>
+                    <span class="gradient-text">Nos offres</span>
                     <span class="gradient-text-orange">recruteur</span>
                 </h1>
 
-                <p class="fs-5 mb-0 mx-auto" style="max-width: 600px; color: var(--black);">
+                <p class="fs-5 mb-0 mx-auto" style="color: var(--text-secondary); line-height: 1.6; max-width: 600px;">
                     Des formules adaptées à tous les besoins, de la découverte à la marque employeur.
                     <br class="d-none d-md-block">
-                    <span class="fs-6" style="color: var(--aquamarine);">
-                        Choisissez l'offre qui correspond parfaitement à vos ambitions.
-                        Choisissez l'offre qui correspond parfaitement à vos ambitions.
-                    </span>
                 </p>
             </div>
         </div>
@@ -171,3 +142,40 @@
         </div>
     </section>
 @endsection
+
+<style>
+    .pricing-hero {
+        padding-top: 3rem;
+        padding-bottom: 4rem;
+    }
+
+    @media (min-width: 992px) {
+        .pricing-hero {
+            padding-top: 4rem;
+        }
+    }
+
+    .feature-badge {
+        background: rgba(249, 137, 72, 0.15);
+        color: var(--orangish);
+        border: 1px solid rgba(249, 137, 72, 0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-card {
+        background: var(--white);
+        border: 1px solid var(--wondrous-blue);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .contact-card a:hover{
+        color: var(--sand);
+    }
+</style>

@@ -112,11 +112,11 @@
                         @endif
                     @endif
 
-                    <!-- Bouton Premium -->
+                    <!-- Bouton Professionnel -->
                     <li class="nav-item">
                         <a class="btn btn-warning" href="{{ route('recruiters.tarifs') }}">
                             <span class="material-symbols-outlined">star</span>
-                            Premium
+                            Professionnel
                         </a>
                     </li>
 
@@ -180,7 +180,7 @@
                     <ul class="navbar-nav w-100 mb-3">
                         <li class="nav-item"><a class="nav-link text-white" href="{{ route('job_offers.index') }}">Offres</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="{{ route('companies.index') }}">Entreprises</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiters.tarifs') }}">Premium</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiters.tarifs') }}">Professionnel</a></li>
                         @if (!$isAuthenticated)
                             <li class="nav-item"><a class="btn-login" href="{{ route('auth', ['tab' => 'login']) }}">  <span class="material-symbols-outlined">login</span>Connexion</a></li>
                         @endif
@@ -198,7 +198,7 @@
                                 <li class="nav-item"><a class="nav-link text-white" href="{{ route('recruiter.jobs.index') }}">Offres</a></li>
                                 <li class="nav-item"><a class="nav-link text-white" href="{{ route('cvtheque.index') }}">Cvthèque</a></li>
                             @endif
-                            <li class="nav-item"><a class="btn btn-warning w-100" href="{{ route('recruiters.tarifs') }}">Premium</a></li>
+                            <li class="nav-item"><a class="btn btn-warning w-100" href="{{ route('recruiters.tarifs') }}">Professionnel</a></li>
                             <li class="nav-item">
                                 <form action="{{ route('logout') }}" method="POST" class="mt-2">
                                     @csrf
