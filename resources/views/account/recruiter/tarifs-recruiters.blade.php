@@ -15,6 +15,14 @@
         />
     </section>
 
+{{--    <x-companies.section-partners--}}
+{{--        :companies="$companies ?? []"--}}
+{{--        badge="Nos partenaires"--}}
+{{--        title="Ils nous font confiance"--}}
+{{--        buttonText="Découvrir toutes les entreprises"--}}
+{{--        buttonLink="{{ route('companies.index') }}"--}}
+{{--    />--}}
+
     <section class="pricing-hero">
         <div class="container">
             <div class="text-center">

@@ -7,8 +7,8 @@
     <section class="hero-modern text-center">
         <div class="container">
             <x-hero
-                badge="Votre carrière commence ici"
-                title="La découverte<br><span class='gradient-text'>d'entreprises réinventées</span>"
+                badge="Révélez l'ADN de votre entreprise"
+                title="La découverte<br><span class='gradient-text'>d'entreprises réinventée</span>"
                 description="Découvrez les entreprises autrement à travers leur histoire, leurs valeurs et leurs équipes, et accédez à leurs dernières propositions d'embauches."
                 text-align="center"
             />
@@ -22,8 +22,8 @@
         'badge' => 'Marketing RH',
         'badgeColor' => 'blue',
         'icon' => 'campaign',
-        'title' => 'Valorisez votre marque employeur',
-        'description' => 'Attirez les meilleurs talents grâce à des stratégies de communication RH ciblées et efficaces.',
+        'title' => 'Valorisez votre image de marque',
+        'description' => 'Valorisez votre structure auprès de votre public cible grâce à une page dédiée et optimisée.',
         'image' => 'img/following.jpg',
         'reverse' => false
     ],
@@ -32,8 +32,8 @@
         'badgeColor' => 'orange',
         'icon' => 'video_library',
         'title' => 'Racontez votre histoire de manière impactante',
-        'description' => 'Créez des contenus narratifs et multimédias pour captiver votre audience et transmettre vos valeurs.',
-        'image' => 'img/paperwork.jpg',
+        'description' => 'Accédez à des outils éditoriaux pensés pour captiver votre audience et transmettre vos valeurs.',
+        'image' => 'img/multimedia.jpg',
         'reverse' => true
     ],
     [
