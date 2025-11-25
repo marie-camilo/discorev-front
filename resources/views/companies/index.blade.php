@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container py-4">
-        <h1 class="fw-bold mb-4 mt-5 gradient-text">Entreprises</h1>
+        <h1 class="fw-bold mb-4 mt-5 gradient-text">Entreprises Test</h1>
 
 
         {{-- Formulaire de filtres --}}
