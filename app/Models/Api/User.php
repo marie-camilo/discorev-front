@@ -98,10 +98,15 @@ class User extends BaseApiModel
 
     public function getAccountTypeLabel(): string
     {
-        return match($this->accountType) {
+        return match ($this->accountType) {
             'candidate' => 'Candidat',
             'recruiter' => 'Recruteur',
             default => 'Inconnu'
         };
+    }
+
+    public function __get($key)
+    {
+        return $this->attributes[$key] ?? null;
     }
 }

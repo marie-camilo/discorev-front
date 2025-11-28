@@ -11,6 +11,7 @@ use App\Helpers\NafHelper;
 use App\Models\Api\RecruiterTeamMember;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RecruiterController extends Controller
 {
@@ -32,24 +33,24 @@ class RecruiterController extends Controller
             ->filter(fn($r) => is_array($r))
             ->map(fn($r) => Recruiter::fromApiData($r));
 
-//        // Créer un recruteur fictif pour tester le front
-//        $dummyRecruiter = new Recruiter();
-//        $dummyRecruiter->id = 999;
-//        $dummyRecruiter->companyName = "Entreprise Test";
-//        $dummyRecruiter->teamSize = "11-50";
-//        $dummyRecruiter->sector = "Aide à la personne";
-//        $dummyRecruiter->location = "Paris";
-//        $dummyRecruiter->website = "https://discorev.fr";
-//        $dummyRecruiter->contactPerson = "contact@exemple.com";
-//        $dummyRecruiter->phone = "0123456789";
-//        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
-//        $dummyRecruiter->banner = null;
-//        $dummyRecruiter->logo = null;
-//        $dummyRecruiter->offersCount = 3;
-//        $dummyRecruiter->completionScore = 9;
-//
-//        // Fusionner dummy + API
-//        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
+        //        // Créer un recruteur fictif pour tester le front
+        //        $dummyRecruiter = new Recruiter();
+        //        $dummyRecruiter->id = 999;
+        //        $dummyRecruiter->companyName = "Entreprise Test";
+        //        $dummyRecruiter->teamSize = "11-50";
+        //        $dummyRecruiter->sector = "Aide à la personne";
+        //        $dummyRecruiter->location = "Paris";
+        //        $dummyRecruiter->website = "https://discorev.fr";
+        //        $dummyRecruiter->contactPerson = "contact@exemple.com";
+        //        $dummyRecruiter->phone = "0123456789";
+        //        $dummyRecruiter->companyDescription = "Description de test pour la mise en page.";
+        //        $dummyRecruiter->banner = null;
+        //        $dummyRecruiter->logo = null;
+        //        $dummyRecruiter->offersCount = 3;
+        //        $dummyRecruiter->completionScore = 9;
+        //
+        //        // Fusionner dummy + API
+        //        $recruiters = collect([$dummyRecruiter])->merge($recruitersFromApi);
 
         $recruiters = $recruitersFromApi;
 
@@ -219,9 +220,8 @@ class RecruiterController extends Controller
             }
 
             return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
-
         } catch (\Exception $e) {
-            \Log::error('Erreur mise à jour recruteur: ' . $e->getMessage());
+            Log::error('Erreur mise à jour recruteur: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Une erreur est survenue lors de la mise à jour.');

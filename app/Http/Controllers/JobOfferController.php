@@ -167,7 +167,6 @@ class JobOfferController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'requirements' => 'nullable|string',
-            'salaryRange' => 'nullable|string|max:50',
             'employmentType' => 'required|string|in:cdi,cdd,freelance,alternance,stage',
             'location' => 'required|string|max:255',
             'salaryMin' => 'nullable|numeric',
