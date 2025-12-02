@@ -4,194 +4,285 @@
 
 @section('content')
 
-    <div class="company-banner">
+    <header class="company-hero-v5">
         @if ($recruiter->banner)
-            <img src="{{ asset($recruiter->banner) }}" alt="Bandeau entreprise" />
-            <div class="overlay"></div>
-        @else
-            <div class="overlay" style="background-color: #9f9f9f;"></div>
+            <img class="hero-banner-v5" src="{{ asset($recruiter->banner) }}" alt="Bandeau entreprise" />
         @endif
 
-        <div class="company-header container-company">
-            <div class="company-logo">
-                @if ($recruiter->logo)
-                    <img src="{{ asset($recruiter->logo) }}" alt="Logo entreprise" />
-                @endif
-            </div>
-            <div class="company-info">
-                <h1 style="color: white">{{ $recruiter->companyName }}</h1>
-                <div class="details">
-                    <p><span class="material-symbols-outlined text-white">business_center</span>{{ $recruiter->sectorName }}</p>
-                    <p><span class="material-symbols-outlined text-white">location_on</span>{{ $recruiter->location }}</p>
-                    <p><span class="material-symbols-outlined text-white">groups</span>{{ $recruiter->teamSize }}</p>
+        <div class="hero-content-v5 container-v5">
+            <div class="hero-main-info-v5">
+                <div class="company-logo-v5">
+                    @if ($recruiter->logo)
+                        <img src="{{ asset($recruiter->logo) }}" alt="Logo entreprise" />
+                    @endif
+                </div>
+
+                <div class="company-details-v5">
+                    <h1 class="company-name-v5">{{ $recruiter->companyName }}</h1>
+                    <div class="metadata-v5">
+                        <span class="meta-item-v5"><span class="material-symbols-outlined icon-v5">business_center</span>{{ $recruiter->sectorName }}</span>
+                        <span class="meta-item-v5"><span class="material-symbols-outlined icon-v5">location_on</span>{{ $recruiter->location }}</span>
+                        <span class="meta-item-v5"><span class="material-symbols-outlined icon-v5">groups</span>{{ $recruiter->teamSize }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <nav class="company-full-nav" aria-label="Navigation section entreprise">
-        <div class="container-company">
+            <div class="header-actions-integrated">
+                <a href="{{ $recruiter->website }}" target="_blank" class="btn-modern btn-secondary-modern">
+                    Postuler
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="company-nav-v5" aria-label="Navigation section entreprise">
+        <div class="container-v5">
             <ul>
                 @foreach ($sections as $section)
-                    <li><a href="#{{ $section['anchor'] }}">{{ $section['label'] }}</a></li>
+                    <li><a href="#{{ $section['anchor'] }}" class="nav-link-v5">{{ $section['label'] }}</a></li>
                 @endforeach
-                {{-- Ajoutez ici les liens fixes si vous le souhaitez (ex: Offres d'Emplois) --}}
-                <li><a href="#offres-emplois">Offres d'Emplois</a></li>
+                <li><a href="#offres-emplois" class="nav-link-v5">Offres d'Emplois</a></li>
+                <li><a href="{{ $recruiter->website }}" target="_blank" class="nav-link-cta-v5">Postuler</a></li>
             </ul>
         </div>
     </nav>
 
     {{-- CONTENU PRINCIPAL --}}
-    <div class="container-company content-wrapper" role="main" aria-label="Présentation de l'entreprise {{ $recruiter->companyName }}">
+    <div class="container-v5 content-wrapper-v5" role="main" aria-label="Présentation de l'entreprise {{ $recruiter->companyName }}">
 
-        {{-- LIGNE 1 : PRÉSENTATION & CONTACTS (Grille 2 Colonnes) --}}
-        <section id="presentation" class="grid-section">
-            <div class="grid-col-2-3">
-                <h2 class="section-title">Présentation de {{ $recruiter->companyName }}</h2>
+        {{-- LIGNE 1 : PRÉSENTATION & CONTACT (Grille 2/3 - 1/3) --}}
+        <section id="presentation" class="section-v5 grid-2-col-template-v5">
+            <div class="col-main-v5">
+                <h2 class="section-title-v5">Présentation</h2>
                 @php
                     $presentation = collect($sections)->firstWhere('anchor', 'presentation');
                 @endphp
-                {{-- Contenu de la présentation basé sur la donnée dynamique --}}
-                <p>{{ $presentation['data'] ?? 'Aucune description fournie pour le moment.' }}</p>
+                <p class="text-lead-v5">{{ $presentation['data'] ?? 'Aucune description fournie pour le moment.' }}</p>
             </div>
 
-            {{-- Colonne Droite (Liens & Contact) (Utilise déjà $recruiter - OK) --}}
-            <div class="grid-col-1-3">
-                <div class="contact-card">
-                    {{-- ... (Actions Contacter/Rejoindre) ... --}}
-                    {{-- Contact Rapide (Utilise déjà $recruiter - OK) --}}
-                    <ul class="infos-list">
-                        <h3 class="sidebar-title">Contact Rapide</h3>
+            <div class="col-sidebar-v5">
+                <div class="card-v5 sidebar-card-v5">
+                    <h3 class="sidebar-title-v5">Contact & Réseaux</h3>
+                    <ul class="info-list-v5">
                         @if (!empty($recruiter->contactEmail))
-                            <li><span class="material-symbols-outlined">alternate_email</span><a href="mailto:{{ $recruiter->contactEmail }}">{{ $recruiter->contactEmail }}</a></li>
+                            <li><span class="material-symbols-outlined icon-v5">mail</span><a href="mailto:{{ $recruiter->contactEmail }}">{{ $recruiter->contactEmail }}</a></li>
                         @endif
                         @if (!empty($recruiter->contactPhone))
-                            <li><span class="material-symbols-outlined">call</span><a href="tel:{{ $recruiter->contactPhone }}">{{ $recruiter->contactPhone }}</a></li>
+                            <li><span class="material-symbols-outlined icon-v5">call</span><a href="tel:{{ $recruiter->contactPhone }}">{{ $recruiter->contactPhone }}</a></li>
                         @endif
                         @if (!empty($recruiter->location))
-                            <li><span class="material-symbols-outlined">location_on</span> {{ $recruiter->location }}</li>
+                            <li><span class="material-symbols-outlined icon-v5">location_on</span> {{ $recruiter->location }}</li>
                         @endif
                         @if (!empty($recruiter->website))
-                            <li><span class="material-symbols-outlined">public</span><a href="{{ $recruiter->website }}" target="_blank">{{ $recruiter->website }}</a></li>
+                            <li><span class="material-symbols-outlined icon-v5">public</span><a href="{{ $recruiter->website }}" target="_blank">{{ parse_url($recruiter->website, PHP_URL_HOST) }}</a></li>
                         @endif
                     </ul>
                 </div>
             </div>
         </section>
 
-        {{-- LIGNE 2 : GRILLE D'IMAGES & FICHE D'IDENTITÉ --}}
-        <section id="galerie" class="grid-section reverse-on-mobile">
-            <div class="grid-col-2-3">
-                <h2 class="section-title">Nos Locaux en Images</h2>
+        {{-- LIGNE 2 : GALERIE D'IMAGES & FICHE D'IDENTITÉ --}}
+        <section id="galerie" class="section-v5 grid-2-col-template-v5 reverse-on-mobile">
+            <div class="col-main-v5">
+                <h2 class="section-title-v5">Nos Locaux en Images</h2>
                 @php
-                    $mediaSection = collect($sections)->firstWhere('anchor', 'galerie');
+                    $galerieSection = collect($sections)->firstWhere('anchor', 'galerie');
                 @endphp
-                @if ($mediaSection && !empty($mediaSection['data']))
-                    <div class="image-grid">
-                        @foreach ($mediaSection['data'] as $media)
-                            <img src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? 'Image' }}">
+                @if ($galerieSection && !empty($galerieSection['data']))
+                    <div class="masonry-grid-v5">
+                        @foreach ($galerieSection['data'] as $media)
+                            <div class="masonry-item-v5">
+                                <img src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? 'Image' }}">
+                            </div>
                         @endforeach
                     </div>
                 @else
-                    <div class="image-grid-placeholder"><p>Pas de photos disponibles pour l'instant.</p></div>
+                    <div class="placeholder-v5"><p>Pas de photos disponibles pour l'instant.</p></div>
                 @endif
             </div>
 
-            {{-- Colonne Droite (Fiche Identité - utilise déjà $recruiter - OK) --}}
-            <div class="grid-col-1-3">
-                <div class="identity-card">
-                    <h2 class="section-title">Fiche d'Identité</h2>
-                    <ul class="identity-list">
-                        <li><strong>SIRET:</strong> {{ $recruiter->siret ?? 'N/A' }}</li>
-                        <li><strong>Taille d'équipe:</strong> {{ $recruiter->teamSize ?? 'N/A' }}</li>
-                        <li><strong>Secteur:</strong> {{ $recruiter->sectorName ?? 'N/A' }}</li>
-                        <li><strong>Fondation:</strong> N/A (À ajouter dans CompaniesData)</li>
+            <div class="col-sidebar-v5">
+                <div class="card-v5 identity-card-v5">
+                    <h2 class="sidebar-title-v5">Fiche d'Identité</h2>
+                    <ul class="info-list-v5 identity-list-v5">
+                        <li><strong>SIRET:</strong> <span>{{ $recruiter->siret ?? 'N/A' }}</span></li>
+                        <li><strong>Taille d'équipe:</strong> <span>{{ $recruiter->teamSize ?? 'N/A' }}</span></li>
+                        <li><strong>Secteur:</strong> <span>{{ $recruiter->sectorName ?? 'N/A' }}</span></li>
+                        <li><strong>Fondation:</strong> <span>N/A (À ajouter dans CompaniesData)</span></li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        {{-- LIGNE 3 : VALEURS & OFFRES (Doit être rendu dynamique si vous ajoutez une section 'valeurs-culture' dans CompaniesData) --}}
-        <section class="grid-section">
-            <div id="valeurs-culture" class="grid-col-1-2">
-                <h2 class="section-title">Valeurs & Culture</h2>
-                {{-- Ceci est statique. À remplacer par une boucle si vous ajoutez une section 'valeurs-culture' dans CompaniesData --}}
-                <p>La culture de {{ $recruiter->companyName }} repose sur trois piliers : **Innovation**, **Collaboration** et **Impact**.</p>
-                <div class="values-grid">
-                    <div class="value-card"><span class="material-symbols-outlined">lightbulb</span> Innovation</div>
-                    <div class="value-card"><span class="material-symbols-outlined">group</span> Collaboration</div>
-                    <div class="value-card"><span class="material-symbols-outlined">rocket_launch</span> Impact</div>
+        {{-- LIGNE 3 : VALEURS & OFFRES (Grille 1/2 - 1/2) --}}
+        <section class="section-v5 grid-2-col-template-v5 grid-2-equal-v5">
+            <div id="valeurs-culture" class="col-1-2-v5">
+                <h2 class="section-title-v5">Valeurs & Culture</h2>
+                <p class="text-muted-v5">La culture de {{ $recruiter->companyName }} repose sur trois piliers : **Innovation**, **Collaboration** et **Impact**.</p>
+                <div class="values-grid-v5">
+                    <div class="value-card-v5"><span class="material-symbols-outlined icon-large-v5">lightbulb</span> Innovation</div>
+                    <div class="value-card-v5"><span class="material-symbols-outlined icon-large-v5">group</span> Collaboration</div>
+                    <div class="value-card-v5"><span class="material-symbols-outlined icon-large-v5">rocket_launch</span> Impact</div>
                 </div>
             </div>
 
-            <div id="offres" class="grid-col-1-2">
-                <h2 class="section-title">Offres d'Emploi</h2>
-                {{-- Ces offres sont statiques et devront être remplacées par une boucle sur les offres réelles --}}
-                <div class="job-card-simple">
-                    <h4>Développeur Fullstack Junior</h4>
-                    <a href="{{ route('job_offers.index') }}" class="btn-text">Voir l'offre →</a>
-                </div>
-                <a href="#offres-emplois" class="btn-modern btn-tertiary-modern mt-3">Voir toutes les offres</a>
+            <div id="offres" class="col-1-2-v5">
+                <h2 class="section-title-v5">Offres d'Emploi Récentes</h2>
+                @php
+                    // Assumant que $jobOffers est une variable disponible passée par le contrôleur
+                    $recentJobs = $jobOffers ?? [];
+                    $previewJobs = array_slice($recentJobs, 0, 2);
+                @endphp
+
+                @if (!empty($previewJobs))
+                    @foreach ($previewJobs as $job)
+                        <div class="job-preview-v5">
+                            <h4>{{ $job['title'] }}</h4>
+                            <p class="job-meta-v5">{{ $job['contract'] }} · {{ $job['location'] }} · {{ $job['salary'] }}</p>
+                            <a href="{{ $job['link'] ?? route('job_offers.index') }}" class="link-text-v5">
+                                Voir l'offre <span class="material-symbols-outlined">arrow_forward</span>
+                            </a>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="job-preview-v5">
+                        <p class="text-muted-v5" style="margin: 0;">Aucune offre d'emploi récente disponible.</p>
+                    </div>
+                @endif
+
+                <a href="#offres-emplois" class="btn-modern btn-primary-gradient mt-3">
+                    Voir toutes les offres
+                    <span class="material-symbols-outlined">arrow_downward</span>
+                </a>
             </div>
         </section>
 
-        {{-- LIGNE 4 : ÉQUIPE & TÉMOIGNAGE (Grille 2 Colonnes) --}}
-        <section id="equipe" class="grid-section">
-            <div class="grid-col-2-3">
-                <h2 class="section-title">Notre Équipe</h2>
+        {{-- LIGNE 4 : ÉQUIPE (Vidéo 1/3, Membres 2/3) --}}
+        <section id="equipe" class="section-v5 grid-2-col-template-v5 reverse-on-mobile">
+            <div class="col-sidebar-v5">
+                <h2 class="section-title-v5">L'équipe en Vidéo</h2>
+                @if (!empty($recruiter->teamVideoUrl))
+                    {{-- Vidéo en 1/3 (col-sidebar) sur grand écran --}}
+                    <div class="video-container-v5">
+                        <iframe
+                            src="{{ $recruiter->teamVideoUrl }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                @else
+                    <div class="placeholder-v5"><p>Vidéo d'équipe bientôt disponible.</p></div>
+                @endif
+            </div>
+
+            <div class="col-main-v5">
+                <h2 class="section-title-v5">Nos Leaders</h2>
                 @php
                     $teamSection = collect($sections)->firstWhere('anchor', 'equipe');
                 @endphp
 
                 @if ($teamSection && !empty($teamSection['data']))
-                    <p>Découvrez nos leaders et l'ambiance chez {{ $recruiter->companyName }}.</p>
-                    <div class="team-grid">
+                    <p class="text-lead-v5">Découvrez nos leaders et l'ambiance chez {{ $recruiter->companyName }}.</p>
+                    {{-- Liste des Membres de l'Équipe --}}
+                    <div class="team-grid-v5">
                         @foreach ($teamSection['data'] as $member)
-                            <article class="team-member-card" role="listitem">
+                            <article class="card-v5 team-member-card-v5" role="listitem">
                                 <img src="{{ asset($member['avatar'] ?? 'img/default-avatar.png') }}" alt="{{ $member['name'] ?? '' }}" />
-                                <h3>{{ $member['name'] ?? '' }}</h3>
-                                <p class="role"><strong>{{ $member['role'] ?? '' }}</strong></p>
-                                <a href="#" class="linkedin-link"><img src="{{ asset('img/icons/linkedin.png') }}" alt="LinkedIn" /></a>
+                                <div class="member-info-v5">
+                                    <h3>{{ $member['name'] ?? '' }}</h3>
+                                    <p class="role-v5">{{ $member['role'] ?? '' }}</p>
+                                    <a href="#" class="linkedin-link-modern" aria-label="Profil LinkedIn de {{ $member['name'] ?? '' }}"><span class="material-symbols-outlined">link</span> LinkedIn</a>
+                                </div>
                             </article>
                         @endforeach
                     </div>
                 @else
-                    <div class="video-placeholder"><p>Informations sur l'équipe non disponibles.</p></div>
+                    <div class="placeholder-v5"><p>Informations sur l'équipe non disponibles.</p></div>
                 @endif
-            </div>
-
-            {{-- Colonne Droite (Témoignage - Statique pour l'instant) --}}
-            <div id="temoignages" class="grid-col-1-3">
-                <h2 class="section-title">Témoignage du Mois</h2>
-                <div class="testimonial-card">
-                    <p class="quote">"Travailler chez {{ $recruiter->companyName }}, c'est l'assurance de relever des défis passionnants avec une équipe soudée et innovante."</p>
-                    <div class="author"><p>— **(À remplacer)**, (Rôle)</p></div>
-                </div>
             </div>
         </section>
 
-        {{-- LIGNE 5 : GRILLE DE MÉDIAS (Pleine Largeur) --}}
-        <section id="medias">
-            <h2 class="section-title">Espace Médias et Presse</h2>
-            @if ($mediaSection && !empty($mediaSection['data']))
-                <div class="image-grid-large">
-                    @foreach ($mediaSection['data'] as $media)
-                        <img src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? 'Média' }}">
+        {{-- LIGNE 5 : TÉMOIGNAGES (Pleine Largeur) --}}
+        <section id="temoignages" class="section-v5 section-full-v5">
+            <h2 class="section-title-v5">Ce que disent nos employés</h2>
+            @php
+                $testimonials = collect($sections)->firstWhere('anchor', 'temoignages')['data'] ?? [];
+            @endphp
+
+            @if (!empty($testimonials))
+                <div class="testimonials-slider-v5">
+                    @foreach ($testimonials as $testimonial)
+                        <div class="testimonial-card-v5">
+                            <span class="material-symbols-outlined quote-icon-v5">format_quote</span>
+                            <p class="quote-text-v5">"{{ $testimonial['quote'] ?? 'Témoignage non spécifié.' }}"</p>
+                            <div class="author-info-v5">
+                                <p class="author-name-v5">**{{ $testimonial['author'] ?? 'Anonyme' }}**</p>
+                                <p class="author-role-v5">{{ $testimonial['role'] ?? 'Employé' }}</p>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             @else
-                <div class="image-grid-placeholder"><p>Contenu médias bientôt disponible.</p></div>
+                <div class="placeholder-v5"><p>Aucun témoignage disponible pour le moment.</p></div>
             @endif
         </section>
 
-        {{-- LIGNE 6 : OFFRES D'EMPLOI COMPLÈTES (Pleine Largeur) --}}
-        <section id="offres-emplois">
-            <h2 class="section-title">Toutes nos Offres d'Emploi</h2>
-            <p>Liste complète de toutes les opportunités actuellement ouvertes chez {{ $recruiter->companyName }}.</p>
-            <div class="job-offers-full-list">
-                <div class="alert alert-info">Chargement dynamique des offres...</div>
+        {{-- LIGNE 6 : ESPACE MÉDIAS --}}
+        <section id="medias" class="section-v5 section-full-v5">
+            <h2 class="section-title-v5">Espace Médias et Presse</h2>
+            @php
+                $mediaPressSection = collect($sections)->firstWhere('anchor', 'medias');
+            @endphp
+            @if ($mediaPressSection && !empty($mediaPressSection['data']))
+                <div class="masonry-grid-v5 masonry-grid-large-v5">
+                    @foreach ($mediaPressSection['data'] as $media)
+                        <div class="masonry-item-v5">
+                            <img src="{{ asset($media->filePath ?? '') }}" alt="{{ $media->title ?? 'Média' }}">
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="placeholder-v5"><p>Contenu médias bientôt disponible.</p></div>
+            @endif
+        </section>
+
+        {{-- LIGNE 7 : OFFRES D'EMPLOI COMPLÈTES (Pleine Largeur) --}}
+        <section id="offres-emplois" class="section-v5 section-full-v5">
+            <h2 class="section-title-v5">Toutes nos Opportunités</h2>
+            <p class="text-lead-v5">Liste complète de toutes les opportunités actuellement ouvertes chez {{ $recruiter->companyName }}.</p>
+
+            @php
+                $allJobs = $jobOffers ?? []; // Utiliser $jobOffers passé par le contrôleur
+            @endphp
+
+            <div class="job-offers-full-list-v5">
+                @if (!empty($allJobs))
+                    @foreach ($allJobs as $job)
+                        <div class="job-preview-v5 card-v5 job-full-item">
+                            <div class="job-info-col">
+                                <h4>{{ $job['title'] }}</h4>
+                                <p class="job-meta-v5">
+                                    <span class="material-symbols-outlined icon-v5">work</span> {{ $job['contract'] }}
+                                    · <span class="material-symbols-outlined icon-v5">location_on</span> {{ $job['location'] }}
+                                    @if (!empty($job['salary'])) · <span class="material-symbols-outlined icon-v5">payments</span> {{ $job['salary'] }} @endif
+                                </p>
+                            </div>
+                            <div class="job-action-col">
+                                <a href="{{ $job['link'] ?? route('job_offers.index') }}" class="btn-modern btn-primary-modern">
+                                    Postuler
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="alert alert-info card-v5">
+                        <p>Il n'y a actuellement aucune offre d'emploi ouverte chez {{ $recruiter->companyName }}.</p>
+                    </div>
+                @endif
             </div>
-            <a href="{{ route('job_offers.index') }}" class="btn-modern btn-primary-modern mt-3">Accéder au Jobboard</a>
+
+            <a href="{{ route('job_offers.index') }}" class="btn-modern btn-primary-gradient mt-3">Accéder au Jobboard</a>
         </section>
 
     </div>
@@ -200,567 +291,538 @@
 @push('styles')
     <style>
         :root {
-            /* Veuillez définir vos variables si elles ne le sont pas globalement */
-            --sand: #f8f8f4; /* Exemple */
-            --indigo: #05383d; /* Exemple */
-            --aquamarine: #7fffd4; /* Exemple */
-            --orangish: #f98948; /* Exemple */
-            --wondrous-blue: #007bff; /* Exemple */
-            --text-secondary: #5a5a5a; /* Exemple */
-            --gradient-secondary: linear-gradient(90deg, #f98948, #ff6b6b); /* Exemple */
+            --color-primary: #05383d;
+            --color-accent-light: #546e7a;
+            --color-accent-warm: #f98948;
+            --color-background: #F9F9F9;
+            --color-card-background: #FFFFFF;
+            --color-text-dark: var(--color-primary);
+            --color-text-muted: #616161;
+            --color-border: rgba(5, 56, 61, 0.1);
+            --color-shadow: rgba(5, 56, 61, 0.08);
+
+            --color-testimonial-bg: #efefef;
+
+            --border-radius-large: 16px;
+            --border-radius-base: 10px;
+            --shadow-subtle: 0 6px 15px var(--color-shadow);
+            --transition-base: all 0.3s ease;
+            --gradient-title: linear-gradient(90deg, var(--color-accent-warm), #d55d17);
         }
 
         body {
-            background-color: var(--sand);
+            background-color: var(--color-background);
+            font-family: 'Inter', sans-serif;
+            color: var(--color-text-dark);
+            line-height: 1.6;
         }
 
-        .container-company {
+        .container-v5 {
             max-width: 1300px;
             margin-left: auto;
             margin-right: auto;
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
         }
 
-        /* ===== GLOBAL SECTIONS & TITLES ===== */
-        .content-wrapper > section {
-            margin-top: 3rem;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        /* Styles de section et titre conservés mais renommés en -v5 */
+        .content-wrapper-v5 > section {
+            margin-top: 5rem;
+            margin-bottom: 5rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .section-title {
-            font-size: 1.75rem;
+        .section-title-v5 {
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
-            color: var(--indigo);
-            font-weight: 700;
+            color: var(--color-primary);
+            font-weight: 800;
             position: relative;
             padding-bottom: 0.75rem;
         }
 
-        .section-title::after {
+        .section-title-v5::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--gradient-secondary);
+            width: 70px;
+            height: 4px;
+            background: var(--gradient-title);
             border-radius: 2px;
         }
 
-        /* ========================================================== */
-        /* ===== 1. BANNER ET HEADER (RÉSOLUTIONS DE STYLE) ===== */
-        /* ========================================================== */
-        .company-banner {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            max-height: 400px;
-            min-height: 220px;
-            overflow: visible;
-            box-shadow: 0 10px 30px rgba(5, 56, 61, 0.15);
-            margin-bottom: 0;
+        .text-lead-v5 {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--color-text-dark);
+            margin-bottom: 2rem;
+        }
+        .text-muted-v5 {
+            color: var(--color-text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
         }
 
-        .company-banner img {
+        /* Icones */
+        .icon-v5 { font-size: 1.25rem !important; }
+        .icon-large-v5 { font-size: 1.8rem !important; }
+        .icon-tiny-v5 { font-size: 0.8rem !important; }
+
+
+        /* ========================================================== */
+        /* ===== 1. HEADER (HERO V5) ===== */
+        /* ========================================================== */
+        .company-hero-v5 {
+            position: relative;
+            width: 100%;
+            min-height: 350px;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 2rem;
+            overflow: hidden;
+        }
+        .hero-banner-v5 {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
         }
-
-        /* Correction de l'Overlay pour la lisibilité du texte */
-        .company-banner .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            background: rgba(5, 56, 61, 0.5); /* Semi-transparent foncé */
-        }
-
-        /* Positionnement du Header */
-        .company-header {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 3;
+        .hero-content-v5 {
+            position: relative;
+            z-index: 10;
             display: flex;
-            flex-direction: row;
+            justify-content: space-between;
             align-items: flex-end;
-            gap: 2rem;
-            padding: 0 1rem 1.5rem;
-            margin: 0 auto;
+            width: 100%;
+            padding-top: 2rem;
         }
-
-        /* Correction du Logo (Dimensionnement et positionnement) */
-        .company-logo {
+        .hero-main-info-v5 {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .company-logo-v5 {
             width: 120px;
             height: 120px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
-            transform: translateY(-60px); /* Décalage vers le haut (moitié de la hauteur) */
+            padding: 0;
             flex-shrink: 0;
+            overflow: hidden;
         }
-
-        .company-logo img {
+        .company-logo-v5 img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* S'assurer que le logo entier est visible */
-            position: relative; /* Annuler l'absolu du parent pour cette image */
-            z-index: 0;
-            border-radius: 0;
+            object-fit: cover;
+            display: block;
+        }
+        .company-details-v5 { color: white; line-height: 1.1; }
+        .company-name-v5 { font-size: 2.5rem; margin-bottom: 0.5rem; font-weight: 900; }
+        .metadata-v5 { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.95rem; font-weight: 500; }
+        .meta-item-v5 { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+        @media (max-width: 992px) {
+            .company-hero-v5 { min-height: 250px; padding-bottom: 1.5rem; }
+            .hero-content-v5 { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .company-logo-v5 { width: 90px; height: 90px; }
+            .company-name-v5 { font-size: 2rem; }
+            .metadata-v5 { font-size: 0.85rem; }
         }
 
-        /* Style des Infos du Header */
-        .company-info {
-            padding-bottom: 1.5rem;
-        }
-
-        .company-info h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-        }
-
-        .company-info .details p {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #eee;
-            margin-bottom: 0.25rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-right: 1.5rem;
-        }
-
-        .company-info .details .material-symbols-outlined {
-            font-size: 1.2rem;
-        }
-
-        /* Styles Mobile pour le Header */
-        @media (max-width: 767px) {
-            .company-header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding-bottom: 0.5rem;
-            }
-            .company-logo {
-                width: 100px;
-                height: 100px;
-                transform: translateY(-50px);
-            }
-            .company-info {
-                padding-bottom: 1rem;
-                margin-top: -30px;
-            }
-            .company-info h1 {
-                font-size: 2rem;
-            }
-        }
-
-        .company-full-nav {
-            width: 100%;
+        /* ========================================================== */
+        /* ===== 2. NAVIGATION STICKY (NAV V5) - Amélioration Responsive ===== */
+        /* ========================================================== */
+        .company-nav-v5 {
             background: white;
-            border-bottom: 1px solid rgba(5, 56, 61, 0.1);
+            border-bottom: 1px solid var(--color-border);
             position: sticky;
             top: 0;
             z-index: 50;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .company-full-nav ul {
+        .company-nav-v5 ul {
             list-style: none;
             padding: 0;
             margin: 0;
             display: flex;
-            flex-wrap: wrap;
             justify-content: flex-start;
-            gap: 0.25rem 1rem;
+            gap: 0 2.5rem;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+        .company-nav-v5 ul::-webkit-scrollbar {
+            height: 4px;
+        }
+        .company-nav-v5 ul::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 2px;
         }
 
-        .company-full-nav ul li {
-            flex-shrink: 0;
-        }
-
-        .company-full-nav ul li a {
+        .company-nav-v5 ul li a {
             text-decoration: none;
             font-weight: 600;
-            color: var(--indigo);
-            padding: 0.8rem 1rem;
-            border-radius: 0;
+            color: var(--color-text-dark);
+            padding: 1rem 0;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
+            transition: var(--transition-base);
             display: block;
             border-bottom: 3px solid transparent;
         }
 
-        .company-full-nav ul li a:hover {
-            background: var(--sand);
-            border-bottom-color: var(--aquamarine);
+        .company-nav-v5 ul li a:hover,
+        .company-nav-v5 ul li a.active {
+            color: var(--color-accent-warm);
+            border-bottom-color: var(--color-accent-warm);
         }
 
-        @media (max-width: 767px) {
-            .company-full-nav ul {
-                flex-wrap: nowrap;
+        .nav-link-cta-v5 {
+            color: var(--color-accent-warm) !important;
+            border-bottom: 3px solid var(--color-accent-warm) !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav-link-cta-v5 { display: none; }
+
+            .company-nav-v5 .container-v5 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .company-nav-v5 ul {
+                gap: 0 1.5rem;
+            }
+
+            .company-nav-v5 ul li a {
+                font-size: 0.9rem;
+                padding: 0.8rem 0;
             }
         }
 
-
         /* ========================================================== */
-        /* ===== 3. GRILLE DE MISE EN PAGE (Grid Layout) ===== */
+        /* ===== 3. GRILLES (Grid Layout V5) ===== */
         /* ========================================================== */
-        .grid-section {
+        .grid-2-col-template-v5 {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
             align-items: flex-start;
         }
-
-        @media (min-width: 1024px) {
-            .grid-section {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 4rem;
-            }
-            .grid-section.reverse-on-mobile {
-                display: grid;
-            }
+        .grid-2-col-template-v5.grid-2-equal-v5 {
+            grid-template-columns: 1fr 1fr;
         }
-
-        /* Colonnes */
-        .grid-col-2-3 {
-            grid-column: span 2;
-        }
-        .grid-col-1-3 {
-            grid-column: span 1;
-        }
-        .grid-col-1-2 {
-            grid-column: span 1;
-        }
-
-        @media (min-width: 1024px) {
-            .grid-section:nth-child(3) { /* Pour la ligne Valeurs/Offres */
-                grid-template-columns: repeat(2, 1fr);
-                gap: 3rem;
-            }
-        }
+        .col-main-v5 { grid-column: span 1; }
+        .col-sidebar-v5 { grid-column: span 1; }
+        .col-1-2-v5 { grid-column: span 1; }
 
         @media (max-width: 1023px) {
-            .grid-col-2-3, .grid-col-1-3, .grid-col-1-2 {
-                grid-column: span 1;
+            .grid-2-col-template-v5,
+            .grid-2-col-template-v5.grid-2-equal-v5 {
+                grid-template-columns: 1fr;
+                gap: 3rem;
             }
-            .grid-section.reverse-on-mobile {
+            .grid-2-col-template-v5.reverse-on-mobile {
                 display: flex;
                 flex-direction: column-reverse;
             }
         }
 
         /* ========================================================== */
-        /* ===== 4. COMPOSANTS (CARTES) ===== */
+        /* ===== 4. COMPOSANTS (CARTES & BLOCS V5) ===== */
         /* ========================================================== */
 
-        /* Carte Contact (colonne droite) */
-        .contact-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(5, 56, 61, 0.08);
-            border: 1px solid rgba(5, 56, 61, 0.05);
-            margin-top: 3.25rem;
+        .card-v5 {
+            background: var(--color-card-background);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--color-border);
+            transition: var(--transition-base);
         }
-
-        .infos-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .infos-list li {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0;
-            border-bottom: 1px dashed rgba(5, 56, 61, 0.1);
-        }
-
-        .infos-list li:last-child {
-            border-bottom: none;
-        }
-
-        .infos-list a {
-            color: var(--indigo);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .sidebar-title {
-            font-size: 1.15rem;
-            color: var(--indigo);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        /* Fiche Identité */
-        .identity-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(5, 56, 61, 0.08);
-            border: 1px solid rgba(5, 56, 61, 0.05);
-        }
-
-        .identity-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .identity-list li {
-            padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(5, 56, 61, 0.1);
-        }
-
-        .identity-list li:last-child {
-            border-bottom: none;
-        }
-
-        /* Carte Valeurs */
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .value-card {
-            background: white;
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            font-weight: 600;
-            color: var(--indigo);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border: 2px solid var(--aquamarine);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Carte Offre Simple */
-        .job-card-simple {
-            background: white;
-            padding: 1.2rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: transform 0.3s ease;
-        }
-
-        .job-card-simple:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .job-card-simple h4 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .btn-text {
-            color: var(--orangish);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-top: 0.5rem;
-        }
-
-        /* Carte Membre Équipe */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .team-member-card {
-            text-align: center;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(5, 56, 61, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(5, 56, 61, 0.05);
-        }
-
-        .team-member-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(5, 56, 61, 0.12);
-        }
-
-        .team-member-card img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 0.75rem;
-            border: 4px solid var(--wondrous-blue);
-            box-shadow: 0 2px 8px rgba(5, 56, 61, 0.1);
-        }
-
-        .team-member-card .role {
-            font-size: 0.9rem;
-            color: var(--aquamarine);
-            margin-bottom: 0.75rem;
-        }
-
-        .linkedin-link img {
-            width: 20px;
-            height: 20px;
-            margin-top: 0.5rem;
-        }
-
-        /* Carte Témoignage */
-        .testimonial-card {
-            background: var(--indigo);
-            color: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(5, 56, 61, 0.15);
-            margin-top: 3.25rem;
-        }
-
-        .testimonial-card .quote {
-            font-style: italic;
-            font-size: 1.1rem;
-            line-height: 1.6;
+        .sidebar-title-v5 {
+            font-size: 1.5rem;
+            color: var(--color-primary);
             margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--color-accent-warm);
+            padding-bottom: 0.75rem;
         }
+        .info-list-v5 { list-style: none; padding: 0; margin: 0; }
+        .info-list-v5 li { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
+        .info-list-v5 li:last-child { border-bottom: none; }
 
-        .testimonial-card .author {
-            text-align: right;
-            font-weight: 600;
-        }
+        .info-list-v5 li a, .info-list-v5 li span { color: var(--color-text-dark); text-decoration: none; font-weight: 500; }
+        .info-list-v5 li a:hover { color: var(--color-accent-warm); }
+        .identity-list-v5 li strong { font-weight: 700; color: var(--color-text-dark); }
+        .identity-list-v5 li span { color: var(--color-text-muted); }
 
-        /* Grille d'images */
-        .image-grid {
+        /* Valeurs (NOUVELLE COULEUR D'ACCENTUATION) */
+        .values-grid-v5 {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .image-grid-large {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1.5rem;
+        }
+        .value-card-v5 {
+            background: var(--color-card-background);
+            padding: 2rem;
+            border-radius: var(--border-radius-base);
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--color-border);
+            border-left: 5px solid var(--color-accent-light); /* Bleu-Gris Ardoise */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+        }
+        .value-card-v5 .icon-large-v5 {
+            color: white;
+            background: var(--color-accent-light); /* Bleu-Gris Ardoise */
+            padding: 0.75rem;
+            border-radius: 50%;
+            font-size: 2rem !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Offres récentes */
+        .job-preview-v5 {
+            background: var(--color-card-background);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-base);
+            border-left: 5px solid var(--color-accent-warm);
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px var(--color-shadow);
+        }
+        .job-preview-v5 h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .job-meta-v5 { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.75rem; }
+        .link-text-v5 { color: var(--color-accent-warm); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition-base); }
+        .link-text-v5:hover { color: var(--color-primary); }
+
+        .job-offers-full-list-v5 {
             margin-top: 2rem;
         }
 
-        .image-grid img, .image-grid-large img {
-            width: 100%;
-            height: 200px;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 4px 16px rgba(5, 56, 61, 0.1);
-            transition: all 0.3s ease;
+        .job-full-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
-
-        .image-grid-placeholder, .video-placeholder {
-            background: rgba(255,255,255,0.7);
-            border: 1px dashed var(--indigo);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            color: var(--text-secondary);
+        .job-full-item h4 {
+            margin-bottom: 0.5rem;
         }
-
-        /* ========================================================== */
-        /* ===== 5. BOUTONS MODERNES (Styles standards) ===== */
-        /* ========================================================== */
-        .btn-modern {
+        .job-info-col {
+            flex-grow: 1;
+            margin-right: 2rem;
+        }
+        .job-action-col .btn-modern {
             padding: 0.75rem 1.5rem;
-            border-radius: 10px;
+            white-space: nowrap;
+        }
+        .job-full-item .job-meta-v5 .icon-v5 {
+            font-size: 1rem !important;
+            position: relative;
+            top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .job-full-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.5rem;
+            }
+            .job-info-col {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .job-action-col {
+                width: 100%;
+            }
+            .job-action-col .btn-modern {
+                width: 100%;
+            }
+        }
+
+        /* Équipe (Vidéo + Membres) */
+        .team-grid-v5 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Optimisé pour 2-3 colonnes */
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .team-member-card-v5 {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem;
+        }
+        .team-member-card-v5 img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 3px solid var(--color-background);
+        }
+        .member-info-v5 h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .role-v5 { font-size: 0.95rem; color: var(--color-text-muted); margin-bottom: 0.5rem; }
+        .linkedin-link-modern {
+            text-decoration: none;
+            color: var(--wondrous-blue);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .video-container-v5 {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%;
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-subtle);
+            margin-top: 1.5rem;
+        }
+        .video-container-v5 iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        @media (max-width: 1023px) {
+            .video-container-v5 {
+                padding-bottom: 56.25%;
+            }
+        }
+
+        .testimonials-slider-v5 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        .testimonial-card-v5 {
+            background: var(--color-testimonial-bg);
+            color: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius-large);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border-top: 6px solid var(--color-accent-warm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .quote-icon-v5 {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 4rem !important;
+            color: #607D8B;
+            opacity: 0.4;
+            z-index: 1;
+        }
+        .quote-text-v5 {
+            font-style: italic;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            z-index: 2;
+            color: var(--indigo);
+        }
+        .author-name-v5 {
+            font-weight: 700;
+            color: var(--indigo);
+        }
+        .author-role-v5 {
+            font-size: 0.9rem;
+            color: #B0BEC5; /* Gris clair */
+        }
+
+        /* Grilles Masonry */
+        .masonry-grid-v5 { column-count: 2; column-gap: 1.5rem; margin-top: 2rem; }
+        .masonry-grid-large-v5 { column-count: 3; }
+        .masonry-item-v5 { break-inside: avoid; padding-bottom: 1.5rem; }
+        .masonry-item-v5 img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius-base);
+            object-fit: cover;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition-base);
+            display: block;
+        }
+        @media (max-width: 767px) {
+            .masonry-grid-v5,
+            .masonry-grid-large-v5 { column-count: 1; }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .masonry-grid-large-v5 { column-count: 2; }
+        }
+
+        .placeholder-v5 {
+            background: var(--color-card-background);
+            border: 2px dashed var(--color-border);
+            padding: 3rem;
+            border-radius: var(--border-radius-base);
+            text-align: center;
+            color: var(--color-text-muted);
+            margin-top: 2rem;
+        }
+        .btn-modern {
+            padding: 0.85rem 1.8rem;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: var(--transition-base);
             border: none;
             cursor: pointer;
         }
-
         .btn-primary-modern {
-            background: var(--gradient-secondary);
+            background: var(--color-accent-warm);
             color: white;
             box-shadow: 0 4px 12px rgba(249, 137, 72, 0.4);
         }
-
         .btn-primary-modern:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(249, 137, 72, 0.6);
         }
-
         .btn-secondary-modern {
-            background: var(--aquamarine);
-            color: var(--indigo);
+            background: white;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
         }
-
         .btn-secondary-modern:hover {
-            background: var(--indigo);
-            color: var(--aquamarine);
+            background: var(--color-primary);
+            color: white;
         }
-
-        .btn-tertiary-modern {
-            background: transparent;
-            color: var(--indigo);
-            border: 2px solid var(--aquamarine);
+        .mt-3 { margin-top: 1.5rem; }
+        .alert-info {
+            background-color: var(--color-background);
+            color: var(--color-primary);
+            border: 1px solid var(--color-accent-light);
         }
-
-        .btn-tertiary-modern:hover {
-            background: var(--aquamarine);
-        }
-
-        /* ===== Utilitaires et Animations ===== */
-        .hover-underline-animation {
-            position: relative;
-        }
-
-        .hover-underline-animation::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            display: block;
-            margin-top: 5px;
-            background: var(--aquamarine);
-            transition: width .3s;
-        }
-
-        .hover-underline-animation:hover::after {
-            width: 100%;
-        }
-
-        .text-white { color: white !important; }
 
     </style>
 @endpush

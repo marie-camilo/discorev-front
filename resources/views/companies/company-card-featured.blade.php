@@ -25,7 +25,6 @@
 </div>
 
 <style>
-    /* Styles pour .section-entreprise et .company-card */
     .section-entreprise {
         padding: 3rem 0;
         max-width: 1400px;
@@ -36,8 +35,8 @@
         margin-bottom: 2rem;
         color: var(--indigo);
         font-weight: 700;
-        padding-left: 15px; /* Ajuster au container */
-        padding-right: 15px; /* Ajuster au container */
+        padding-left: 15px;
+        padding-right: 15px;
     }
 
     .company-card {
@@ -51,11 +50,10 @@
         color: var(--indigo);
         transition: all 0.3s ease;
         max-width: 450px;
-        margin: 2rem 15px 0 15px; /* Centrage et marges */
+        margin: 2rem 15px 0 15px;
         background: white;
         box-shadow: 0 4px 12px rgba(5, 56, 61, 0.05);
     }
-    /* ... (Insérez ici le reste de vos styles pour .company-card, .card-logo, .card-info, etc.) */
     .company-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 20px rgba(5, 56, 61, 0.1);
