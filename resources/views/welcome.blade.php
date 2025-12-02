@@ -60,4 +60,6 @@
             />
         </div>
     </section>
+
+    @include('companies.company-card-featured', ['entrepriseCardData' => $entrepriseCardData])
 @endsection

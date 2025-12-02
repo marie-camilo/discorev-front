@@ -1641,5 +1641,4 @@
             padding: 0 3rem;
         }
     }
-
 </style>

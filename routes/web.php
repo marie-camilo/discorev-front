@@ -13,6 +13,7 @@ use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\HomeController;
+use App\Data\CompaniesData;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -65,6 +66,46 @@ Route::get('/legal/{slug}', [LegalController::class, 'show'])->name('legal.show'
 // Accès aux fiches entreprises
 Route::get('/companies', [RecruiterController::class, 'index'])->name('companies.index');
 Route::get('/companies/{identifier}', [RecruiterController::class, 'show'])->name('companies.show');
+
+
+Route::get('/', function () {
+    // Récupère une liste simplifiée de partenaires (logos, noms, slugs)
+    $partnerList = CompaniesData::getPartnerList();
+
+    // Simule la donnée de la carte entreprise en vedette (on prend le premier élément de la liste pour l'exemple)
+    $entrepriseCardData = $partnerList[0] ?? (object)[
+        'slug' => 'default',
+        'companyName' => 'Entreprise par défaut',
+        'logo' => '/img/logos/default_logo.png',
+        'sectorName' => 'Services'
+    ];
+
+    // Donne la liste des partenaires pour la composante (vous pouvez ajuster ce nom de variable si nécessaire)
+    $companies = $partnerList;
+
+    return view('welcome', compact('entrepriseCardData', 'companies'));
+})->name('home');
+
+Route::get('/entreprise/{slug}', function ($slug) {
+
+    $companyData = CompaniesData::getCompanyBySlug($slug);
+
+    if (!$companyData) {
+        // Renvoie une erreur 404 si le slug n'existe pas dans CompaniesData
+        abort(404, "L'entreprise demandée ($slug) n'a pas été trouvée.");
+    }
+
+    // Extraction des données
+    $recruiter = $companyData['recruiterData'];
+    $sections = $companyData['sectionsData'];
+
+    // Ajoutez des offres d'emploi simulées si nécessaire (pour le placeholder)
+    $jobOffers = [];
+
+    // Utilise la vue mise à jour (company-a.blade.php ou company-page.blade.php)
+    return view('companies.company-a', compact('recruiter', 'sections', 'jobOffers'));
+
+})->name('entreprise.show');
 
 // Pour recruteurs
 Route::middleware(['token.valid', 'recruiter'])->group(function () {

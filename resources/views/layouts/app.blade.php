@@ -7,6 +7,7 @@
     <title>@yield('title', 'Discorev')</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/js/app.js', 'resources/scss/app.scss'])
+    @stack('styles')
 </head>
 
 <body>

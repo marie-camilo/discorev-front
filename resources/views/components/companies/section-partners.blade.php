@@ -10,10 +10,10 @@
         <div class="row justify-content-center g-2 mb-5">
             @foreach ($companies as $company)
                 <x-companies.company-card
-                    :name="$company['name']"
-                    :description="$company['description']"
-                    :link="$company['link']"
-                    :image="$company['image']"
+                    :name="$company->companyName" {{-- J'utilise companyName car c'est la clé que vous avez définie --}}
+                    :description="$company->description ?? 'Description par défaut'"
+                    :link="$company->link ?? '#'"
+                    :image="$company->logo" {{-- J'utilise logo car c'est la clé que vous avez définie --}}
                 />
             @endforeach
         </div>
