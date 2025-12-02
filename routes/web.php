@@ -15,6 +15,9 @@ use App\Http\Controllers\LegalController;
 use App\Http\Controllers\HomeController;
 use App\Data\CompaniesData;
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OfferController;
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Auth
@@ -121,5 +124,18 @@ Route::middleware(['token.valid', 'recruiter'])->group(function () {
     Route::get('/cvtheque', [CandidateController::class, 'index'])->name('cvtheque.index');
 });
 
+Route::middleware(['token.valid', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
+        Route::put('/offers/{id}', [OfferController::class, 'update'])->name('offers.update');
+        Route::delete('/offers/{id}', [OfferController::class, 'delete'])->name('offers.delete');
+    });
+});
+
+
 Route::get('/job_offers/{id}', [JobOfferController::class, 'show'])->name('job_offers.show');
-Route::get('/tarifs', function () {return view('account.recruiter.tarifs-recruiters');})->name('recruiters.tarifs');
+Route::get('/tarifs', function () {
+    return view('account.recruiter.tarifs-recruiters');
+})->name('recruiters.tarifs');

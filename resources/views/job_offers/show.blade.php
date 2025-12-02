@@ -31,14 +31,17 @@
                     @endphp
 
                     <div class="company-logo">
-                        <a href="{{ route('companies.show', $recruiter->id ?: $recruiter->companyName) }}" class="d-inline-block">
-                            <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}" class="offer-logo shadow-sm">
+                        <a href="{{ route('companies.show', $recruiter->id ? $recruiter->id : $recruiter->companyName) }}"
+                            class="d-inline-block">
+                            <img src="{{ $logoUrl }}" alt="Logo de {{ $recruiter->companyName }}"
+                                class="offer-logo shadow-sm">
                         </a>
                     </div>
 
                     <div>
                         <h2 class="mb-1 fw-bold">{{ $offer->title }}</h2>
-                        <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}" class="text-decoration-none company-name-link">
+                        <a href="{{ route('companies.show', ['identifier' => $recruiter->id]) }}"
+                            class="text-decoration-none company-name-link">
                             {{ $recruiter->companyName }}
                         </a>
                         <p class="text-muted small mb-0">Publiée {{ $daysAgo }}</p>
@@ -47,35 +50,36 @@
 
                 <!-- Badges -->
                 <div class="offer-meta d-flex flex-wrap gap-2 justify-content-md-end">
-                <span class="badge-custom">
-                    <span class="material-symbols-outlined">work</span>
-                    {{ strtoupper($offer->employmentType) }}
-                </span>
+                    <span class="badge-custom">
+                        <span class="material-symbols-outlined">work</span>
+                        {{ strtoupper($offer->employmentType) }}
+                    </span>
 
                     <span class="badge-custom">
-                    <span class="material-symbols-outlined">location_on</span>
-                    {{ $offer->location }}
-                </span>
-
-                    @if($offer->startDate && $offer->endDate)
-                        <span class="badge-custom">
-                        <span class="material-symbols-outlined">calendar_month</span>
-                        {{ \Carbon\Carbon::parse($offer->startDate)->format('d/m/Y') }} → {{ \Carbon\Carbon::parse($offer->endDate)->format('d/m/Y') }}
+                        <span class="material-symbols-outlined">location_on</span>
+                        {{ $offer->location }}
                     </span>
+
+                    @if ($offer->startDate && $offer->endDate)
+                        <span class="badge-custom">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            {{ \Carbon\Carbon::parse($offer->startDate)->format('d/m/Y') }} →
+                            {{ \Carbon\Carbon::parse($offer->endDate)->format('d/m/Y') }}
+                        </span>
                     @endif
 
                     @if ($offer->status)
                         <span class="badge-custom {{ $offer->status === 'active' ? 'active' : 'inactive' }}">
-                        <span class="material-symbols-outlined">fiber_manual_record</span>
-                        {{ ucfirst($offer->status) }}
-                    </span>
+                            <span class="material-symbols-outlined">fiber_manual_record</span>
+                            {{ ucfirst($offer->status) }}
+                        </span>
                     @endif
 
                     @if ($offer->salaryMin && $offer->salaryMax)
                         <span class="badge-custom">
-                        <span class="material-symbols-outlined">euro</span>
-                        {{ $offer->salaryMin }} - {{ $offer->salaryMax }} €/mois
-                    </span>
+                            <span class="material-symbols-outlined">euro</span>
+                            {{ $offer->salaryMin }} - {{ $offer->salaryMax }} €/mois
+                        </span>
                     @endif
                 </div>
             </div>
@@ -162,7 +166,7 @@
             font-size: 0.9rem;
             border-radius: 10px;
             background: var(--white);
-            border: 1px solid rgba(0,0,0,0.08);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             color: var(--text-secondary);
             transition: all 0.2s ease;
         }
@@ -195,14 +199,17 @@
             .offer-header {
                 text-align: center;
             }
+
             .company-logo {
                 width: 60px;
                 height: 60px;
                 margin: 0 auto;
             }
+
             .offer-meta {
                 justify-content: center !important;
             }
+
             .badge-custom {
                 font-size: 0.85rem;
             }
